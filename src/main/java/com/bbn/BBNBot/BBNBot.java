@@ -1,9 +1,11 @@
-import listeners.*;
+package com.bbn.BBNBot;
+
+import com.bbn.BBNBot.listeners.*;
 import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
-import util.SECRETS;
+import com.bbn.BBNBot.util.*;
 
 import javax.security.auth.login.LoginException;
 
