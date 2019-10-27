@@ -18,7 +18,7 @@ public class BBNBot {
 
             builder = new JDABuilder(AccountType.BOT).setToken(SECRETS.TOKEN).setAutoReconnect(true).setStatus(OnlineStatus.ONLINE);
             builder.setActivity(Activity.streaming("on the BBN", "https://twitch.tv/bigbotnetwork"));
-            builder.addEventListeners(new MemberJoinListener(), new MessageReceiveListener(), new ReactionAddListener());
+            builder.addEventListeners(new MemberJoinListener(), new MessageReceiveListener(), new ReactionAddListener(), new MemberLeaveListener());
         } catch (Exception e) {
             e.printStackTrace();
         }
