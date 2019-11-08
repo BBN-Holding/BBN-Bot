@@ -1,2 +1,2 @@
 # BBN-Bot
-The very cool and nice BBN Bot
+The bot which regulates the internal affairs on the BigBotNetwork Discord Server.
