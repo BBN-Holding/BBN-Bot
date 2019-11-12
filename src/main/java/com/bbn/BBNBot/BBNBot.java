@@ -7,16 +7,14 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import com.bbn.BBNBot.util.*;
 
-import javax.security.auth.login.LoginException;
-
 public class BBNBot {
-    public static JDABuilder builder;
+    private static JDABuilder builder;
 
     public static void main(String[] args) {
 
         try {
 
-            builder = new JDABuilder(AccountType.BOT).setToken(SECRETS.TOKEN).setAutoReconnect(true).setStatus(OnlineStatus.ONLINE);
+            builder = new JDABuilder(AccountType.BOT).setToken(SECRETS.TOKEN).setAutoReconnect(true).setStatus(OnlineStatus.DO_NOT_DISTURB);
             builder.setActivity(Activity.streaming("on the BBN", "https://twitch.tv/bigbotnetwork"));
             builder.addEventListeners(new MemberJoinListener(), new MessageReceiveListener(), new ReactionAddListener(), new MemberLeaveListener());
         } catch (Exception e) {
@@ -25,8 +23,6 @@ public class BBNBot {
 
         try {
             builder.build();
-        } catch (LoginException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
