@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
+import java.awt.*;
 import java.time.Instant;
 
 public class MemberJoinListener extends ListenerAdapter {
@@ -16,12 +17,14 @@ public class MemberJoinListener extends ListenerAdapter {
                         .setTitle("User joined")
                         .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getDefaultAvatarUrl(), event.getMember().getUser().getDefaultAvatarUrl())
                         .setTimestamp(Instant.now())
+                        .setColor(Color.YELLOW)
                         .build()).queue();
             } else {
                 event.getGuild().getTextChannelsByName("log", true).get(0).sendMessage(new EmbedBuilder()
                         .setTitle("User joined")
                         .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
                         .setTimestamp(Instant.now())
+                        .setColor(Color.YELLOW)
                         .build()).queue();
             }
 
@@ -33,12 +36,14 @@ public class MemberJoinListener extends ListenerAdapter {
                         .setTitle("Bot joined")
                         .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getDefaultAvatarUrl(), event.getMember().getUser().getDefaultAvatarUrl())
                         .setTimestamp(Instant.now())
+                        .setColor(Color.YELLOW)
                         .build()).queue();
             } else {
                 event.getGuild().getTextChannelsByName("log", true).get(0).sendMessage(new EmbedBuilder()
                         .setTitle("Bot joined")
                         .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
                         .setTimestamp(Instant.now())
+                        .setColor(Color.YELLOW)
                         .build()).queue();
             }
         }
