@@ -13,14 +13,14 @@ public class MemberJoinListener extends ListenerAdapter {
             event.getGuild().addRoleToMember(event.getMember(), event.getGuild().getRoleById("636950878615502849")).reason("Auto User Role onJoin").queue();
 
             if (event.getMember().getUser().getAvatarId() == null) {
-                event.getGuild().getTextChannelsByName("log", true).get(0).sendMessage(new EmbedBuilder()
+                event.getGuild().getTextChannelById("452789888945750046").sendMessage(new EmbedBuilder()
                         .setTitle("User joined")
                         .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getDefaultAvatarUrl(), event.getMember().getUser().getDefaultAvatarUrl())
                         .setTimestamp(Instant.now())
                         .setColor(Color.YELLOW)
                         .build()).queue();
             } else {
-                event.getGuild().getTextChannelsByName("log", true).get(0).sendMessage(new EmbedBuilder()
+                event.getGuild().getTextChannelById("452789888945750046").sendMessage(new EmbedBuilder()
                         .setTitle("User joined")
                         .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
                         .setTimestamp(Instant.now())
@@ -32,14 +32,14 @@ public class MemberJoinListener extends ListenerAdapter {
             event.getGuild().addRoleToMember(event.getMember(), event.getGuild().getRoleById("449265354691313676")).reason("Auto Bot Role onJoin").queue();
 
             if (event.getMember().getUser().getAvatarId() == null) {
-                event.getGuild().getTextChannelsByName("log", true).get(0).sendMessage(new EmbedBuilder()
+                event.getGuild().getTextChannelById("452789888945750046").sendMessage(new EmbedBuilder()
                         .setTitle("Bot joined")
                         .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getDefaultAvatarUrl(), event.getMember().getUser().getDefaultAvatarUrl())
                         .setTimestamp(Instant.now())
                         .setColor(Color.YELLOW)
                         .build()).queue();
             } else {
-                event.getGuild().getTextChannelsByName("log", true).get(0).sendMessage(new EmbedBuilder()
+                event.getGuild().getTextChannelById("452789888945750046").sendMessage(new EmbedBuilder()
                         .setTitle("Bot joined")
                         .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
                         .setTimestamp(Instant.now())

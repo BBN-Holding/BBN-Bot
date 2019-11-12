@@ -11,14 +11,14 @@ public class MemberLeaveListener extends ListenerAdapter {
     public void onGuildMemberLeave(GuildMemberLeaveEvent event) {
         if (!event.getMember().getUser().isBot()) {
             if (event.getMember().getUser().getAvatarId() == null) {
-                event.getGuild().getTextChannelsByName("log", true).get(0).sendMessage(new EmbedBuilder()
+                event.getGuild().getTextChannelById("452789888945750046").sendMessage(new EmbedBuilder()
                         .setTitle("User left")
                         .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getDefaultAvatarUrl(), event.getMember().getUser().getDefaultAvatarUrl())
                         .setTimestamp(Instant.now())
                         .setColor(Color.RED)
                         .build()).queue();
             } else {
-                event.getGuild().getTextChannelsByName("log", true).get(0).sendMessage(new EmbedBuilder()
+                event.getGuild().getTextChannelById("452789888945750046").sendMessage(new EmbedBuilder()
                         .setTitle("User left")
                         .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
                         .setTimestamp(Instant.now())
@@ -28,14 +28,14 @@ public class MemberLeaveListener extends ListenerAdapter {
 
         } else {
            if (event.getMember().getUser().getAvatarId() == null) {
-                event.getGuild().getTextChannelsByName("log", true).get(0).sendMessage(new EmbedBuilder()
+                event.getGuild().getTextChannelById("452789888945750046").sendMessage(new EmbedBuilder()
                         .setTitle("Bot left")
                         .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getDefaultAvatarUrl(), event.getMember().getUser().getDefaultAvatarUrl())
                         .setTimestamp(Instant.now())
                         .setColor(Color.RED)
                         .build()).queue();
             } else {
-                event.getGuild().getTextChannelsByName("log", true).get(0).sendMessage(new EmbedBuilder()
+                event.getGuild().getTextChannelById("452789888945750046").sendMessage(new EmbedBuilder()
                         .setTitle("Bot left")
                         .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
                         .setTimestamp(Instant.now())
