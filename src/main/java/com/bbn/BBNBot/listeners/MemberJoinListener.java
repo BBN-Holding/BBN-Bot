@@ -32,7 +32,7 @@ public class MemberJoinListener extends ListenerAdapter {
             }
 
         } else {
-            event.getGuild().addRoleToMember(event.getMember(), event.getGuild().getRoleById("449265354691313676")).reason("Auto Bot Role onJoin").queue();
+            event.getGuild().addRoleToMember(event.getMember(), event.getGuild().getRoleById("645889819024687105")).reason("Auto Bot Role onJoin").queue();
 
             if (event.getMember().getUser().getAvatarId() == null) {
                 event.getGuild().getTextChannelById("452789888945750046").sendMessage(new EmbedBuilder()
