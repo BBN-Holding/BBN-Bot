@@ -13,10 +13,12 @@ public class BBNBot {
     public static void main(String[] args) {
 
         try {
-
             builder = new JDABuilder(AccountType.BOT).setToken(SECRETS.TOKEN).setAutoReconnect(true).setStatus(OnlineStatus.DO_NOT_DISTURB);
             builder.setActivity(Activity.streaming("on the BBN", "https://twitch.tv/bigbotnetwork"));
-            builder.addEventListeners(new MemberJoinListener(), new MessageReceiveListener(), new ReactionAddListener(), new MemberLeaveListener());
+            builder.addEventListeners(new MemberJoinListener(),
+                    new MessageReceiveListener(),
+                    new ReactionAddListener(),
+                    new MemberLeaveListener());
         } catch (Exception e) {
             e.printStackTrace();
         }
