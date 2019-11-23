@@ -23,7 +23,7 @@ public class ReactionAddListener extends ListenerAdapter {
                         .addField("ID", event.getMember().getId(), true)
                         .setTimestamp(Instant.now())
                         .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
-                        .setColor(Color.YELLOW)
+                        .setColor(Color.GREEN)
                         .build()).queue();
             } else {
                 event.getGuild().getTextChannelById("452789888945750046").sendMessage(new EmbedBuilder()
@@ -33,7 +33,7 @@ public class ReactionAddListener extends ListenerAdapter {
                         .addField("ID", event.getMember().getId(), true)
                         .setTimestamp(Instant.now())
                         .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
-                        .setColor(Color.YELLOW)
+                        .setColor(Color.GREEN)
                         .build()).queue();
             }
         }
