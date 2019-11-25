@@ -1,6 +1,8 @@
 package com.bbn.BBNBot.listeners;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -11,7 +13,7 @@ import java.time.format.DateTimeFormatter;
 public class ReactionAddListener extends ListenerAdapter {
 
     public void onMessageReactionAdd(MessageReactionAddEvent event) {
-        if (event.getChannel().getId().equals("449267564745588737")) {
+        if (event.getMessageId().equals("636987504527933460")) {
             event.getGuild().addRoleToMember(event.getMember(), event.getGuild().getRoleById("448554734312226847")).reason("Verified").queue();
             event.getGuild().removeRoleFromMember(event.getMember(), event.getGuild().getRoleById("636950878615502849")).reason("Verified").queue();
             event.getReaction().removeReaction(event.getUser()).queue();
@@ -31,6 +33,29 @@ public class ReactionAddListener extends ListenerAdapter {
                         .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
                         .addField("User Creation Time", event.getMember().getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
                         .addField("ID", event.getMember().getId(), true)
+                        .setTimestamp(Instant.now())
+                        .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
+                        .setColor(Color.GREEN)
+                        .build()).queue();
+            }
+        } else if (event.getMessageId().equals("648520661479981056")) {
+            try {
+                event.getGuild().getTextChannelsByName(event.getUser().getName(), true).get(0);
+                event.getReaction().removeReaction(event.getUser()).queue();
+            } catch (Exception e) {
+                event.getGuild().addRoleToMember(event.getMember(), event.getGuild().getRoleById("648518759971160089")).reason("Want a bot").queue();
+                event.getReaction().removeReaction(event.getUser()).queue();
+                TextChannel channel = event.getGuild().createTextChannel(event.getUser().getName()).setParent(event.getGuild().getCategoryById("648518640718839829")).complete();
+                channel.createPermissionOverride(event.getMember()).setAllow(
+                        Permission.VIEW_CHANNEL,
+                        Permission.MESSAGE_WRITE,
+                        Permission.MESSAGE_ADD_REACTION
+                ).reason("User wants a bot").queue();
+                event.getGuild().getTextChannelById("452789888945750046").sendMessage("<@477141528981012511> <@261083609148948488>").queue();
+                event.getGuild().getTextChannelById("452789888945750046").sendMessage(new EmbedBuilder()
+                        .setTitle("User wants a bot")
+                        .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
+                        .setDescription(channel.getAsMention())
                         .setTimestamp(Instant.now())
                         .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
                         .setColor(Color.GREEN)
