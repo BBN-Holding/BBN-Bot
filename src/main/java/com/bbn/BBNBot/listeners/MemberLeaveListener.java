@@ -1,6 +1,7 @@
 package com.bbn.BBNBot.listeners;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberLeaveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -32,7 +33,6 @@ public class MemberLeaveListener extends ListenerAdapter {
                         .setColor(Color.RED)
                         .build()).queue();
             }
-
         } else {
            if (event.getMember().getUser().getAvatarId() == null) {
                 event.getGuild().getTextChannelById("452789888945750046").sendMessage(new EmbedBuilder()
@@ -54,6 +54,13 @@ public class MemberLeaveListener extends ListenerAdapter {
                         .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
                         .setColor(Color.RED)
                         .build()).queue();
+            }
+        }
+        if (event.getGuild().getTextChannelsByName(event.getUser().getName(), true).size() > 0) {
+            TextChannel channel = event.getGuild().getTextChannelsByName(event.getUser().getName(), true).get(0);
+            if (channel.getParent().getName().equals("Buy your Bot")) {
+                channel.getManager().setParent(event.getGuild().getCategoryById("639550970812039177")).reason("User left").queue();
+                channel.getManager().setName(channel.getName() + "-archive").queue();
             }
         }
     }
