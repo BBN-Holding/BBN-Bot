@@ -69,7 +69,7 @@ public class MemberLeaveListener extends ListenerAdapter {
                 try {
                     GitHub connection = GitHub.connectUsingOAuth(SECRETS.GHTOKEN);
                     GHRepository Mining = connection.getMyself().getRepository("Data-Mining");
-                    GHContentUpdateResponse commit = Mining.createContent().branch("master").path(event.getMember().getUser().getAsTag()).content(channel.getHistory().toString()).message("Message").commit();
+                    GHContentUpdateResponse commit = Mining.createContent().branch("master").path(event.getMember().getUser().getAsTag() + " | " + Instant.now()).content(channel.getHistory().toString()).message("Message").commit();
                     event.getGuild().getTextChannelById("452789888945750046").sendMessage(new EmbedBuilder()
                             .setTitle("Log file created")
                             .setDescription("[Successfully create the log file on GitHub](" + commit.getCommit().getHtmlUrl() + ")")
@@ -85,6 +85,7 @@ public class MemberLeaveListener extends ListenerAdapter {
                             .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
                             .setColor(Color.RED)
                             .build()).queue();
+                    e.printStackTrace();
                 }
             }
         }
