@@ -39,10 +39,7 @@ public class ReactionAddListener extends ListenerAdapter {
                         .build()).queue();
             }
         } else if (event.getMessageId().equals("648520661479981056")) {
-            try {
-                event.getGuild().getTextChannelsByName(event.getUser().getName(), true).get(0);
-                event.getReaction().removeReaction(event.getUser()).queue();
-            } catch (Exception e) {
+            if (event.getGuild().getTextChannelsByName(event.getUser().getName(), true).size() == 0) {
                 event.getGuild().addRoleToMember(event.getMember(), event.getGuild().getRoleById("648518759971160089")).reason("Want a bot").queue();
                 event.getReaction().removeReaction(event.getUser()).queue();
                 TextChannel channel = event.getGuild().createTextChannel(event.getUser().getName()).setParent(event.getGuild().getCategoryById("648518640718839829")).complete();
@@ -63,6 +60,8 @@ public class ReactionAddListener extends ListenerAdapter {
                         .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
                         .setColor(Color.GREEN)
                         .build()).queue();
+            } else {
+                event.getReaction().removeReaction(event.getUser()).queue();
             }
         }
     }
