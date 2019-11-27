@@ -54,5 +54,10 @@
         <artifactId>slf4j-simple</artifactId>
         <version>1.6.4</version>
     </dependency>
+    <dependency>
+        <groupId>org.kohsuke</groupId>
+        <artifactId>github-api</artifactId>
+        <version>1.99</version>
+    </dependency>
 </dependencies>
 </project>
