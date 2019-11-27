@@ -50,14 +50,14 @@ public class MessageReceiveListener extends ListenerAdapter {
         } else if (event.getMessage().getContentRaw().startsWith(event.getGuild().getSelfMember().getAsMention() + " close") && event.getChannel().getParent().equals(event.getGuild().getCategoryById("648518640718839829"))) {
             TextChannel channel = event.getGuild().getTextChannelsByName(event.getChannel().getName(), true).get(0);
                 if (channel.getName().contains(event.getAuthor().getName()) || event.getAuthor().getId().equals("477141528981012511") || event.getAuthor().getId().equals("261083609148948488")) {
-                    channel.getManager().setName(channel.getName() + "-archive").queue();
                     channel.getManager().setParent(event.getGuild().getCategoryById("639550970812039177")).reason("Case closed").queue();
                     channel.getManager().removePermissionOverride(event.getMember()).queue();
                     event.getMessage().addReaction("✅").queue();
+                    channel.getManager().setName(channel.getName() + "-archive").queue();
                     try {
                         GitHub connection = GitHub.connectUsingOAuth(SECRETS.GHTOKEN);
                         GHRepository Mining = connection.getMyself().getRepository("Data-Mining");
-                        GHContentUpdateResponse commit = Mining.createContent().branch("master").path(event.getMember().getUser().getAsTag() + " | " + Instant.now()).content(event.getChannel().getHistory().toString()).message("Message").commit();
+                        GHContentUpdateResponse commit = Mining.createContent().branch("master").path(channel.getId() + ".md").content(event.getChannel().getHistory().toString()).message("Message").commit();
                         event.getGuild().getTextChannelById("452789888945750046").sendMessage(new EmbedBuilder()
                                 .setTitle("Log file created")
                                 .setDescription("[Successfully create the log file on GitHub](" + commit.getCommit().getHtmlUrl() + ")")
