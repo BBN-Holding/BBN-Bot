@@ -11,8 +11,10 @@ import org.kohsuke.github.GitHub;
 
 import java.awt.*;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 public class MessageReceiveListener extends ListenerAdapter {
@@ -57,8 +59,10 @@ public class MessageReceiveListener extends ListenerAdapter {
                     try {
                         GitHub connection = GitHub.connectUsingOAuth(SECRETS.GHTOKEN);
                         GHRepository Mining = connection.getMyself().getRepository("Data-Mining");
+                        String pattern = "dd-MM-yyyy";
+                        String date = new SimpleDateFormat(pattern).format(new Date());
                         GHContentUpdateResponse commit = Mining.createContent().branch("master")
-                                .path(channel.getId() + ".md")
+                                .path(date + "/" + channel.getId() + ".md")
                                 .content(channel.getHistory().retrievePast(100).complete().toString())
                                 .message("Channel by " + channel.getName() + " archived")
                                 .commit();
