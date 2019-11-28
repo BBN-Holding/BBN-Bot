@@ -51,7 +51,7 @@ public class ReactionAddListener extends ListenerAdapter {
                         Permission.MESSAGE_EMBED_LINKS
                 ).reason("User wants a bot").queue();
                 channel.getManager().setTopic("Bot request by " + event.getUser().getAsTag() + " ID: " + event.getMember().getId()).reason("User wants a bot").queue();
-                event.getGuild().getTextChannelById("452789888945750046").sendMessage("<@477141528981012511> <@261083609148948488>").queue();
+                event.getGuild().getTextChannelById("452789888945750046").sendMessage("<@477141528981012511> ").queue();
                 event.getGuild().getTextChannelById("452789888945750046").sendMessage(new EmbedBuilder()
                         .setTitle("User wants a bot")
                         .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())

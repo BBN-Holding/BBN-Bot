@@ -49,7 +49,7 @@ public class MessageReceiveListener extends ListenerAdapter {
             }
         } else if (event.getMessage().getContentRaw().startsWith(event.getGuild().getSelfMember().getAsMention() + " close") && event.getChannel().getParent().equals(event.getGuild().getCategoryById("648518640718839829"))) {
             TextChannel channel = event.getGuild().getTextChannelsByName(event.getChannel().getName(), true).get(0);
-                if (channel.getName().equalsIgnoreCase(event.getAuthor().getName()) || event.getAuthor().getId().equals("477141528981012511") || event.getAuthor().getId().equals("261083609148948488")) {
+                if (channel.getTopic().contains(event.getAuthor().getId()) || event.getAuthor().getId().equals("477141528981012511") || event.getAuthor().getId().equals("261083609148948488")) {
                     channel.getManager().setParent(event.getGuild().getCategoryById("639550970812039177")).reason("Case closed").queue();
                     channel.getManager().removePermissionOverride(event.getMember()).queue();
                     event.getMessage().addReaction("✅").queue();
@@ -57,7 +57,12 @@ public class MessageReceiveListener extends ListenerAdapter {
                     try {
                         GitHub connection = GitHub.connectUsingOAuth(SECRETS.GHTOKEN);
                         GHRepository Mining = connection.getMyself().getRepository("Data-Mining");
-                        GHContentUpdateResponse commit = Mining.createContent().branch("master").path(channel.getId() + ".md").content(channel.getHistory().retrievePast(100).complete().toString()).message("Message").commit();
+                        GHContentUpdateResponse commit = Mining.createContent().branch("master")
+                                .path(channel.getId() + ".md")
+                                .content(channel.getHistory().retrievePast(100).complete().toString())
+                                .message("Channel by " + channel.getName() + " archived")
+                                .commit();
+                        commit.getCommit().createComment("Archived by " + event.getAuthor().getName(), channel.getId() + ".md", 1, 1);
                         event.getGuild().getTextChannelById("452789888945750046").sendMessage(new EmbedBuilder()
                                 .setTitle("Log file created")
                                 .setDescription("[Successfully create the log file on GitHub](" + commit.getCommit().getHtmlUrl() + ")")
@@ -68,7 +73,7 @@ public class MessageReceiveListener extends ListenerAdapter {
                     } catch (IOException e) {
                         event.getGuild().getTextChannelById("452789888945750046").sendMessage(new EmbedBuilder()
                                 .setTitle("Error while creating")
-                                .setDescription("Error while creating the GitHub log file.")
+                                .setDescription("```"  + e.toString() + "```")
                                 .setTimestamp(Instant.now())
                                 .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
                                 .setColor(Color.RED)
