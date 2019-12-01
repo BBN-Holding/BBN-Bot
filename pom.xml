@@ -22,19 +22,9 @@
 
 <repositories>
     <repository>
-        <id>jitpack.io</id>
-        <name>JitPack</name>
-        <url>https://jitpack.io</url>
-    </repository>
-    <repository>
         <id>jcenter</id>
         <name>JCenter</name>
         <url>https://jcenter.bintray.com</url>
-    </repository>
-    <repository>
-        <id>central</id>
-        <name>bintray</name>
-        <url>http://jcenter.bintray.com</url>
     </repository>
 </repositories>
 
@@ -42,7 +32,7 @@
     <dependency>
         <groupId>net.dv8tion</groupId>
         <artifactId>JDA</artifactId>
-        <version>LATEST</version>
+        <version>4.0.0_68</version>
     </dependency>
     <dependency>
         <groupId>org.slf4j</groupId>
