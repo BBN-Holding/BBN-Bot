@@ -49,7 +49,7 @@ public class MessageReceiveListener extends ListenerAdapter {
             } else {
                 event.getMessage().delete().queueAfter(1, TimeUnit.SECONDS);
             }
-        } else if (event.getMessage().getContentRaw().startsWith(event.getGuild().getSelfMember().getAsMention() + " close") && event.getChannel().getParent().equals(event.getGuild().getCategoryById("648518640718839829"))) {
+        } else if (event.getMessage().getContentRaw().startsWith(event.getGuild().getSelfMember().getAsMention().replace("!", "") + " close") && event.getChannel().getParent().equals(event.getGuild().getCategoryById("648518640718839829"))) {
             TextChannel channel = event.getGuild().getTextChannelsByName(event.getChannel().getName(), true).get(0);
                 if (channel.getTopic().contains(event.getAuthor().getId()) || event.getAuthor().getId().equals("477141528981012511") || event.getAuthor().getId().equals("261083609148948488")) {
                     channel.getManager().setParent(event.getGuild().getCategoryById("639550970812039177")).reason("Case closed").queue();
