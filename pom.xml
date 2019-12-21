@@ -47,7 +47,7 @@
     <dependency>
         <groupId>org.kohsuke</groupId>
         <artifactId>github-api</artifactId>
-        <version>1.99</version>
+        <version>1.101</version>
     </dependency>
     <dependency>
         <groupId>org.apache.httpcomponents</groupId>
