@@ -24,3 +24,5 @@ hs_err_pid*
 .idea/
 SECRETS.java
 target/
+
+config.json
