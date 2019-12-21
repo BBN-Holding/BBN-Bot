@@ -102,7 +102,7 @@ public class MessageReceiveListener extends ListenerAdapter {
                         pr.merge("Merged!");
                         event.getChannel().sendMessage(new EmbedBuilder()
                                 .setTitle("Successfully created")
-                                .setDescription("[Successfully created the PR on GitHub](" + pr.getUrl() + ")")
+                                .setDescription("[Successfully created the PR on GitHub](" + pr.getHtmlUrl() + ")")
                                 .setTimestamp(Instant.now())
                                 .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
                                 .setColor(Color.GREEN)
@@ -127,7 +127,7 @@ public class MessageReceiveListener extends ListenerAdapter {
                         pr.merge("Merged!");
                         event.getChannel().sendMessage(new EmbedBuilder()
                                 .setTitle("Successfully created")
-                                .setDescription("[Successfully created the PR on GitHub](" + pr.getUrl() + ")")
+                                .setDescription("[Successfully created the PR on GitHub](" + pr.getHtmlUrl() + ")")
                                 .setTimestamp(Instant.now())
                                 .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
                                 .setColor(Color.GREEN)
@@ -152,7 +152,7 @@ public class MessageReceiveListener extends ListenerAdapter {
                         pr.merge("Merged!");
                         event.getChannel().sendMessage(new EmbedBuilder()
                                 .setTitle("Successfully created")
-                                .setDescription("[Successfully created the PR on GitHub](" + pr.getUrl() + ")")
+                                .setDescription("[Successfully created the PR on GitHub](" + pr.getHtmlUrl() + ")")
                                 .setTimestamp(Instant.now())
                                 .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
                                 .setColor(Color.GREEN)
@@ -177,7 +177,7 @@ public class MessageReceiveListener extends ListenerAdapter {
                         pr.merge("Merged!");
                         event.getChannel().sendMessage(new EmbedBuilder()
                                 .setTitle("Successfully created")
-                                .setDescription("[Successfully created the PR on GitHub](" + pr.getUrl() + ")")
+                                .setDescription("[Successfully created the PR on GitHub](" + pr.getHtmlUrl() + ")")
                                 .setTimestamp(Instant.now())
                                 .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
                                 .setColor(Color.GREEN)
@@ -202,7 +202,7 @@ public class MessageReceiveListener extends ListenerAdapter {
                         pr.merge("Merged!");
                         event.getChannel().sendMessage(new EmbedBuilder()
                                 .setTitle("Successfully created")
-                                .setDescription("[Successfully created the PR on GitHub](" + pr.getUrl() + ")")
+                                .setDescription("[Successfully created the PR on GitHub](" + pr.getHtmlUrl() + ")")
                                 .setTimestamp(Instant.now())
                                 .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
                                 .setColor(Color.GREEN)
@@ -227,7 +227,7 @@ public class MessageReceiveListener extends ListenerAdapter {
                         pr.merge("Merged!");
                         event.getChannel().sendMessage(new EmbedBuilder()
                                 .setTitle("Successfully created")
-                                .setDescription("[Successfully created the PR on GitHub](" + pr.getUrl() + ")")
+                                .setDescription("[Successfully created the PR on GitHub](" + pr.getHtmlUrl() + ")")
                                 .setTimestamp(Instant.now())
                                 .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
                                 .setColor(Color.GREEN)
