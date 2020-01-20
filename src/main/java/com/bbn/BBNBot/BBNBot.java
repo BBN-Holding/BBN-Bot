@@ -18,18 +18,14 @@ public class BBNBot {
     public static void main(String[] args) {
 
         Sender sender = new Sender();
-
-        try {
-            builder = new JDABuilder(AccountType.BOT).setToken(SECRETS.TOKEN).setAutoReconnect(true).setStatus(OnlineStatus.DO_NOT_DISTURB);
-            builder.setActivity(Activity.streaming("on the BBN", "https://twitch.tv/bigbotnetwork"));
-            builder.addEventListeners(new MemberJoinListener(),
-                    new MessageReceiveListener(),
-                    new ReactionAddListener(),
-                    new MemberLeaveListener(),
-                    new OnlineStatusListener(sender));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        
+        builder = new JDABuilder(AccountType.BOT).setToken(SECRETS.TOKEN).setAutoReconnect(true).setStatus(OnlineStatus.DO_NOT_DISTURB);
+        builder.setActivity(Activity.streaming("on the BBN", "https://twitch.tv/bigbotnetwork"));
+        builder.addEventListeners(new MemberJoinListener(),
+                new MessageReceiveListener(),
+                new ReactionAddListener(),
+                new MemberLeaveListener(),
+                new OnlineStatusListener(sender));
 
         try {
             builder.build();
