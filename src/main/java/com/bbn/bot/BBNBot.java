@@ -13,19 +13,21 @@ import com.bbn.bot.util.*;
  */
 
 public class BBNBot {
-    private static JDABuilder builder;
 
     public static void main(String[] args) {
 
         Sender sender = new Sender();
 
-        builder = new JDABuilder(AccountType.BOT).setToken(SECRETS.TOKEN).setAutoReconnect(true).setStatus(OnlineStatus.DO_NOT_DISTURB);
-        builder.setActivity(Activity.streaming("on the BBN", "https://twitch.tv/bigbotnetwork"));
-        builder.addEventListeners(new MemberJoinListener(),
-                new MessageReceiveListener(),
-                new ReactionAddListener(),
-                new MemberLeaveListener(),
-                new OnlineStatusListener(sender));
+        JDABuilder builder = new JDABuilder(AccountType.BOT);
+        builder.setActivity(Activity.streaming("on the BBN", "https://twitch.tv/bigbotnetwork"))
+                .setToken(SECRETS.TOKEN)
+                .setAutoReconnect(true)
+                .setStatus(OnlineStatus.DO_NOT_DISTURB)
+                .addEventListeners(new MemberJoinListener(),
+                        new MessageReceiveListener(),
+                        new ReactionAddListener(),
+                        new MemberLeaveListener(),
+                        new OnlineStatusListener(sender));
 
         try {
             builder.build();
