@@ -49,150 +49,95 @@ public class MessageReceiveListener extends ListenerAdapter {
             }
         } else if (event.getMessage().getContentRaw().startsWith(event.getGuild().getSelfMember().getAsMention().replace("@", "@!") + " close") || event.getMessage().getContentRaw().startsWith("bbn!close") && event.getChannel().getParent().equals(event.getGuild().getCategoryById("648518640718839829"))) {
             TextChannel channel = event.getGuild().getTextChannelsByName(event.getChannel().getName(), true).get(0);
-                if (channel.getTopic().contains(event.getAuthor().getId()) || event.getAuthor().getId().equals("477141528981012511") || event.getAuthor().getId().equals("261083609148948488")) {
-                    channel.getManager().setParent(event.getGuild().getCategoryById("639550970812039177")).reason("Case closed").queue();
-                    channel.getManager().removePermissionOverride(event.getMember()).queue();
-                    event.getMessage().addReaction("✅").queue();
-                    channel.getManager().setName(channel.getName() + "-archive").queue();
-                    try {
-                        GitHub connection = GitHub.connectUsingOAuth(SECRETS.GHTOKEN);
-                        GHRepository Mining = connection.getMyself().getRepository("Data-Mining");
-                        String pattern = "dd-MM-yyyy";
-                        String date = new SimpleDateFormat(pattern).format(new Date());
-                        GHContentUpdateResponse commit = Mining.createContent().branch("master")
-                                .path(date + "/" + channel.getId() + ".md")
-                                .content(channel.getHistory().retrievePast(100).complete().toString())
-                                .message("Channel by " + channel.getName() + " archived")
-                                .commit();
-                        commit.getCommit().createComment("Archived by " + event.getAuthor().getName(), channel.getId() + ".md", 1, 1);
-                        event.getGuild().getTextChannelById("452789888945750046").sendMessage(new EmbedBuilder()
-                                .setTitle("Log file created")
-                                .setDescription("[Successfully created the log file on GitHub](" + commit.getCommit().getHtmlUrl() + ")")
-                                .setTimestamp(Instant.now())
-                                .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
-                                .setColor(Color.GREEN)
-                                .build()).queue();
-                    } catch (IOException e) {
-                        event.getGuild().getTextChannelById("452789888945750046").sendMessage(new EmbedBuilder()
-                                .setTitle("Error while creating")
-                                .setDescription("```"  + e.toString() + "```")
-                                .setTimestamp(Instant.now())
-                                .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
-                                .setColor(Color.RED)
-                                .build()).queue();
-                        e.printStackTrace();
-                    }
-                } else {
-                    event.getChannel().sendMessage(new EmbedBuilder()
-                            .setTitle("Not you channel")
-                            .setDescription("You can only execute this command in your own channel.")
+            if (channel.getTopic().contains(event.getAuthor().getId()) || event.getAuthor().getId().equals("477141528981012511") || event.getAuthor().getId().equals("261083609148948488")) {
+                channel.getManager().setParent(event.getGuild().getCategoryById("639550970812039177")).reason("Case closed").queue();
+                channel.getManager().removePermissionOverride(event.getMember()).queue();
+                event.getMessage().addReaction("✅").queue();
+                channel.getManager().setName(channel.getName() + "-archive").queue();
+                try {
+                    GitHub connection = GitHub.connectUsingOAuth(SECRETS.GHTOKEN);
+                    GHRepository Mining = connection.getMyself().getRepository("Data-Mining");
+                    String pattern = "dd-MM-yyyy";
+                    String date = new SimpleDateFormat(pattern).format(new Date());
+                    GHContentUpdateResponse commit = Mining.createContent().branch("master")
+                            .path(date + "/" + channel.getId() + ".md")
+                            .content(channel.getHistory().retrievePast(100).complete().toString())
+                            .message("Channel by " + channel.getName() + " archived")
+                            .commit();
+                    commit.getCommit().createComment("Archived by " + event.getAuthor().getName(), channel.getId() + ".md", 1, 1);
+                    event.getGuild().getTextChannelById("452789888945750046").sendMessage(new EmbedBuilder()
+                            .setTitle("Log file created")
+                            .setDescription("[Successfully created the log file on GitHub](" + commit.getCommit().getHtmlUrl() + ")")
+                            .setTimestamp(Instant.now())
+                            .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
+                            .setColor(Color.GREEN)
+                            .build()).queue();
+                } catch (IOException e) {
+                    event.getGuild().getTextChannelById("452789888945750046").sendMessage(new EmbedBuilder()
+                            .setTitle("Error while creating")
+                            .setDescription("```" + e.toString() + "```")
                             .setTimestamp(Instant.now())
                             .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
                             .setColor(Color.RED)
                             .build()).queue();
+                    e.printStackTrace();
                 }
+            } else {
+                event.getChannel().sendMessage(new EmbedBuilder()
+                        .setTitle("Not you channel")
+                        .setDescription("You can only execute this command in your own channel.")
+                        .setTimestamp(Instant.now())
+                        .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
+                        .setColor(Color.RED)
+                        .build()).queue();
+            }
         } else if (event.getMessage().getContentRaw().startsWith("bbn!merge") && event.getAuthor().getId().equals("477141528981012511") || event.getAuthor().getId().equals("261083609148948488")) {
             switch (event.getMessage().getContentRaw().replace("bbn!merge ", "")) {
                 case "hax-dev greg-dev":
-                    try {
-                        createPR(event, "Merge Hax's branch into Greg's branch", "hax-dev", "greg-dev");
-                    } catch (IOException e) {
-                        event.getChannel().sendMessage(new EmbedBuilder()
-                                .setTitle("Error while creating")
-                                .setDescription("```"  + e.toString() + "```")
-                                .setTimestamp(Instant.now())
-                                .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
-                                .setColor(Color.RED)
-                                .build()).queue();
-                        e.printStackTrace();
-                    }
+                    createPR(event, "Merge Hax's branch into Greg's branch", "hax-dev", "greg-dev");
                     break;
                 case "hax-dev master":
-                    try {
-                        createPR(event, "Merge Hax's branch into the master branch", "hax-dev", "master");
-                    } catch (IOException e) {
-                        event.getChannel().sendMessage(new EmbedBuilder()
-                                .setTitle("Error while creating")
-                                .setDescription("```"  + e.toString() + "```")
-                                .setTimestamp(Instant.now())
-                                .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
-                                .setColor(Color.RED)
-                                .build()).queue();
-                        e.printStackTrace();
-                    }
+                    createPR(event, "Merge Hax's branch into the master branch", "hax-dev", "master");
                     break;
                 case "greg-dev master":
-                    try {
-                        createPR(event, "Merge Greg's branch into the master branch", "greg-dev", "master");
-                    } catch (IOException e) {
-                        event.getChannel().sendMessage(new EmbedBuilder()
-                                .setTitle("Error while creating")
-                                .setDescription("```"  + e.toString() + "```")
-                                .setTimestamp(Instant.now())
-                                .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
-                                .setColor(Color.RED)
-                                .build()).queue();
-                        e.printStackTrace();
-                    }
+                    createPR(event, "Merge Greg's branch into the master branch", "greg-dev", "master");
                     break;
                 case "greg-dev hax-dev":
-                    try {
-                        createPR(event, "Merge Greg's branch into Hax's branch", "greg-dev", "hax-dev");
-                    } catch (IOException e) {
-                        event.getChannel().sendMessage(new EmbedBuilder()
-                                .setTitle("Error while creating")
-                                .setDescription("```"  + e.toString() + "```")
-                                .setTimestamp(Instant.now())
-                                .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
-                                .setColor(Color.RED)
-                                .build()).queue();
-                        e.printStackTrace();
-                    }
+                    createPR(event, "Merge Greg's branch into Hax's branch", "greg-dev", "hax-dev");
                     break;
                 case "master greg-dev":
-                    try {
-                        createPR(event, "Merge the master branch into Greg's branch", "master", "greg-dev");
-                    } catch (IOException e) {
-                        event.getChannel().sendMessage(new EmbedBuilder()
-                                .setTitle("Error while creating")
-                                .setDescription("```"  + e.toString() + "```")
-                                .setTimestamp(Instant.now())
-                                .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
-                                .setColor(Color.RED)
-                                .build()).queue();
-                        e.printStackTrace();
-                    }
+                    createPR(event, "Merge the master branch into Greg's branch", "master", "greg-dev");
                     break;
                 case "master hax-dev":
-                    try {
-                        createPR(event, "Merge the master branch into Hax's branch", "master", "hax-dev");
-                    } catch (IOException e) {
-                        event.getChannel().sendMessage(new EmbedBuilder()
-                                .setTitle("Error while creating")
-                                .setDescription("```"  + e.toString() + "```")
-                                .setTimestamp(Instant.now())
-                                .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
-                                .setColor(Color.RED)
-                                .build()).queue();
-                        e.printStackTrace();
-                    }
+                    createPR(event, "Merge the master branch into Hax's branch", "master", "hax-dev");
                     break;
             }
         }
     }
 
-    private void createPR(GuildMessageReceivedEvent event, String s, String master, String s2) throws IOException {
-        GitHub connection = GitHub.connectUsingOAuth(SECRETS.GHTOKEN);
-        GHOrganization BBN = connection.getOrganization("BigBotNetwork");
-        GHRepository Hadder = BBN.getRepository("Hadder");
-        GHPullRequest pr = Hadder.createPullRequest(s, master, s2, "Pull Request created by " + event.getAuthor().getAsTag());
-        pr.merge("Merged!");
-        event.getChannel().sendMessage(new EmbedBuilder()
-                .setTitle("Successfully created")
-                .setDescription("[Successfully created the PR on GitHub](" + pr.getHtmlUrl() + ")")
-                .setTimestamp(Instant.now())
-                .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
-                .setColor(Color.GREEN)
-                .build()).queue();
+    private void createPR(GuildMessageReceivedEvent event, String s, String master, String s2) {
+        try {
+            GitHub connection = GitHub.connectUsingOAuth(SECRETS.GHTOKEN);
+            GHOrganization BBN = connection.getOrganization("BigBotNetwork");
+            GHRepository Hadder = BBN.getRepository("Hadder");
+            GHPullRequest pr = Hadder.createPullRequest(s, master, s2, "Pull Request created by " + event.getAuthor().getAsTag());
+            pr.merge("Merged!");
+            event.getChannel().sendMessage(new EmbedBuilder()
+                    .setTitle("Successfully created")
+                    .setDescription("[Successfully created the PR on GitHub](" + pr.getHtmlUrl() + ")")
+                    .setTimestamp(Instant.now())
+                    .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
+                    .setColor(Color.GREEN)
+                    .build()).queue();
+        } catch (IOException e) {
+            event.getChannel().sendMessage(new EmbedBuilder()
+                    .setTitle("Error while creating")
+                    .setDescription("```" + e.toString() + "```")
+                    .setTimestamp(Instant.now())
+                    .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
+                    .setColor(Color.RED)
+                    .build()).queue();
+            e.printStackTrace();
+        }
     }
 }
