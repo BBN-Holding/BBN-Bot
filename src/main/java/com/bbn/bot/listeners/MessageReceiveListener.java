@@ -137,7 +137,6 @@ public class MessageReceiveListener extends ListenerAdapter {
                     .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
                     .setColor(Color.RED)
                     .build()).queue();
-            e.printStackTrace();
         }
     }
 }
