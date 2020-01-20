@@ -1,7 +1,7 @@
-package com.bbn.BBNBot.listeners;
+package com.bbn.bot.listeners;
 
-import com.bbn.BBNBot.core.Sender;
-import com.bbn.BBNBot.util.SECRETS;
+import com.bbn.bot.core.Sender;
+import com.bbn.bot.util.SECRETS;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;

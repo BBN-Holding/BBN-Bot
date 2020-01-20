@@ -1,6 +1,6 @@
-package com.bbn.BBNBot.listeners;
+package com.bbn.bot.listeners;
 
-import com.bbn.BBNBot.util.SECRETS;
+import com.bbn.bot.util.SECRETS;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -95,18 +95,7 @@ public class MessageReceiveListener extends ListenerAdapter {
             switch (event.getMessage().getContentRaw().replace("bbn!merge ", "")) {
                 case "hax-dev greg-dev":
                     try {
-                        GitHub connection = GitHub.connectUsingOAuth(SECRETS.GHTOKEN);
-                        GHOrganization BBN = connection.getOrganization("BigBotNetwork");
-                        GHRepository Hadder = BBN.getRepository("Hadder");
-                        GHPullRequest pr = Hadder.createPullRequest("Merge Hax's branch into Greg's branch", "hax-dev", "greg-dev", "Pull Request created by " + event.getAuthor().getAsTag());
-                        pr.merge("Merged!");
-                        event.getChannel().sendMessage(new EmbedBuilder()
-                                .setTitle("Successfully created")
-                                .setDescription("[Successfully created the PR on GitHub](" + pr.getHtmlUrl() + ")")
-                                .setTimestamp(Instant.now())
-                                .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
-                                .setColor(Color.GREEN)
-                                .build()).queue();
+                        createPR(event, "Merge Hax's branch into Greg's branch", "hax-dev", "greg-dev");
                     } catch (IOException e) {
                         event.getChannel().sendMessage(new EmbedBuilder()
                                 .setTitle("Error while creating")
@@ -120,18 +109,7 @@ public class MessageReceiveListener extends ListenerAdapter {
                     break;
                 case "hax-dev master":
                     try {
-                        GitHub connection = GitHub.connectUsingOAuth(SECRETS.GHTOKEN);
-                        GHOrganization BBN = connection.getOrganization("BigBotNetwork");
-                        GHRepository Hadder = BBN.getRepository("Hadder");
-                        GHPullRequest pr = Hadder.createPullRequest("Merge Hax's branch into the master branch", "hax-dev", "master", "Pull Request created by " + event.getAuthor().getAsTag());
-                        pr.merge("Merged!");
-                        event.getChannel().sendMessage(new EmbedBuilder()
-                                .setTitle("Successfully created")
-                                .setDescription("[Successfully created the PR on GitHub](" + pr.getHtmlUrl() + ")")
-                                .setTimestamp(Instant.now())
-                                .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
-                                .setColor(Color.GREEN)
-                                .build()).queue();
+                        createPR(event, "Merge Hax's branch into the master branch", "hax-dev", "master");
                     } catch (IOException e) {
                         event.getChannel().sendMessage(new EmbedBuilder()
                                 .setTitle("Error while creating")
@@ -145,18 +123,7 @@ public class MessageReceiveListener extends ListenerAdapter {
                     break;
                 case "greg-dev master":
                     try {
-                        GitHub connection = GitHub.connectUsingOAuth(SECRETS.GHTOKEN);
-                        GHOrganization BBN = connection.getOrganization("BigBotNetwork");
-                        GHRepository Hadder = BBN.getRepository("Hadder");
-                        GHPullRequest pr = Hadder.createPullRequest("Merge Greg's branch into the master branch", "greg-dev", "master", "Pull Request created by " + event.getAuthor().getAsTag());
-                        pr.merge("Merged!");
-                        event.getChannel().sendMessage(new EmbedBuilder()
-                                .setTitle("Successfully created")
-                                .setDescription("[Successfully created the PR on GitHub](" + pr.getHtmlUrl() + ")")
-                                .setTimestamp(Instant.now())
-                                .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
-                                .setColor(Color.GREEN)
-                                .build()).queue();
+                        createPR(event, "Merge Greg's branch into the master branch", "greg-dev", "master");
                     } catch (IOException e) {
                         event.getChannel().sendMessage(new EmbedBuilder()
                                 .setTitle("Error while creating")
@@ -170,18 +137,7 @@ public class MessageReceiveListener extends ListenerAdapter {
                     break;
                 case "greg-dev hax-dev":
                     try {
-                        GitHub connection = GitHub.connectUsingOAuth(SECRETS.GHTOKEN);
-                        GHOrganization BBN = connection.getOrganization("BigBotNetwork");
-                        GHRepository Hadder = BBN.getRepository("Hadder");
-                        GHPullRequest pr = Hadder.createPullRequest("Merge Greg's branch into Hax's branch", "greg-dev", "hax-dev", "Pull Request created by " + event.getAuthor().getAsTag());
-                        pr.merge("Merged!");
-                        event.getChannel().sendMessage(new EmbedBuilder()
-                                .setTitle("Successfully created")
-                                .setDescription("[Successfully created the PR on GitHub](" + pr.getHtmlUrl() + ")")
-                                .setTimestamp(Instant.now())
-                                .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
-                                .setColor(Color.GREEN)
-                                .build()).queue();
+                        createPR(event, "Merge Greg's branch into Hax's branch", "greg-dev", "hax-dev");
                     } catch (IOException e) {
                         event.getChannel().sendMessage(new EmbedBuilder()
                                 .setTitle("Error while creating")
@@ -195,18 +151,7 @@ public class MessageReceiveListener extends ListenerAdapter {
                     break;
                 case "master greg-dev":
                     try {
-                        GitHub connection = GitHub.connectUsingOAuth(SECRETS.GHTOKEN);
-                        GHOrganization BBN = connection.getOrganization("BigBotNetwork");
-                        GHRepository Hadder = BBN.getRepository("Hadder");
-                        GHPullRequest pr = Hadder.createPullRequest("Merge the master branch into Greg's branch", "master", "greg-dev", "Pull Request created by " + event.getAuthor().getAsTag());
-                        pr.merge("Merged!");
-                        event.getChannel().sendMessage(new EmbedBuilder()
-                                .setTitle("Successfully created")
-                                .setDescription("[Successfully created the PR on GitHub](" + pr.getHtmlUrl() + ")")
-                                .setTimestamp(Instant.now())
-                                .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
-                                .setColor(Color.GREEN)
-                                .build()).queue();
+                        createPR(event, "Merge the master branch into Greg's branch", "master", "greg-dev");
                     } catch (IOException e) {
                         event.getChannel().sendMessage(new EmbedBuilder()
                                 .setTitle("Error while creating")
@@ -220,18 +165,7 @@ public class MessageReceiveListener extends ListenerAdapter {
                     break;
                 case "master hax-dev":
                     try {
-                        GitHub connection = GitHub.connectUsingOAuth(SECRETS.GHTOKEN);
-                        GHOrganization BBN = connection.getOrganization("BigBotNetwork");
-                        GHRepository Hadder = BBN.getRepository("Hadder");
-                        GHPullRequest pr = Hadder.createPullRequest("Merge the master branch into Hax's branch", "master", "hax-dev", "Pull Request created by " + event.getAuthor().getAsTag());
-                        pr.merge("Merged!");
-                        event.getChannel().sendMessage(new EmbedBuilder()
-                                .setTitle("Successfully created")
-                                .setDescription("[Successfully created the PR on GitHub](" + pr.getHtmlUrl() + ")")
-                                .setTimestamp(Instant.now())
-                                .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
-                                .setColor(Color.GREEN)
-                                .build()).queue();
+                        createPR(event, "Merge the master branch into Hax's branch", "master", "hax-dev");
                     } catch (IOException e) {
                         event.getChannel().sendMessage(new EmbedBuilder()
                                 .setTitle("Error while creating")
@@ -245,5 +179,20 @@ public class MessageReceiveListener extends ListenerAdapter {
                     break;
             }
         }
+    }
+
+    private void createPR(GuildMessageReceivedEvent event, String s, String master, String s2) throws IOException {
+        GitHub connection = GitHub.connectUsingOAuth(SECRETS.GHTOKEN);
+        GHOrganization BBN = connection.getOrganization("BigBotNetwork");
+        GHRepository Hadder = BBN.getRepository("Hadder");
+        GHPullRequest pr = Hadder.createPullRequest(s, master, s2, "Pull Request created by " + event.getAuthor().getAsTag());
+        pr.merge("Merged!");
+        event.getChannel().sendMessage(new EmbedBuilder()
+                .setTitle("Successfully created")
+                .setDescription("[Successfully created the PR on GitHub](" + pr.getHtmlUrl() + ")")
+                .setTimestamp(Instant.now())
+                .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
+                .setColor(Color.GREEN)
+                .build()).queue();
     }
 }

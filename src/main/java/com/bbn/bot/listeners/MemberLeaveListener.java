@@ -1,6 +1,6 @@
-package com.bbn.BBNBot.listeners;
+package com.bbn.bot.listeners;
 
-import com.bbn.BBNBot.util.SECRETS;
+import com.bbn.bot.util.SECRETS;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberLeaveEvent;

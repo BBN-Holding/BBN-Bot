@@ -1,6 +1,6 @@
-package com.bbn.BBNBot.core;
+package com.bbn.bot.core;
 
-import com.bbn.BBNBot.util.SECRETS;
+import com.bbn.bot.util.SECRETS;
 import com.sun.mail.smtp.SMTPTransport;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;

@@ -1,4 +1,4 @@
-package com.bbn.BBNBot.listeners;
+package com.bbn.bot.listeners;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;

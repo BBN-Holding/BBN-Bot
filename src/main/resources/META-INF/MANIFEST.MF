@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
-Main-Class: com.bbn.BBNBot.BBNBot
+Main-Class: com.bbn.bot.BBNBot
 
