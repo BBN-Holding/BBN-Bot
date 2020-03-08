@@ -68,11 +68,7 @@ public class Sender {
             SMTPTransport t = (SMTPTransport) session.getTransport("smtp");
 
             t.connect(SECRETS.SMTP_SERVER, SECRETS.USERNAME, SECRETS.PASSWORD);
-
             t.sendMessage(msg, msg.getAllRecipients());
-
-            System.out.println("Response: " + t.getLastServerResponse());
-
             t.close();
 
         } catch (MessagingException e) {
