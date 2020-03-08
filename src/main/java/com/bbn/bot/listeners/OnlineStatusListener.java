@@ -52,7 +52,6 @@ public class OnlineStatusListener extends ListenerAdapter {
                             if (member.getUser().getId().equals(id.split("/")[0])) {
                                 boolean online = !member.getOnlineStatus().equals(OnlineStatus.OFFLINE);
                                 sender.setState(id.split("/")[1], online);
-                                System.out.println(id.split("/")[0]+" is online? "+online);
                                 found = true;
                             }
                         }
