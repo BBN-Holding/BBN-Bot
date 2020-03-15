@@ -28,4 +28,8 @@ public class Config {
         return config.getString("Token");
     }
 
+    public String getGitHubToken() {
+        return config.getString("GitHubToken");
+    }
+
 }

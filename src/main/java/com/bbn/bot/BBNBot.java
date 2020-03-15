@@ -14,10 +14,11 @@ import net.dv8tion.jda.api.entities.Activity;
 
 public class BBNBot {
 
+    public static Config config = new Config("./BBN_config.json");
+
     public static void main(String[] args) {
 
         Sender sender = new Sender();
-        Config config = new Config("./BBN_config.json");
         config.load();
 
         JDABuilder builder = new JDABuilder(AccountType.BOT);

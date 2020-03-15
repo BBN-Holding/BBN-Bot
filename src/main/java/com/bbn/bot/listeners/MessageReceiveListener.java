@@ -1,6 +1,6 @@
 package com.bbn.bot.listeners;
 
-import com.bbn.bot.util.SECRETS;
+import com.bbn.bot.BBNBot;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -55,7 +55,7 @@ public class MessageReceiveListener extends ListenerAdapter {
                 event.getMessage().addReaction("✅").queue();
                 channel.getManager().setName(channel.getName() + "-archive").queue();
                 try {
-                    GitHub connection = GitHub.connectUsingOAuth(SECRETS.GHTOKEN);
+                    GitHub connection = GitHub.connectUsingOAuth(BBNBot.config.getGitHubToken());
                     GHRepository Mining = connection.getMyself().getRepository("Data-Mining");
                     String pattern = "dd-MM-yyyy";
                     String date = new SimpleDateFormat(pattern).format(new Date());
@@ -117,7 +117,7 @@ public class MessageReceiveListener extends ListenerAdapter {
 
     private void createPR(GuildMessageReceivedEvent event, String s, String master, String s2) {
         try {
-            GitHub connection = GitHub.connectUsingOAuth(SECRETS.GHTOKEN);
+            GitHub connection = GitHub.connectUsingOAuth(BBNBot.config.getGitHubToken());
             GHOrganization BBN = connection.getOrganization("BigBotNetwork");
             GHRepository Hadder = BBN.getRepository("Hadder");
             GHPullRequest pr = Hadder.createPullRequest(s, master, s2, "Pull Request created by " + event.getAuthor().getAsTag());
