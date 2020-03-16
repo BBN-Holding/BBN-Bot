@@ -30,7 +30,8 @@ public class BBNBot {
                         new MessageReceiveListener(),
                         new ReactionAddListener(),
                         new MemberLeaveListener(),
-                        new OnlineStatusListener(sender));
+                        new OnlineStatusListener(sender),
+                        new VoiceLogListener());
 
         try {
             builder.build();
