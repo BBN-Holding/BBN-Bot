@@ -1,5 +1,6 @@
 package com.bbn.bot.core;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -30,6 +31,42 @@ public class Config {
 
     public String getGitHubToken() {
         return config.getString("GitHubToken");
+    }
+
+    public JSONArray getBotIDs() {
+        return config.getJSONArray("BotIDs");
+    }
+
+    public String getAPIKey() {
+        return config.getString("APIKey");
+    }
+
+    public String getPageID() {
+        return config.getString("PageID");
+    }
+
+    public String getDCGID() {
+        return config.getString("DCG-ID");
+    }
+
+    public String getDCRID() {
+        return config.getString("DCR-ID");
+    }
+
+    public String getSMTPServer() {
+        return config.getString("SMTP-Server");
+    }
+
+    public String getEMail() {
+        return config.getString("E-Mail");
+    }
+
+    public String getUsername() {
+        return config.getString("Username");
+    }
+
+    public String getPassword() {
+        return config.getString("Password");
     }
 
 }

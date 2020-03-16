@@ -1,6 +1,6 @@
 package com.bbn.bot.listeners;
 
-import com.bbn.bot.util.SECRETS;
+import com.bbn.bot.BBNBot;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberLeaveEvent;
@@ -69,7 +69,7 @@ public class MemberLeaveListener extends ListenerAdapter {
                 channel.getManager().setParent(event.getGuild().getCategoryById("639550970812039177")).reason("Case closed").queue();
                 channel.getManager().setName(channel.getName() + "-archive").queue();
                 try {
-                    GitHub connection = GitHub.connectUsingOAuth(SECRETS.GHTOKEN);
+                    GitHub connection = GitHub.connectUsingOAuth(BBNBot.config.getGitHubToken());
                     GHRepository Mining = connection.getMyself().getRepository("Data-Mining");
                     String pattern = "dd-MM-yyyy";
                     String date = new SimpleDateFormat(pattern).format(new Date());

@@ -1,7 +1,7 @@
 package com.bbn.bot.listeners;
 
+import com.bbn.bot.BBNBot;
 import com.bbn.bot.core.Sender;
-import com.bbn.bot.util.SECRETS;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -12,12 +12,14 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import javax.annotation.Nonnull;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class OnlineStatusListener extends ListenerAdapter {
 
     private Sender sender;
+    ArrayList<String> BotIDs = new ArrayList<>();
 
     public OnlineStatusListener(Sender sender) {
         this.sender = sender;
@@ -37,13 +39,17 @@ public class OnlineStatusListener extends ListenerAdapter {
         new Thread(() -> new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                sender.updateMetric(String.valueOf(event.getJDA().getGatewayPing()), String.valueOf(Instant.now().getEpochSecond()), SECRETS.DiscordGateway_metricid);
+                sender.updateMetric(String.valueOf(event.getJDA().getGatewayPing()), String.valueOf(Instant.now().getEpochSecond()), BBNBot.config.getDCGID());
                 event.getJDA().getRestPing().queue(ping ->
-                        sender.updateMetric(String.valueOf(ping), String.valueOf(Instant.now().getEpochSecond()), SECRETS.DiscordRest_metricid)
+                        sender.updateMetric(String.valueOf(ping), String.valueOf(Instant.now().getEpochSecond()), BBNBot.config.getDCRID())
                 );
 
-                for (int i = 0; i < SECRETS.BotIDs.length; i++) {
-                    String id = SECRETS.BotIDs[i];
+                int length = BBNBot.config.getBotIDs().length();
+                for (int i=0;i<length;i++) {
+                    BotIDs.add(BBNBot.config.getBotIDs().get(i).toString());
+                }
+
+                for (String id : BotIDs) {
                     boolean found = false;
                     for (Guild guild : event.getJDA().getGuilds()) {
                         if (found) break;
