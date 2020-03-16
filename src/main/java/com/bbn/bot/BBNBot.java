@@ -4,6 +4,7 @@ import com.bbn.bot.core.Config;
 import com.bbn.bot.core.Sender;
 import com.bbn.bot.listeners.*;
 import net.dv8tion.jda.api.AccountType;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
@@ -15,6 +16,7 @@ import net.dv8tion.jda.api.entities.Activity;
 public class BBNBot {
 
     public static Config config = new Config("./BBN_config.json");
+    public static JDA jda;
 
     public static void main(String[] args) {
 
@@ -34,7 +36,7 @@ public class BBNBot {
                         new VoiceLogListener());
 
         try {
-            builder.build();
+            jda = builder.build();
         } catch (Exception e) {
             e.printStackTrace();
         }
