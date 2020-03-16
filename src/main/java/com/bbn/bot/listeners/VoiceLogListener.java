@@ -101,7 +101,7 @@ public class VoiceLogListener extends ListenerAdapter {
         TextChannel c = event.getJDA().getTextChannelById("689123407249670164");
         c.sendMessage(new EmbedBuilder()
                 .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
-                .setTitle("User moved")
+                .setTitle("User switched channel")
                 .addField("Old Channel", event.getChannelLeft().getName(), true)
                 .addField("Members in old channel", String.valueOf(event.getChannelLeft().getMembers().size()), true)
                 .addBlankField(true)
