@@ -19,7 +19,7 @@ import java.util.TimerTask;
 public class OnlineStatusListener extends ListenerAdapter {
 
     private Sender sender;
-    ArrayList<String> BotIDs = new ArrayList<>();
+    private ArrayList<String> BotIDs = new ArrayList<>();
 
     public OnlineStatusListener(Sender sender) {
         this.sender = sender;

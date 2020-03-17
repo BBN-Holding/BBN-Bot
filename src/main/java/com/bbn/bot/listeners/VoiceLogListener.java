@@ -1,6 +1,5 @@
 package com.bbn.bot.listeners;
 
-import com.bbn.bot.BBNBot;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.guild.voice.*;
