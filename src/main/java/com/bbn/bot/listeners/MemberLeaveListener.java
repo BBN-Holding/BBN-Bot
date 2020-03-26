@@ -1,9 +1,25 @@
+/*
+ * Copyright 2018-2020 GregTCLTK and Schlauer-Hax
+ *
+ * Licensed under the MIT License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://opensource.org/licenses/MIT
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.bbn.bot.listeners;
 
 import com.bbn.bot.BBNBot;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.guild.member.GuildMemberLeaveEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.kohsuke.github.GHContentUpdateResponse;
 import org.kohsuke.github.GHRepository;
@@ -17,7 +33,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class MemberLeaveListener extends ListenerAdapter {
-    public void onGuildMemberLeave(GuildMemberLeaveEvent event) {
+    public void onGuildMemberRemove(GuildMemberRemoveEvent event) {
         if (!event.getMember().getUser().isBot()) {
             if (event.getMember().getUser().getAvatarId() == null) {
                 event.getGuild().getTextChannelById("452789888945750046").sendMessage(new EmbedBuilder()
@@ -107,5 +123,6 @@ public class MemberLeaveListener extends ListenerAdapter {
                         .build()).queue();
             }
         }
+        super.onGuildMemberRemove(event);
     }
 }
