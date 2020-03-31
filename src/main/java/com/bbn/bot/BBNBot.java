@@ -16,6 +16,9 @@
 
 package com.bbn.bot;
 
+import com.bbn.bot.commands.CloseCommand;
+import com.bbn.bot.commands.WarnCommand;
+import com.bbn.bot.core.CommandHandler;
 import com.bbn.bot.core.Config;
 import com.bbn.bot.core.Sender;
 import com.bbn.bot.listeners.*;
@@ -43,7 +46,11 @@ public class BBNBot {
                         new ReactionAddListener(),
                         new MemberLeaveListener(),
                         new OnlineStatusListener(sender),
-                        new VoiceLogListener());
+                        new VoiceLogListener(),
+                        new CommandListener());
+
+        CommandHandler.commands.put("warn", new WarnCommand());
+        CommandHandler.commands.put("close", new CloseCommand());
 
         try {
             jda = builder.build();
