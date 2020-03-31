@@ -17,6 +17,7 @@
 package com.bbn.bot;
 
 import com.bbn.bot.commands.CloseCommand;
+import com.bbn.bot.commands.MergeCommand;
 import com.bbn.bot.commands.WarnCommand;
 import com.bbn.bot.core.CommandHandler;
 import com.bbn.bot.core.Config;
@@ -37,6 +38,10 @@ public class BBNBot {
         Sender sender = new Sender();
         config.load();
 
+        CommandHandler.commands.put("warn", new WarnCommand());
+        CommandHandler.commands.put("close", new CloseCommand());
+        CommandHandler.commands.put("merge", new MergeCommand());
+
         JDABuilder builder = JDABuilder.createDefault(config.getToken());
         builder.setActivity(Activity.streaming("on the BBN", "https://twitch.tv/bigbotnetwork"))
                 .setAutoReconnect(true)
@@ -48,9 +53,6 @@ public class BBNBot {
                         new OnlineStatusListener(sender),
                         new VoiceLogListener(),
                         new CommandListener());
-
-        CommandHandler.commands.put("warn", new WarnCommand());
-        CommandHandler.commands.put("close", new CloseCommand());
 
         try {
             jda = builder.build();

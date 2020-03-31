@@ -16,19 +16,13 @@
 
 package com.bbn.bot.listeners;
 
-import com.bbn.bot.BBNBot;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.kohsuke.github.*;
 
 import java.awt.*;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 public class MessageReceiveListener extends ListenerAdapter {
@@ -63,52 +57,6 @@ public class MessageReceiveListener extends ListenerAdapter {
             } else {
                 event.getMessage().delete().queueAfter(1, TimeUnit.SECONDS);
             }
-        } else if (event.getMessage().getContentRaw().startsWith("bbn!merge") && event.getAuthor().getId().equals("477141528981012511") || event.getAuthor().getId().equals("261083609148948488")) {
-            switch (event.getMessage().getContentRaw().replace("bbn!merge ", "")) {
-                case "hax-dev greg-dev":
-                    createPR(event, "Merge Hax's branch into Greg's branch", "hax-dev", "greg-dev");
-                    break;
-                case "hax-dev master":
-                    createPR(event, "Merge Hax's branch into the master branch", "hax-dev", "master");
-                    break;
-                case "greg-dev master":
-                    createPR(event, "Merge Greg's branch into the master branch", "greg-dev", "master");
-                    break;
-                case "greg-dev hax-dev":
-                    createPR(event, "Merge Greg's branch into Hax's branch", "greg-dev", "hax-dev");
-                    break;
-                case "master greg-dev":
-                    createPR(event, "Merge the master branch into Greg's branch", "master", "greg-dev");
-                    break;
-                case "master hax-dev":
-                    createPR(event, "Merge the master branch into Hax's branch", "master", "hax-dev");
-                    break;
-            }
-        }
-    }
-
-    private void createPR(GuildMessageReceivedEvent event, String s, String master, String s2) {
-        try {
-            GitHub connection = GitHub.connectUsingOAuth(BBNBot.config.getGitHubToken());
-            GHOrganization BBN = connection.getOrganization("BigBotNetwork");
-            GHRepository Hadder = BBN.getRepository("Hadder");
-            GHPullRequest pr = Hadder.createPullRequest(s, master, s2, "Pull Request created by " + event.getAuthor().getAsTag());
-            pr.merge("Merged!");
-            event.getChannel().sendMessage(new EmbedBuilder()
-                    .setTitle("Successfully created")
-                    .setDescription("[Successfully created the PR on GitHub](" + pr.getHtmlUrl() + ")")
-                    .setTimestamp(Instant.now())
-                    .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
-                    .setColor(Color.GREEN)
-                    .build()).queue();
-        } catch (IOException e) {
-            event.getChannel().sendMessage(new EmbedBuilder()
-                    .setTitle("Error while creating")
-                    .setDescription("```" + e.toString() + "```")
-                    .setTimestamp(Instant.now())
-                    .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
-                    .setColor(Color.RED)
-                    .build()).queue();
         }
     }
 }

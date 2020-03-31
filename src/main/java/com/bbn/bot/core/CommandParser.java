@@ -37,7 +37,5 @@ public class CommandParser {
             this.args = args;
             this.event = event;
         }
-
     }
-
 }
