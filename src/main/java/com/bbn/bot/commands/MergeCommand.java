@@ -3,13 +3,9 @@ package com.bbn.bot.commands;
 import com.bbn.bot.BBNBot;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import org.kohsuke.github.GHOrganization;
-import org.kohsuke.github.GHPullRequest;
-import org.kohsuke.github.GHRepository;
-import org.kohsuke.github.GitHub;
+import org.kohsuke.github.*;
 
 import java.awt.*;
-import java.io.IOException;
 import java.time.Instant;
 
 public class MergeCommand implements Command {
@@ -30,7 +26,15 @@ public class MergeCommand implements Command {
                         .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
                         .setColor(Color.GREEN)
                         .build()).queue();
-            } catch (IOException e) {
+            } catch (HttpException e) {
+                event.getChannel().sendMessage(new EmbedBuilder()
+                        .setTitle("Invalid branch")
+                        .setDescription("One or both branch names are invalid.")
+                        .setTimestamp(Instant.now())
+                        .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
+                        .setColor(Color.RED)
+                        .build()).queue();
+            } catch (Exception e) {
                 event.getChannel().sendMessage(new EmbedBuilder()
                         .setTitle("Error while creating")
                         .setDescription("```" + e.toString() + "```")
