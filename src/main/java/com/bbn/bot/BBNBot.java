@@ -28,6 +28,9 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 public class BBNBot {
 
     public static Config config = new Config("./BBN_config.json");
@@ -35,7 +38,6 @@ public class BBNBot {
 
     public static void main(String[] args) {
 
-        Sender sender = new Sender();
         config.load();
 
         CommandHandler.commands.put("warn", new WarnCommand());
@@ -50,9 +52,13 @@ public class BBNBot {
                         new MessageReceiveListener(),
                         new ReactionAddListener(),
                         new MemberLeaveListener(),
-                        new OnlineStatusListener(sender),
                         new VoiceLogListener(),
                         new CommandListener());
+
+        if (Files.notExists(Paths.get("./pom.xml"))) {
+            Sender sender = new Sender();
+            builder.addEventListeners(new OnlineStatusListener(sender));
+        }
 
         try {
             jda = builder.build();
