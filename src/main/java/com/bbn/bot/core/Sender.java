@@ -46,7 +46,10 @@ public class Sender {
         httpPost.addHeader("Authorization", "OAuth " + BBNBot.config.getAPIKey());
         httpPost.setEntity(stringEntity);
         try {
-            httpclient.execute(httpPost);
+            CloseableHttpResponse response = httpclient.execute(httpPost);
+            HttpEntity entity = response.getEntity();
+            String string = EntityUtils.toString(entity, "UTF-8");
+            System.out.println(string);
         } catch (IOException e) {
             e.printStackTrace();
         }
