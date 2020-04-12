@@ -26,6 +26,7 @@ import java.time.format.DateTimeFormatter;
 
 public class MemberJoinListener extends ListenerAdapter {
     public void onGuildMemberJoin(GuildMemberJoinEvent event) {
+        event.getGuild().retrieveMember(event.getUser());
         if (!event.getMember().getUser().isBot()) {
             event.getGuild().addRoleToMember(event.getMember(), event.getGuild().getRoleById("636950878615502849")).reason("Auto User Role onJoin").queue();
 

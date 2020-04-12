@@ -31,6 +31,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class OnlineStatusListener extends ListenerAdapter {
 
@@ -61,27 +62,28 @@ public class OnlineStatusListener extends ListenerAdapter {
                 );
 
                 int length = BBNBot.config.getBotIDs().length();
-                for (int i=0;i<length;i++) {
+                for (int i = 0; i < length; i++) {
                     BotIDs.add(BBNBot.config.getBotIDs().get(i).toString());
                 }
 
                 for (String id : BotIDs) {
-                    boolean found = false;
-                    for (Guild guild : event.getJDA().getGuilds()) {
-                        if (found) break;
-                        for (Member member : guild.getMembers()) {
-                            if (found) break;
-                            if (member.getUser().getId().equals(id.split("/")[0])) {
-                                boolean online = !member.getOnlineStatus().equals(OnlineStatus.OFFLINE);
-                                sender.setState(id.split("/")[1], online);
-                                found = true;
-                            }
-                        }
+                    AtomicBoolean found = new AtomicBoolean(false);
+                    for (Guild g : event.getJDA().getGuilds()) {
+                        if (found.get()) break;
+                        g.retrieveMembers()
+                                .thenApply((v) -> g.getMemberCache())
+                                .thenAccept((members) -> {
+                                    for (Member member : g.getMembers()) {
+                                        if (found.get()) break;
+                                        if (member.getUser().getId().equals(id.split("/")[0])) {
+                                            boolean online = !member.getOnlineStatus().equals(OnlineStatus.OFFLINE);
+                                            sender.setState(id.split("/")[1], online);
+                                            found.set(true);
+                                        }
+                                    }
+                                });
                     }
-
                 }
-
-
             }
         }, 1000, 300000)).start();
     }

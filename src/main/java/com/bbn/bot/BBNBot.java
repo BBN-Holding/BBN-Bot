@@ -27,9 +27,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
-
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 
 public class BBNBot {
 
@@ -38,13 +36,14 @@ public class BBNBot {
 
     public static void main(String[] args) {
 
+        Sender sender = new Sender();
         config.load();
 
         CommandHandler.commands.put("warn", new WarnCommand());
         CommandHandler.commands.put("close", new CloseCommand());
         CommandHandler.commands.put("merge", new MergeCommand());
 
-        JDABuilder builder = JDABuilder.createDefault(config.getToken());
+        JDABuilder builder = JDABuilder.createDefault(config.getToken(), GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_VOICE_STATES, GatewayIntent.GUILD_EMOJIS);
         builder.setActivity(Activity.streaming("on the BBN", "https://twitch.tv/bigbotnetwork"))
                 .setAutoReconnect(true)
                 .setStatus(OnlineStatus.DO_NOT_DISTURB)
@@ -53,12 +52,8 @@ public class BBNBot {
                         new ReactionAddListener(),
                         new MemberLeaveListener(),
                         new VoiceLogListener(),
-                        new CommandListener());
-
-        if (Files.notExists(Paths.get("./pom.xml"))) {
-            Sender sender = new Sender();
-            builder.addEventListeners(new OnlineStatusListener(sender));
-        }
+                        new CommandListener(),
+                        new OnlineStatusListener(sender));
 
         try {
             jda = builder.build();
