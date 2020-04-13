@@ -67,22 +67,12 @@ public class OnlineStatusListener extends ListenerAdapter {
                 }
 
                 for (String id : BotIDs) {
-                    AtomicBoolean found = new AtomicBoolean(false);
-                    for (Guild g : event.getJDA().getGuilds()) {
-                        if (found.get()) break;
-                        g.retrieveMembers()
-                                .thenApply((v) -> g.getMemberCache())
-                                .thenAccept((members) -> {
-                                    for (Member member : g.getMembers()) {
-                                        if (found.get()) break;
-                                        if (member.getUser().getId().equals(id.split("/")[0])) {
-                                            boolean online = !member.getOnlineStatus().equals(OnlineStatus.OFFLINE);
-                                            sender.setState(id.split("/")[1], online);
-                                            found.set(true);
-                                        }
-                                    }
-                                });
-                    }
+                    Guild g = event.getJDA().getGuildById("448554629282922527");
+                    g.retrieveMemberById(id.split("/")[0]).queue((member) -> {
+                        boolean online = member.getOnlineStatus().equals(OnlineStatus.OFFLINE);
+                        System.out.println(member.getOnlineStatus());
+                        sender.setState(id.split("/")[1], online);
+                    });
                 }
             }
         }, 1000, 300000)).start();
