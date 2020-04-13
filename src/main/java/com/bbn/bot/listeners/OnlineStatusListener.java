@@ -19,6 +19,7 @@ package com.bbn.bot.listeners;
 import com.bbn.bot.BBNBot;
 import com.bbn.bot.core.Sender;
 import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.entities.ClientType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.Event;
@@ -69,8 +70,7 @@ public class OnlineStatusListener extends ListenerAdapter {
                 for (String id : BotIDs) {
                     Guild g = event.getJDA().getGuildById("448554629282922527");
                     g.retrieveMemberById(id.split("/")[0]).queue((member) -> {
-                        boolean online = member.getOnlineStatus().equals(OnlineStatus.OFFLINE);
-                        System.out.println(member.getOnlineStatus());
+                        boolean online = !member.getOnlineStatus().equals(OnlineStatus.OFFLINE);
                         sender.setState(id.split("/")[1], online);
                     });
                 }

@@ -47,7 +47,6 @@ public class BBNBot {
         JDABuilder builder = JDABuilder.createDefault(config.getToken(), GatewayIntent.getIntents(GatewayIntent.ALL_INTENTS));
         builder.setActivity(Activity.streaming("on the BBN", "https://twitch.tv/bigbotnetwork"))
                 .setAutoReconnect(true)
-                .setDisabledIntents(GatewayIntent.GUILD_PRESENCES)
                 .setStatus(OnlineStatus.DO_NOT_DISTURB)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .addEventListeners(new MemberJoinListener(),

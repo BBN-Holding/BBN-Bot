@@ -80,7 +80,6 @@ public class Sender {
             msg.setSubject((online) ? "UP" : "DOWN");
             msg.setText("Gud Email");
             msg.setSentDate(new Date());
-            System.out.println(msg.getSubject());
 
             SMTPTransport t = (SMTPTransport) session.getTransport("smtp");
 
