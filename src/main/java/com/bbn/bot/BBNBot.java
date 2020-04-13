@@ -28,6 +28,7 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.MemberCachePolicy;
 
 public class BBNBot {
 
@@ -43,10 +44,12 @@ public class BBNBot {
         CommandHandler.commands.put("close", new CloseCommand());
         CommandHandler.commands.put("merge", new MergeCommand());
 
-        JDABuilder builder = JDABuilder.createDefault(config.getToken(), GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_VOICE_STATES, GatewayIntent.GUILD_EMOJIS);
+        JDABuilder builder = JDABuilder.createDefault(config.getToken(), GatewayIntent.getIntents(GatewayIntent.ALL_INTENTS));
         builder.setActivity(Activity.streaming("on the BBN", "https://twitch.tv/bigbotnetwork"))
                 .setAutoReconnect(true)
+                .setDisabledIntents(GatewayIntent.GUILD_PRESENCES)
                 .setStatus(OnlineStatus.DO_NOT_DISTURB)
+                .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .addEventListeners(new MemberJoinListener(),
                         new MessageReceiveListener(),
                         new ReactionAddListener(),

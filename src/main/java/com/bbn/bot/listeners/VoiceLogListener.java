@@ -30,6 +30,7 @@ public class VoiceLogListener extends ListenerAdapter {
     @Override
     public void onGuildVoiceDeafen(@Nonnull GuildVoiceDeafenEvent event) {
         TextChannel c = event.getJDA().getTextChannelById("689123407249670164");
+        event.getGuild().retrieveMember(event.getMember().getUser()).queue();
         if (event.getVoiceState().isDeafened()) {
             c.sendMessage(new EmbedBuilder()
                     .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
@@ -57,6 +58,7 @@ public class VoiceLogListener extends ListenerAdapter {
     @Override
     public void onGuildVoiceMute(@Nonnull GuildVoiceMuteEvent event) {
         TextChannel c = event.getJDA().getTextChannelById("689123407249670164");
+        event.getGuild().retrieveMember(event.getMember().getUser()).queue();
         if (event.getVoiceState().isMuted()) {
             c.sendMessage(new EmbedBuilder()
                     .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
@@ -84,6 +86,7 @@ public class VoiceLogListener extends ListenerAdapter {
     @Override
     public void onGuildVoiceJoin(@Nonnull GuildVoiceJoinEvent event) {
         TextChannel c = event.getJDA().getTextChannelById("689123407249670164");
+        event.getGuild().retrieveMember(event.getMember().getUser()).queue();
         c.sendMessage(new EmbedBuilder()
                 .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
                 .setTitle("User joined")
@@ -99,6 +102,7 @@ public class VoiceLogListener extends ListenerAdapter {
     @Override
     public void onGuildVoiceLeave(@Nonnull GuildVoiceLeaveEvent event) {
         TextChannel c = event.getJDA().getTextChannelById("689123407249670164");
+        event.getGuild().retrieveMember(event.getMember().getUser()).queue();
         c.sendMessage(new EmbedBuilder()
                 .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
                 .setTitle("User left")
@@ -114,6 +118,7 @@ public class VoiceLogListener extends ListenerAdapter {
     @Override
     public void onGuildVoiceMove(@Nonnull GuildVoiceMoveEvent event) {
         TextChannel c = event.getJDA().getTextChannelById("689123407249670164");
+        event.getGuild().retrieveMember(event.getMember().getUser()).queue();
         c.sendMessage(new EmbedBuilder()
                 .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
                 .setTitle("User switched channel")

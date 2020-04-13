@@ -34,7 +34,6 @@ import java.util.Date;
 
 public class MemberLeaveListener extends ListenerAdapter {
     public void onGuildMemberRemove(GuildMemberRemoveEvent event) {
-        event.getGuild().retrieveMember(event.getUser());
         if (!event.getMember().getUser().isBot()) {
             if (event.getMember().getUser().getAvatarId() == null) {
                 event.getGuild().getTextChannelById("452789888945750046").sendMessage(new EmbedBuilder()
