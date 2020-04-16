@@ -53,6 +53,7 @@ public class BBNBot {
                         new MemberJoinListener(),
                         new MemberLeaveListener(),
                         new MemberBanListener(),
+                        new MemberUnbanListener(),
                         new MessageReceiveListener(),
                         new ReactionAddListener(),
                         new VoiceLogListener(),
