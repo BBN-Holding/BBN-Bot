@@ -19,9 +19,7 @@ package com.bbn.bot.listeners;
 import com.bbn.bot.BBNBot;
 import com.bbn.bot.core.Sender;
 import net.dv8tion.jda.api.OnlineStatus;
-import net.dv8tion.jda.api.entities.ClientType;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.Event;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.ReconnectedEvent;
@@ -32,7 +30,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class OnlineStatusListener extends ListenerAdapter {
 
