@@ -75,6 +75,6 @@ public class OnlineStatusListener extends ListenerAdapter {
                     });
                 }
             }
-        }, 1000, 300000)).start();
+        }, 1000, 100000)).start();
     }
 }
