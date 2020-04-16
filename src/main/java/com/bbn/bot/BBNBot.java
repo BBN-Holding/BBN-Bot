@@ -49,10 +49,12 @@ public class BBNBot {
                 .setAutoReconnect(true)
                 .setStatus(OnlineStatus.DO_NOT_DISTURB)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
-                .addEventListeners(new MemberJoinListener(),
+                .addEventListeners(
+                        new MemberJoinListener(),
+                        new MemberLeaveListener(),
+                        new MemberBanListener(),
                         new MessageReceiveListener(),
                         new ReactionAddListener(),
-                        new MemberLeaveListener(),
                         new VoiceLogListener(),
                         new CommandListener(),
                         new OnlineStatusListener(sender));
