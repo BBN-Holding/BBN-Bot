@@ -16,7 +16,7 @@ public class MemberUnbanListener extends ListenerAdapter {
         if (!event.getUser().isBot()) {
             if (event.getUser().getAvatarId() == null) {
                 event.getGuild().getTextChannelById("452789888945750046").sendMessage(new EmbedBuilder()
-                        .setTitle("User banned")
+                        .setTitle("User unbanned")
                         .setAuthor(event.getUser().getAsTag(), event.getUser().getDefaultAvatarUrl(), event.getUser().getDefaultAvatarUrl())
                         .addField("User Creation Time", event.getUser().getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
                         .addField("ID", event.getUser().getId(), true)
@@ -26,7 +26,7 @@ public class MemberUnbanListener extends ListenerAdapter {
                         .build()).queue();
             } else {
                 event.getGuild().getTextChannelById("452789888945750046").sendMessage(new EmbedBuilder()
-                        .setTitle("User banned")
+                        .setTitle("User unbanned")
                         .setAuthor(event.getUser().getAsTag(), event.getUser().getAvatarUrl(), event.getUser().getAvatarUrl())
                         .addField("User Creation Time", event.getUser().getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
                         .addField("ID", event.getUser().getId(), true)
@@ -38,7 +38,7 @@ public class MemberUnbanListener extends ListenerAdapter {
         } else {
             if (event.getUser().getAvatarId() == null) {
                 event.getGuild().getTextChannelById("452789888945750046").sendMessage(new EmbedBuilder()
-                        .setTitle("Bot banned")
+                        .setTitle("Bot unbanned")
                         .setAuthor(event.getUser().getAsTag(), event.getUser().getDefaultAvatarUrl(), event.getUser().getDefaultAvatarUrl())
                         .addField("Bot Creation Time", event.getUser().getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
                         .addField("ID", event.getUser().getId(), true)
@@ -48,7 +48,7 @@ public class MemberUnbanListener extends ListenerAdapter {
                         .build()).queue();
             } else {
                 event.getGuild().getTextChannelById("452789888945750046").sendMessage(new EmbedBuilder()
-                        .setTitle("Bot banned")
+                        .setTitle("Bot unbanned")
                         .setAuthor(event.getUser().getAsTag(), event.getUser().getAvatarUrl(), event.getUser().getAvatarUrl())
                         .addField("Bot Creation Time", event.getUser().getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
                         .addField("ID", event.getUser().getId(), true)
