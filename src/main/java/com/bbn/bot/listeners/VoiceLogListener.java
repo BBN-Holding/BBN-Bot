@@ -17,6 +17,7 @@
 package com.bbn.bot.listeners;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.guild.voice.*;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -60,6 +61,8 @@ public class VoiceLogListener extends ListenerAdapter {
         TextChannel c = event.getJDA().getTextChannelById("689123407249670164");
         event.getGuild().retrieveMember(event.getMember().getUser()).queue();
         if (event.getVoiceState().isMuted()) {
+            if (!event.getMember().hasPermission(Permission.ADMINISTRATOR))
+                event.getGuild().deafen(event.getMember(), true).queue();
             c.sendMessage(new EmbedBuilder()
                     .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
                     .setTitle("User muted")
@@ -70,6 +73,8 @@ public class VoiceLogListener extends ListenerAdapter {
                     .setTimestamp(Instant.now())
                     .build()).queue();
         } else {
+            if (!event.getMember().hasPermission(Permission.ADMINISTRATOR))
+                event.getGuild().deafen(event.getMember(), false).queue();
             c.sendMessage(new EmbedBuilder()
                     .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
                     .setTitle("User unmuted")
