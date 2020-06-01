@@ -19,13 +19,11 @@ package com.bbn.bot.core;
 import com.bbn.bot.BBNBot;
 import com.sun.mail.smtp.SMTPTransport;
 import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
 import javax.mail.Message;
