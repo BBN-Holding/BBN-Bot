@@ -34,7 +34,7 @@ public class VoiceLogListener extends ListenerAdapter {
         if (event.getVoiceState().isDeafened()) {
             c.sendMessage(new EmbedBuilder()
                     .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
-                    .setTitle(event.getMember().getEffectiveName() + " deafed")
+                    .setTitle(event.getMember().getUser().getAsTag() + " deafed")
                     .addField("Channel", event.getVoiceState().getChannel().getName(), true)
                     .addField("Members in Channel", String.valueOf(event.getVoiceState().getChannel().getMembers().size()), true)
                     .setColor(Color.RED)
@@ -44,7 +44,7 @@ public class VoiceLogListener extends ListenerAdapter {
         } else {
             c.sendMessage(new EmbedBuilder()
                     .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
-                    .setTitle(event.getMember().getEffectiveName() + " undeafed")
+                    .setTitle(event.getMember().getUser().getAsTag() + " undeafed")
                     .addField("Channel", event.getVoiceState().getChannel().getName(), true)
                     .addField("Members in Channel", String.valueOf(event.getVoiceState().getChannel().getMembers().size()), true)
                     .setColor(Color.GREEN)
@@ -62,7 +62,7 @@ public class VoiceLogListener extends ListenerAdapter {
         if (event.getVoiceState().isMuted()) {
             c.sendMessage(new EmbedBuilder()
                     .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
-                    .setTitle(event.getMember().getEffectiveName() + " muted")
+                    .setTitle(event.getMember().getUser().getAsTag() + " muted")
                     .addField("Channel", event.getVoiceState().getChannel().getName(), true)
                     .addField("Members in Channel", String.valueOf(event.getVoiceState().getChannel().getMembers().size()), true)
                     .setColor(Color.RED)
@@ -72,7 +72,7 @@ public class VoiceLogListener extends ListenerAdapter {
         } else {
             c.sendMessage(new EmbedBuilder()
                     .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
-                    .setTitle(event.getMember().getEffectiveName() + " unmuted")
+                    .setTitle(event.getMember().getUser().getAsTag() + " unmuted")
                     .addField("Channel", event.getVoiceState().getChannel().getName(), true)
                     .addField("Members in Channel", String.valueOf(event.getVoiceState().getChannel().getMembers().size()), true)
                     .setColor(Color.GREEN)
@@ -89,7 +89,7 @@ public class VoiceLogListener extends ListenerAdapter {
         event.getGuild().retrieveMember(event.getMember().getUser()).queue();
         c.sendMessage(new EmbedBuilder()
                 .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
-                .setTitle(event.getMember().getEffectiveName() + " joined")
+                .setTitle(event.getMember().getUser().getAsTag() + " joined")
                 .addField("Channel", event.getChannelJoined().getName(), true)
                 .addField("Members in Channel", String.valueOf(event.getChannelJoined().getMembers().size()), true)
                 .setColor(Color.GREEN)
@@ -105,7 +105,7 @@ public class VoiceLogListener extends ListenerAdapter {
         event.getGuild().retrieveMember(event.getMember().getUser()).queue();
         c.sendMessage(new EmbedBuilder()
                 .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
-                .setTitle(event.getMember().getEffectiveName() + " left")
+                .setTitle(event.getMember().getUser().getAsTag() + " left")
                 .addField("Channel", event.getChannelLeft().getName(), true)
                 .addField("Members in Channel", String.valueOf(event.getChannelLeft().getMembers().size()), true)
                 .setColor(Color.RED)
@@ -121,7 +121,7 @@ public class VoiceLogListener extends ListenerAdapter {
         event.getGuild().retrieveMember(event.getMember().getUser()).queue();
         c.sendMessage(new EmbedBuilder()
                 .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
-                .setTitle(event.getMember().getEffectiveName() + " switched channel")
+                .setTitle(event.getMember().getUser().getAsTag() + " switched channel")
                 .addField("Old Channel", event.getChannelLeft().getName(), true)
                 .addBlankField(true)
                 .addField("Members in old channel", String.valueOf(event.getChannelLeft().getMembers().size()), true)
