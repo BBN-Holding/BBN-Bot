@@ -40,12 +40,12 @@ public class BBNBot {
     }
 
     public void main() {
-        Sender sender = new Sender();
+        Sender sender = new Sender(config);
         config.load();
 
         CommandHandler.commands.put("warn", new WarnCommand());
         CommandHandler.commands.put("close", new CloseCommand(config));
-        CommandHandler.commands.put("merge", new MergeCommand());
+        CommandHandler.commands.put("merge", new MergeCommand(config));
 
         JDABuilder builder = JDABuilder.createDefault(config.getToken(), GatewayIntent.getIntents(GatewayIntent.ALL_INTENTS));
         builder.setActivity(Activity.streaming("on the BBN", "https://twitch.tv/bigbotnetwork"))

@@ -1,6 +1,7 @@
 package com.bbn.bot.commands;
 
 import com.bbn.bot.BBNBot;
+import com.bbn.bot.core.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.kohsuke.github.*;
@@ -10,12 +11,18 @@ import java.time.Instant;
 
 public class MergeCommand implements Command {
 
+    Config config;
+
+    public MergeCommand(Config config) {
+        this.config = config;
+    }
+
     @Override
     public void action(String[] args, MessageReceivedEvent event) {
         if (event.getAuthor().getId().equals("477141528981012511") || event.getAuthor().getId().equals("261083609148948488")) {
             if (args.length == 2) {
                 try {
-                    GitHub connection = GitHub.connectUsingOAuth(BBNBot.config.getGitHubToken());
+                    GitHub connection = GitHub.connectUsingOAuth(config.getGitHubToken());
                     GHOrganization BBN = connection.getOrganization("BigBotNetwork");
                     GHRepository Hadder = BBN.getRepository("Hadder");
                     GHPullRequest pr = Hadder.createPullRequest("Merge branches by BBNBot", args[0], args[1], "Pull Request created by " + event.getAuthor().getAsTag());

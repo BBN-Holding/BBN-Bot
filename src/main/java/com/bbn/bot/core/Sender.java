@@ -37,11 +37,17 @@ import java.util.Properties;
 
 public class Sender {
 
+    Config config;
+
+    public Sender(Config config) {
+        this.config = config;
+    }
+
     private void sendPost(String uri, String json) {
         CloseableHttpClient httpclient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(uri);
         HttpEntity stringEntity = new StringEntity(json,ContentType.APPLICATION_JSON);
-        httpPost.addHeader("Authorization", "OAuth " + BBNBot.config.getAPIKey());
+        httpPost.addHeader("Authorization", "OAuth " + config.getAPIKey());
         httpPost.setEntity(stringEntity);
         try {
             httpclient.execute(httpPost);
@@ -52,7 +58,7 @@ public class Sender {
 
     public void updateMetric(String value, String timestamp, String metric_id) {
         sendPost(
-                "https://api.statuspage.io/v1/pages/" + BBNBot.config.getPageID() + "/metrics/" + metric_id + "/data.json",
+                "https://api.statuspage.io/v1/pages/" + config.getPageID() + "/metrics/" + metric_id + "/data.json",
                 new JSONObject().put("data", new JSONObject().put("timestamp", timestamp).put("value", value)).toString()
         );
     }
@@ -60,7 +66,7 @@ public class Sender {
     private void sendState(String email, boolean online) {
 
         Properties prop = System.getProperties();
-        prop.put("mail.smtp.host", BBNBot.config.getSMTPServer());
+        prop.put("mail.smtp.host", config.getSMTPServer());
         prop.put("mail.smtp.auth", "true");
         prop.put("mail.smtp.port", "25");
 
@@ -68,7 +74,7 @@ public class Sender {
         Message msg = new MimeMessage(session);
 
         try {
-            msg.setFrom(new InternetAddress(BBNBot.config.getEMail()));
+            msg.setFrom(new InternetAddress(config.getEMail()));
             msg.setRecipients(Message.RecipientType.TO,
                     InternetAddress.parse(email, false));
 
@@ -78,7 +84,7 @@ public class Sender {
 
             SMTPTransport t = (SMTPTransport) session.getTransport("smtp");
 
-            t.connect(BBNBot.config.getSMTPServer(), BBNBot.config.getUsername(), BBNBot.config.getPassword());
+            t.connect(config.getSMTPServer(), config.getUsername(), config.getPassword());
             t.sendMessage(msg, msg.getAllRecipients());
             t.close();
 

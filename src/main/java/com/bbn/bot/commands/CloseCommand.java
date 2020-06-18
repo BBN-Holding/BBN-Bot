@@ -33,7 +33,7 @@ public class CloseCommand implements Command {
                 event.getMessage().addReaction("✅").queue();
                 channel.getManager().setName(channel.getName() + "-archive").queue();
                 try {
-                    GitHub connection = GitHub.connectUsingOAuth(BBNBot.config.getGitHubToken());
+                    GitHub connection = GitHub.connectUsingOAuth(config.getGitHubToken());
                     GHRepository Mining = connection.getMyself().getRepository("Data-Mining");
                     String pattern = "dd-MM-yyyy";
                     String date = new SimpleDateFormat(pattern).format(new Date());

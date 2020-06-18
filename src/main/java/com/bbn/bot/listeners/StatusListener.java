@@ -17,6 +17,7 @@
 package com.bbn.bot.listeners;
 
 import com.bbn.bot.BBNBot;
+import com.bbn.bot.core.Config;
 import com.bbn.bot.core.Sender;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Guild;
@@ -32,6 +33,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class StatusListener extends ListenerAdapter {
+
+    Config config;
+
+    public StatusListener(Config config) {
+        this.config = config;
+    }
 
     private Sender sender;
     private ArrayList<String> BotIDs = new ArrayList<>();
@@ -54,14 +61,14 @@ public class StatusListener extends ListenerAdapter {
         new Thread(() -> new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                sender.updateMetric(String.valueOf(event.getJDA().getGatewayPing()), String.valueOf(Instant.now().getEpochSecond()), BBNBot.config.getDCGID());
+                sender.updateMetric(String.valueOf(event.getJDA().getGatewayPing()), String.valueOf(Instant.now().getEpochSecond()), config.getDCGID());
                 event.getJDA().getRestPing().queue(ping ->
-                        sender.updateMetric(String.valueOf(ping), String.valueOf(Instant.now().getEpochSecond()), BBNBot.config.getDCRID())
+                        sender.updateMetric(String.valueOf(ping), String.valueOf(Instant.now().getEpochSecond()), config.getDCRID())
                 );
 
-                int length = BBNBot.config.getBotIDs().length();
+                int length = config.getBotIDs().length();
                 for (int i = 0; i < length; i++) {
-                    BotIDs.add(BBNBot.config.getBotIDs().get(i).toString());
+                    BotIDs.add(config.getBotIDs().get(i).toString());
                 }
 
                 for (String id : BotIDs) {
