@@ -17,6 +17,7 @@
 package com.bbn.bot.listeners;
 
 import com.bbn.bot.BBNBot;
+import com.bbn.bot.core.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
@@ -33,59 +34,32 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class MemberLeaveListener extends ListenerAdapter {
+
+    Config config;
+
+    public MemberLeaveListener(Config config) {
+        this.config = config;
+    }
+
     public void onGuildMemberRemove(GuildMemberRemoveEvent event) {
-        if (!event.getMember().getUser().isBot()) {
-            if (event.getMember().getUser().getAvatarId() == null) {
-                event.getGuild().getTextChannelById("452789888945750046").sendMessage(new EmbedBuilder()
-                        .setTitle("User left")
-                        .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getDefaultAvatarUrl(), event.getMember().getUser().getDefaultAvatarUrl())
-                        .addField("User Creation Time", event.getMember().getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
-                        .addField("ID", event.getMember().getId(), true)
-                        .setTimestamp(Instant.now())
-                        .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
-                        .setColor(Color.RED)
-                        .build()).queue();
-            } else {
-                event.getGuild().getTextChannelById("452789888945750046").sendMessage(new EmbedBuilder()
-                        .setTitle("User left")
-                        .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
-                        .addField("User Creation Time", event.getMember().getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
-                        .addField("ID", event.getMember().getId(), true)
-                        .setTimestamp(Instant.now())
-                        .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
-                        .setColor(Color.RED)
-                        .build()).queue();
-            }
-        } else {
-           if (event.getMember().getUser().getAvatarId() == null) {
-                event.getGuild().getTextChannelById("452789888945750046").sendMessage(new EmbedBuilder()
-                        .setTitle("Bot left")
-                        .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getDefaultAvatarUrl(), event.getMember().getUser().getDefaultAvatarUrl())
-                        .addField("Bot Creation Time", event.getMember().getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
-                        .addField("ID", event.getMember().getId(), true)
-                        .setTimestamp(Instant.now())
-                        .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
-                        .setColor(Color.RED)
-                        .build()).queue();
-            } else {
-                event.getGuild().getTextChannelById("452789888945750046").sendMessage(new EmbedBuilder()
-                        .setTitle("Bot left")
-                        .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
-                        .addField("Bot Creation Time", event.getMember().getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
-                        .addField("ID", event.getMember().getId(), true)
-                        .setTimestamp(Instant.now())
-                        .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
-                        .setColor(Color.RED)
-                        .build()).queue();
-            }
-        }
+        event.getGuild().getTextChannelById(config.getLogChannelID()).sendMessage(new EmbedBuilder()
+                .setTitle(((!event.getMember().getUser().isBot()) ? "User" : "Bot") + " left")
+                .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getEffectiveAvatarUrl(), event.getMember().getUser().getEffectiveAvatarUrl())
+                .addField(((!event.getMember().getUser().isBot()) ? "User" : "Bot") + " Creation Time", event.getMember().getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
+                .addField("ID", event.getMember().getId(), true)
+                .setTimestamp(Instant.now())
+                .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
+                .setColor(Color.RED)
+                .build()).queue();
+
         if (event.getGuild().getTextChannelsByName(event.getUser().getName(), true).size() > 0) {
             TextChannel channel = event.getGuild().getTextChannelsByName(event.getUser().getName(), true).get(0);
             if (channel.getTopic().contains(event.getUser().getId())) {
-                channel.getManager().setParent(event.getGuild().getCategoryById("639550970812039177")).reason("Case closed").queue();
+                channel.getManager().setParent(event.getGuild().getCategoryById(config.getArchiveCategoryID()))
+                        .reason("Case closed").queue();
                 channel.getManager().setName(channel.getName() + "-archive").queue();
                 try {
-                    GitHub connection = GitHub.connectUsingOAuth(BBNBot.config.getGitHubToken());
+                    GitHub connection = GitHub.connectUsingOAuth(config.getGitHubToken());
                     GHRepository Mining = connection.getMyself().getRepository("Data-Mining");
                     String pattern = "dd-MM-yyyy";
                     String date = new SimpleDateFormat(pattern).format(new Date());
@@ -112,15 +86,6 @@ public class MemberLeaveListener extends ListenerAdapter {
                             .build()).queue();
                     e.printStackTrace();
                 }
-            } else {
-                event.getGuild().getTextChannelById("452789888945750046").sendMessage("<@477141528981012511>").queue();
-                event.getGuild().getTextChannelById("452789888945750046").sendMessage(new EmbedBuilder()
-                        .setTitle("Error")
-                        .setDescription("Error because getTopic stuff.")
-                        .setTimestamp(Instant.now())
-                        .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
-                        .setColor(Color.RED)
-                        .build()).queue();
             }
         }
         super.onGuildMemberRemove(event);

@@ -31,12 +31,12 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class OnlineStatusListener extends ListenerAdapter {
+public class StatusListener extends ListenerAdapter {
 
     private Sender sender;
     private ArrayList<String> BotIDs = new ArrayList<>();
 
-    public OnlineStatusListener(Sender sender) {
+    public StatusListener(Sender sender) {
         this.sender = sender;
     }
 

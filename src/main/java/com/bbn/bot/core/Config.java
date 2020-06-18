@@ -85,4 +85,51 @@ public class Config {
         return config.getString("Password");
     }
 
+    public String getNewsChannelID() {
+        return config.getString("NC_ID");
+    }
+
+    public String getVoiceChannelID() {
+        return config.getString("VCLOG_ID");
+    }
+
+    public String getInsiderRoleID() {
+        return config.getString("INSIDERROLE_ID");
+    }
+
+    public String getLogChannelID() {
+        return config.getString("LOGCHANNEL_ID");
+    }
+
+    public String getWantBotRoleID() {
+        return config.getString("BOTWANT_ID");
+    }
+
+    public String getBYBCategoryID() {
+        return config.getString("BYBCATEGORY_ID");
+    }
+
+    public String getArchiveCategoryID() {
+        return config.getString("ARCHIVECATEGORY_ID");
+    }
+
+    public String getBYBMessageID() {
+        return config.getString("BYBMESSAGE_ID");
+    }
+
+    public String getVerifyMessageID() {
+        return config.getString("VERIFYMESSAGE_ID");
+    }
+
+    public String getCommunityRoleID() {
+        return config.getString("COMMUNITYROLE_ID");
+    }
+
+    public String getUnVerifiedRoleID() {
+        return config.getString("UNVERIFIEDROLE_ID");
+    }
+
+    public String getBotRoleID() {
+        return config.getString("BOTROLE_ID");
+    }
 }

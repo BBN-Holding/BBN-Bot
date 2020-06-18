@@ -32,16 +32,19 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 
 public class BBNBot {
 
-    public static Config config = new Config("./BBN_config.json");
-    public static JDA jda;
+    public Config config = new Config("./BBN_config.json");
+    public JDA jda;
 
     public static void main(String[] args) {
+        new BBNBot().main();
+    }
 
+    public void main() {
         Sender sender = new Sender();
         config.load();
 
         CommandHandler.commands.put("warn", new WarnCommand());
-        CommandHandler.commands.put("close", new CloseCommand());
+        CommandHandler.commands.put("close", new CloseCommand(config));
         CommandHandler.commands.put("merge", new MergeCommand());
 
         JDABuilder builder = JDABuilder.createDefault(config.getToken(), GatewayIntent.getIntents(GatewayIntent.ALL_INTENTS));
@@ -50,15 +53,15 @@ public class BBNBot {
                 .setStatus(OnlineStatus.DO_NOT_DISTURB)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .addEventListeners(
-                        new MemberJoinListener(),
-                        new MemberLeaveListener(),
-                        new MemberBanListener(),
-                        new MemberUnbanListener(),
-                        new MessageReceiveListener(),
-                        new ReactionAddListener(),
-                        new VoiceLogListener(),
+                        new MemberJoinListener(config),
+                        new MemberLeaveListener(config),
+                        new MemberBanListener(config),
+                        new MessageReceiveListener(config),
+                        new ReactionAddListener(config),
+                        new VoiceLogListener(config),
                         new CommandListener(),
-                        new OnlineStatusListener(sender));
+                        new StatusListener(sender),
+                        new NewsChannelListener(config));
 
         try {
             jda = builder.build();
