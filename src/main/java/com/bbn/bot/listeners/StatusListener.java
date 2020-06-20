@@ -36,16 +36,13 @@ public class StatusListener extends ListenerAdapter {
 
     Config config;
 
-    public StatusListener(Config config) {
+    public StatusListener(Config config, Sender sender) {
         this.config = config;
+        this.sender = sender;
     }
 
     private Sender sender;
     private ArrayList<String> BotIDs = new ArrayList<>();
-
-    public StatusListener(Sender sender) {
-        this.sender = sender;
-    }
 
     @Override
     public void onReady(@Nonnull ReadyEvent event) {

@@ -131,7 +131,7 @@ public class NewsChannelListener extends ListenerAdapter {
                         Member member = insider.get(i);
                         if (member.getOnlineStatus() != OnlineStatus.OFFLINE) {
                             String game = "";
-                            if (member.getActivities().size()!=0) {
+                            if (member.getActivities().size() != 0) {
                                 for (Activity activity : member.getActivities()) {
                                     if (!activity.getName().equals("Custom Status"))
                                         game += String.format(", %s", activity.getName());
@@ -140,7 +140,7 @@ public class NewsChannelListener extends ListenerAdapter {
                             game = game.replaceFirst(", ", "");
                             String vc = (member.getVoiceState() != null) ? ((member.getVoiceState().getChannel() != null) ?
                                     "(" + member.getVoiceState().getChannel().getName() + ")" : "") : "";
-                            if (game.length()!=0) game = String.format(" - %s", game);
+                            if (game.length() != 0) game = String.format(" - %s", game);
                             statusinsider.add(String.format("%s - %s %s%s", member.getUser().getAsTag(), member.getOnlineStatus(), vc, game));
                         }
                     }

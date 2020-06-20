@@ -46,7 +46,9 @@ public class VoiceLogListener extends ListenerAdapter {
         else if (event instanceof GuildVoiceJoinEvent)
             eb.setTitle(event.getMember().getUser().getAsTag() + " joined");
         else if (event instanceof GuildVoiceLeaveEvent)
-            eb.setTitle(event.getMember().getUser().getAsTag() + " left");
+            eb.setTitle(event.getMember().getUser().getAsTag() + " left")
+                    .addField("Channel", ((GuildVoiceLeaveEvent)event).getChannelLeft().getName(), true)
+                    .addField("Members in Channel", String.valueOf(((GuildVoiceLeaveEvent)event).getChannelLeft().getMembers().size()), true);
         else if (event instanceof GuildVoiceMoveEvent) {
             eb.setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
                     .setTitle(event.getMember().getUser().getAsTag() + " switched channel")
@@ -56,11 +58,12 @@ public class VoiceLogListener extends ListenerAdapter {
         }
 
         eb.setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
-                .addField("Channel", event.getVoiceState().getChannel().getName(), true)
-                .addField("Members in Channel", String.valueOf(event.getVoiceState().getChannel().getMembers().size()), true)
                 .setColor(Color.RED)
                 .setFooter("Provided by BBN", "https://bigbotnetwork.com/images/avatar.png")
                 .setTimestamp(Instant.now());
+        if (event.getVoiceState().getChannel()!=null)
+                eb.addField("Channel", event.getVoiceState().getChannel().getName(), true)
+                .addField("Members in Channel", String.valueOf(event.getVoiceState().getChannel().getMembers().size()), true);
         c.sendMessage(eb.build());
     }
 
