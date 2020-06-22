@@ -73,11 +73,10 @@ public class NewsChannelListener extends ListenerAdapter {
                                     String lastlastmessages = message.getEmbeds().get(0).getFields().get(1).getValue();
                                     message.delete().queue();
                                     channel.sendMessage(new EmbedBuilder().setTitle("This Message will get updated").build()).queue(msgtoupdate -> this.updateMessage(msgtoupdate, lastlastmessages));
-                                    return;
                                 } else {
                                     this.updateMessage(message, null);
-                                    return;
                                 }
+                                return;
                             }
                         }
                         channel.sendMessage(new EmbedBuilder().setTitle("This Message will get updated").build()).queue(msgtoupdate -> this.updateMessage(msgtoupdate, null));
