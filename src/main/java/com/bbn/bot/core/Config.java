@@ -101,20 +101,12 @@ public class Config {
         return config.getString("LOGCHANNEL_ID");
     }
 
-    public String getWantBotRoleID() {
-        return config.getString("BOTWANT_ID");
-    }
-
     public String getBYBCategoryID() {
         return config.getString("BYBCATEGORY_ID");
     }
 
     public String getArchiveCategoryID() {
         return config.getString("ARCHIVECATEGORY_ID");
-    }
-
-    public String getBYBMessageID() {
-        return config.getString("BYBMESSAGE_ID");
     }
 
     public String getVerifyMessageID() {

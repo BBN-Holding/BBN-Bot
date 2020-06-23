@@ -35,7 +35,7 @@ public class VoiceLogListener extends ListenerAdapter {
     }
 
     public void sendMessage(GenericGuildVoiceEvent event) {
-        TextChannel c = event.getJDA().getTextChannelById(config.getVoiceChannelID());
+        TextChannel c = event.getJDA().getTextChannelById(config.getVoiceChannelID()) ;
         event.getGuild().retrieveMember(event.getMember().getUser()).queue();
 
         EmbedBuilder eb = new EmbedBuilder();
@@ -64,7 +64,7 @@ public class VoiceLogListener extends ListenerAdapter {
         if (event.getVoiceState().getChannel()!=null)
                 eb.addField("Channel", event.getVoiceState().getChannel().getName(), true)
                 .addField("Members in Channel", String.valueOf(event.getVoiceState().getChannel().getMembers().size()), true);
-        c.sendMessage(eb.build());
+        c.sendMessage(eb.build()).queue();
     }
 
     @Override

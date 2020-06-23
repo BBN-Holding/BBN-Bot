@@ -25,7 +25,7 @@ public class NewsChannelListener extends ListenerAdapter {
         this.config = config;
     }
 
-    ArrayList<Message> lastmessages = new ArrayList<>();
+    ArrayList<Message> lastMessages = new ArrayList<>();
 
     @Override
     public void onReady(@Nonnull ReadyEvent event) {
@@ -52,10 +52,10 @@ public class NewsChannelListener extends ListenerAdapter {
         boolean isvclog = event.getChannel().getId().equals(config.getVoiceChannelID()) && event.getAuthor().getId().equals(event.getJDA().getSelfUser().getId());
         boolean isnews = event.getChannel().getId().equals(config.getNewsChannelID());
         if (!isvclog && !isnews) {
-            if (lastmessages.size() == 5) {
-                lastmessages.remove(4);
+            if (lastMessages.size() == 5) {
+                lastMessages.remove(4);
             }
-            lastmessages.add(0, event.getMessage());
+            lastMessages.add(0, event.getMessage());
         }
         this.updateNewsChannel(event.getJDA());
     }
@@ -106,16 +106,16 @@ public class NewsChannelListener extends ListenerAdapter {
                     String lastmessagesoutput;
                     if (lastlastmessages == null) {
                         StringBuilder stringBuilder = new StringBuilder();
-                        for (Message lastmessage : lastmessages) {
+                        for (Message lastMessage : lastMessages) {
                             String attachment = "";
-                            if (lastmessage.getEmbeds().size() > 0)
-                                attachment += String.format(",%d Embeds", lastmessage.getEmbeds().size());
-                            if (lastmessage.getAttachments().size() > 0)
-                                attachment += String.format(",%d Attachments", lastmessage.getAttachments().size());
+                            if (lastMessage.getEmbeds().size() > 0)
+                                attachment += String.format(",%d Embeds", lastMessage.getEmbeds().size());
+                            if (lastMessage.getAttachments().size() > 0)
+                                attachment += String.format(",%d Attachments", lastMessage.getAttachments().size());
                             if (attachment.length() != 0)
                                 attachment = String.format("(%s)", attachment.replaceFirst(",", ""));
-                            stringBuilder.append(String.format("#%s - %s: %s %s\n", lastmessage.getChannel().getName(),
-                                    lastmessage.getAuthor().getAsTag(), lastmessage.getContentRaw(), attachment));
+                            stringBuilder.append(String.format("#%s - %s: %s %s\n", lastMessage.getChannel().getName(),
+                                    lastMessage.getAuthor().getAsTag(), lastMessage.getContentRaw(), attachment));
                         }
                         if (stringBuilder.chars().count() == 0) {
                             lastmessagesoutput = "No new captured Messages";
@@ -126,34 +126,31 @@ public class NewsChannelListener extends ListenerAdapter {
                     message.getGuild().retrieveMembers();
                     ArrayList<String> statusinsider = new ArrayList<>();
                     List<Member> insider = message.getGuild().getMembersWithRoles(insiderrole);
-                    for (int i = 0; i < insider.size(); i++) {
-                        Member member = insider.get(i);
+                    for (Member member : insider) {
                         if (member.getOnlineStatus() != OnlineStatus.OFFLINE) {
-                            String game = "";
+                            StringBuilder game = new StringBuilder();
                             if (member.getActivities().size() != 0) {
                                 for (Activity activity : member.getActivities()) {
                                     if (!activity.getName().equals("Custom Status"))
-                                        game += String.format(", %s", activity.getName());
+                                        game.append(String.format(", %s", activity.getName()));
                                 }
                             }
-                            game = game.replaceFirst(", ", "");
+                            game = new StringBuilder(game.toString().replaceFirst(", ", ""));
                             String vc = (member.getVoiceState() != null) ? ((member.getVoiceState().getChannel() != null) ?
                                     "(" + member.getVoiceState().getChannel().getName() + ")" : "") : "";
-                            if (game.length() != 0) game = String.format(" - %s", game);
-                            statusinsider.add(String.format("%s - %s %s%s", member.getUser().getAsTag(), member.getOnlineStatus(), vc, game));
+                            if (game.length() != 0) game = new StringBuilder(String.format(" - %s", game.toString()));
+                            statusinsider.add(String.format("%s - %s %s%s", member.getUser().getAsTag(), member.getOnlineStatus(), vc, game.toString()));
                         }
                     }
 
-                    message.editMessage(
-                            new EmbedBuilder()
-                                    .setTitle("Overview")
-                                    .addField("Last 5 Actions in #voicelog", String.join("\n", vcactions.toArray(new String[0])), false)
-                                    .addField("Last 5 new Messages", lastmessagesoutput, false)
-                                    .addField("Online Insiders", String.join("\n", statusinsider.toArray(new String[0])), false)
-                                    .setFooter("Last updated", "https://bigbotnetwork.com/images/avatar.png")
-                                    .setTimestamp(Instant.now())
-                                    .build()
-                    ).queue();
+                    message.editMessage(new EmbedBuilder()
+                            .setTitle("Overview")
+                            .addField("Last 5 Actions in #voicelog", String.join("\n", vcactions.toArray(new String[0])), false)
+                            .addField("Last 5 new Messages", lastmessagesoutput, false)
+                            .addField("Online Insiders", String.join("\n", statusinsider.toArray(new String[0])), false)
+                            .setFooter("Last updated", "https://bigbotnetwork.com/images/avatar.png")
+                            .setTimestamp(Instant.now())
+                            .build()).queue();
                 }
         );
     }

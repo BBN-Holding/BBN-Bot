@@ -18,8 +18,6 @@ package com.bbn.bot.listeners;
 
 import com.bbn.bot.core.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -50,35 +48,6 @@ public class ReactionAddListener extends ListenerAdapter {
                     .setColor(Color.GREEN)
                     .build()).queue();
 
-        } else if (event.getMessageId().equals(config.getBYBMessageID())) {
-            if (event.getGuild().getTextChannelsByName(event.getUser().getName(), true).size() == 0) {
-                event.getGuild().addRoleToMember(event.getMember(), event.getGuild().getRoleById(config.getWantBotRoleID())).reason("Want a bot").queue();
-                event.getReaction().removeReaction(event.getUser()).queue();
-                TextChannel channel = event.getGuild().createTextChannel(event.getUser().getName())
-                        .setParent(event.getGuild().getCategoryById(config.getBYBCategoryID())).complete();
-                channel.getManager().setTopic("Bot request by " + event.getUser().getAsTag() + " ID: " +
-                        event.getMember().getId()).reason("User wants a bot").complete();
-                channel.createPermissionOverride(event.getMember()).setAllow(
-                        Permission.VIEW_CHANNEL,
-                        Permission.MESSAGE_WRITE,
-                        Permission.MESSAGE_ADD_REACTION,
-                        Permission.MESSAGE_ATTACH_FILES,
-                        Permission.MESSAGE_EMBED_LINKS
-                ).reason("User wants a bot").queue();
-                TextChannel textChannel = event.getGuild().getTextChannelById("452789888945750046");
-                textChannel.sendMessage("<@477141528981012511> ").queue();
-                textChannel.sendMessage(new EmbedBuilder()
-                        .setTitle("User wants a bot")
-                        .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getEffectiveAvatarUrl(),
-                                event.getMember().getUser().getEffectiveAvatarUrl())
-                        .setDescription(channel.getAsMention())
-                        .setTimestamp(Instant.now())
-                        .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
-                        .setColor(Color.GREEN)
-                        .build()).queue();
-            } else {
-                event.getReaction().removeReaction(event.getUser()).queue();
-            }
         }
     }
 }
