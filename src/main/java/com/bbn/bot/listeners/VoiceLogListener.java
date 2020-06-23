@@ -40,25 +40,28 @@ public class VoiceLogListener extends ListenerAdapter {
 
         EmbedBuilder eb = new EmbedBuilder();
         if (event instanceof GuildVoiceMuteEvent)
-            eb.setTitle(event.getMember().getUser().getAsTag() + " " + ((!event.getVoiceState().isMuted()) ? "un" : "") + "muted");
+            eb.setTitle(event.getMember().getUser().getAsTag() + " " + ((!event.getVoiceState().isMuted()) ? "un" : "") + "muted")
+                    .setColor(((!event.getVoiceState().isMuted()) ? Color.GREEN : Color.RED));
         else if (event instanceof GuildVoiceDeafenEvent)
-            eb.setTitle(event.getMember().getUser().getAsTag() + " " + ((!event.getVoiceState().isDeafened()) ? "un" : "") + "deafed");
+            eb.setTitle(event.getMember().getUser().getAsTag() + " " + ((!event.getVoiceState().isDeafened()) ? "un" : "") + "deafed")
+                    .setColor(((!event.getVoiceState().isDeafened()) ? Color.GREEN : Color.RED));
         else if (event instanceof GuildVoiceJoinEvent)
-            eb.setTitle(event.getMember().getUser().getAsTag() + " joined");
+            eb.setTitle(event.getMember().getUser().getAsTag() + " joined").setColor(Color.GREEN);
         else if (event instanceof GuildVoiceLeaveEvent)
             eb.setTitle(event.getMember().getUser().getAsTag() + " left")
                     .addField("Channel", ((GuildVoiceLeaveEvent)event).getChannelLeft().getName(), true)
-                    .addField("Members in Channel", String.valueOf(((GuildVoiceLeaveEvent)event).getChannelLeft().getMembers().size()), true);
+                    .addField("Members in Channel", String.valueOf(((GuildVoiceLeaveEvent)event).getChannelLeft().getMembers().size()), true)
+                    .setColor(Color.RED);
         else if (event instanceof GuildVoiceMoveEvent) {
             eb.setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
                     .setTitle(event.getMember().getUser().getAsTag() + " switched channel")
                     .addField("Old Channel", ((GuildVoiceMoveEvent) event).getChannelLeft().getName(), true)
                     .addBlankField(true)
-                    .addField("Members in old channel", String.valueOf(((GuildVoiceMoveEvent) event).getChannelLeft().getMembers().size()), true);
+                    .addField("Members in old channel", String.valueOf(((GuildVoiceMoveEvent) event).getChannelLeft().getMembers().size()), true)
+                    .setColor(Color.ORANGE);
         }
 
         eb.setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
-                .setColor(Color.RED)
                 .setFooter("Provided by BBN", "https://bigbotnetwork.com/images/avatar.png")
                 .setTimestamp(Instant.now());
         if (event.getVoiceState().getChannel()!=null)
