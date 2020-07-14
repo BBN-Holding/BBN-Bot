@@ -16,7 +16,6 @@
 
 package com.bbn.bot;
 
-import com.bbn.bot.commands.CloseCommand;
 import com.bbn.bot.commands.MergeCommand;
 import com.bbn.bot.commands.WarnCommand;
 import com.bbn.bot.core.CommandHandler;
@@ -44,7 +43,6 @@ public class BBNBot {
         config.load();
 
         CommandHandler.commands.put("warn", new WarnCommand());
-        CommandHandler.commands.put("close", new CloseCommand(config));
         CommandHandler.commands.put("merge", new MergeCommand(config));
 
         JDABuilder builder = JDABuilder.createDefault(config.getToken(), GatewayIntent.getIntents(GatewayIntent.ALL_INTENTS));
