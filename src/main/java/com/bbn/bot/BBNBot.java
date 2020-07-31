@@ -18,9 +18,7 @@ package com.bbn.bot;
 
 import com.bbn.bot.commands.MergeCommand;
 import com.bbn.bot.commands.WarnCommand;
-import com.bbn.bot.core.CommandHandler;
-import com.bbn.bot.core.Config;
-import com.bbn.bot.core.Sender;
+import com.bbn.bot.core.*;
 import com.bbn.bot.listeners.*;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -28,6 +26,12 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
+import org.java_websocket.server.WebSocketServer;
+
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 public class BBNBot {
 
@@ -44,6 +48,8 @@ public class BBNBot {
 
         CommandHandler.commands.put("warn", new WarnCommand());
         CommandHandler.commands.put("merge", new MergeCommand(config));
+
+        Logger logger = new Logger("data/");
 
         JDABuilder builder = JDABuilder.createDefault(config.getToken(), GatewayIntent.getIntents(GatewayIntent.ALL_INTENTS));
         builder.setActivity(Activity.streaming("on the BBN", "https://twitch.tv/bigbotnetwork"))
@@ -63,8 +69,14 @@ public class BBNBot {
                         new OnlineStatusListener(config)
                 );
 
+        String host = "localhost";
+        int port = 8888;
+
+        WebSocketServer server = new WebSocketHandler(new InetSocketAddress(host, port));
+        server.run();
+
         try {
-            jda = builder.build();
+            //jda = builder.build();
         } catch (Exception e) {
             e.printStackTrace();
         }
