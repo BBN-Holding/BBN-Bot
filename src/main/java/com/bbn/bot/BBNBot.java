@@ -59,7 +59,9 @@ public class BBNBot {
                         new VoiceLogListener(config),
                         new CommandListener(),
                         new StatusListener(config, sender),
-                        new NewsChannelListener(config));
+                        new NewsChannelListener(config),
+                        new OnlineStatusListener(config)
+                );
 
         try {
             jda = builder.build();
