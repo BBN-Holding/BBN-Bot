@@ -123,7 +123,7 @@ public class NewsChannelListener extends ListenerAdapter {
                     } else lastmessagesoutput = lastlastmessages;
 
                     Role insiderrole = message.getGuild().getRoleById(config.getInsiderRoleID());
-                    message.getGuild().retrieveMembers();
+                    message.getGuild().loadMembers();
                     ArrayList<String> statusinsider = new ArrayList<>();
                     List<Member> insider = message.getGuild().getMembersWithRoles(insiderrole);
                     for (Member member : insider) {
