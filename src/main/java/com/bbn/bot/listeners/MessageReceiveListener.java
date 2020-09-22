@@ -37,7 +37,7 @@ public class MessageReceiveListener extends ListenerAdapter {
     }
 
     public void onGuildMessageReceived(GuildMessageReceivedEvent e) {
-        if (e.getChannel().getId().equals("449267564745588737")) {
+        if (e.getChannel().getId().equals("757990314937155646")) {
             if (e.getMessage().getContentRaw().toLowerCase().contains("community")) {
                 e.getGuild().addRoleToMember(e.getMember(), e.getGuild().getRoleById(config.getCommunityRoleID())).reason("Verified").queue();
                 e.getGuild().removeRoleFromMember(e.getMember(), e.getGuild().getRoleById(config.getUnVerifiedRoleID())).reason("Verified").queue();

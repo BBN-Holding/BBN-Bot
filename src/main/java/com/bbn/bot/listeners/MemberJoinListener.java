@@ -38,7 +38,7 @@ public class MemberJoinListener extends ListenerAdapter {
                 ? config.getUnVerifiedRoleID() : config.getBotRoleID())))
                 .reason("Auto " + ((!event.getMember().getUser().isBot()) ? "User" : "Bot") + " Role onJoin").queue();
 
-        event.getGuild().getTextChannelById("452789888945750046").sendMessage(new EmbedBuilder()
+        event.getGuild().getTextChannelById(config.getLogChannelID()).sendMessage(new EmbedBuilder()
                 .setTitle(((!event.getMember().getUser().isBot()) ? "User" : "Bot") + " joined")
                 .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getEffectiveAvatarUrl(), event.getMember().getUser().getEffectiveAvatarUrl())
                 .addField(((!event.getMember().getUser().isBot()) ? "User" : "Bot") + " Creation Time", event.getMember().getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
