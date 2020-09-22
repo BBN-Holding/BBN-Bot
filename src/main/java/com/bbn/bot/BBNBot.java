@@ -59,8 +59,7 @@ public class BBNBot {
                         new VoiceLogListener(config),
                         new CommandListener(),
                         new StatusListener(config, sender),
-                        new NewsChannelListener(config),
-                        new OnlineStatusListener(config)
+                        new NewsChannelListener(config)
                 );
 
         try {

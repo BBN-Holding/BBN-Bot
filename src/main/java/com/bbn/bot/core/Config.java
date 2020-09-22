@@ -116,8 +116,4 @@ public class Config {
     public String getBotRoleID() {
         return config.getString("BOTROLE_ID");
     }
-
-    public String getStatusLogChannelID() {
-        return config.getString("STATUSLOG_ID");
-    }
 }
