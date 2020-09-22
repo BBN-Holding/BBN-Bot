@@ -101,14 +101,6 @@ public class Config {
         return config.getString("LOGCHANNEL_ID");
     }
 
-    public String getBYBCategoryID() {
-        return config.getString("BYBCATEGORY_ID");
-    }
-
-    public String getArchiveCategoryID() {
-        return config.getString("ARCHIVECATEGORY_ID");
-    }
-
     public String getVerifyMessageID() {
         return config.getString("VERIFYMESSAGE_ID");
     }
