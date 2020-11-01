@@ -47,12 +47,16 @@ public class VoiceLogListener extends ListenerAdapter {
 
         events.put(System.currentTimeMillis(), event.getMember());
 
+        HashMap<Long, Member> temp = new HashMap<>();
+
         events.forEach((timestamp, member) -> {
                     if (timestamp + 120000 < System.currentTimeMillis()) {
-                        events.remove(timestamp, member);
+                        temp.put(timestamp, member);
                     }
                 }
         );
+
+        temp.forEach((timestamp, member) -> events.remove(timestamp, member));
 
         int count = 0;
         for (Map.Entry<Long, Member> entry : events.entrySet()) {
@@ -91,7 +95,12 @@ public class VoiceLogListener extends ListenerAdapter {
         c.sendMessage(eb.build()).queue();
         if (count > 10) {
             c.sendMessage("Over 10 Events, kick").queue();
-            event.getMember().kick("Voicelog").queue();
+            event.getMember().getUser().openPrivateChannel().queue(
+                    privateChannel -> privateChannel.sendMessage("You spammed Voicelog, bb").queue(
+                            ignore -> event.getMember().kick("Voicelog").queue()
+                    )
+            );
+
         }
     }
 

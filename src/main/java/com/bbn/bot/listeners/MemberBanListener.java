@@ -36,9 +36,9 @@ public class MemberBanListener extends ListenerAdapter {
 
     public void sendMessage(String reason, User user, Guild guild) {
         guild.getTextChannelById(config.getLogChannelID()).sendMessage(new EmbedBuilder()
-                .setTitle((user.isBot()) ? "Bot" : "User" + ((reason==null) ? " unbanned" : " banned"))
+                .setTitle(((user.isBot()) ? "Bot" : "User") + ((reason==null) ? " unbanned" : " banned"))
                 .setAuthor(user.getAsTag(), user.getEffectiveAvatarUrl(), user.getEffectiveAvatarUrl())
-                .addField((user.isBot()) ? "Bot" : "User" + " Creation Time", user.getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
+                .addField(((user.isBot()) ? "Bot" : "User") + " Creation Time", user.getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
                 .addField("ID", user.getId(), true)
                 .addField("Reason", reason==null ? "Not specified" : reason, false)
                 .setTimestamp(Instant.now())
