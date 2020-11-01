@@ -18,6 +18,7 @@ package com.bbn.bot.listeners;
 
 import com.bbn.bot.core.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.guild.voice.*;
@@ -26,10 +27,8 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import javax.annotation.Nonnull;
 import java.awt.*;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 public class VoiceLogListener extends ListenerAdapter {
 
@@ -70,14 +69,22 @@ public class VoiceLogListener extends ListenerAdapter {
         else if (event instanceof GuildVoiceDeafenEvent)
             eb.setTitle(event.getMember().getUser().getAsTag() + " " + ((!event.getVoiceState().isDeafened()) ? "un" : "") + "deafed")
                     .setColor(((!event.getVoiceState().isDeafened()) ? Color.GREEN : Color.RED));
-        else if (event instanceof GuildVoiceJoinEvent)
+        else if (event instanceof GuildVoiceJoinEvent) {
             eb.setTitle(event.getMember().getUser().getAsTag() + " joined").setColor(Color.GREEN);
-        else if (event instanceof GuildVoiceLeaveEvent)
+            if (((GuildVoiceJoinEvent) event).getChannelJoined().getMembers().size()==1) startKickTimeout(event.getJDA(),
+                    event.getMember().getIdLong(), event.getGuild().getIdLong());
+        } else if (event instanceof GuildVoiceLeaveEvent) {
+            if (((GuildVoiceLeaveEvent) event).getChannelLeft().getMembers().size()==1) startKickTimeout(event.getJDA(),
+                    ((GuildVoiceLeaveEvent) event).getChannelLeft().getMembers().get(0).getIdLong(), event.getGuild().getIdLong());
             eb.setTitle(event.getMember().getUser().getAsTag() + " left")
                     .addField("Channel", ((GuildVoiceLeaveEvent) event).getChannelLeft().getName(), true)
                     .addField("Members in Channel", String.valueOf(((GuildVoiceLeaveEvent) event).getChannelLeft().getMembers().size()), true)
                     .setColor(Color.RED);
-        else if (event instanceof GuildVoiceMoveEvent) {
+        } else if (event instanceof GuildVoiceMoveEvent) {
+            if (((GuildVoiceMoveEvent) event).getChannelLeft().getMembers().size()==1) startKickTimeout(event.getJDA(),
+                    ((GuildVoiceMoveEvent) event).getChannelLeft().getMembers().get(0).getIdLong(), event.getGuild().getIdLong());
+            if (((GuildVoiceMoveEvent) event).getChannelJoined().getMembers().size()==1) startKickTimeout(event.getJDA(),
+                    ((GuildVoiceMoveEvent) event).getChannelJoined().getMembers().get(0).getIdLong(), event.getGuild().getIdLong());
             eb.setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
                     .setTitle(event.getMember().getUser().getAsTag() + " switched channel")
                     .addField("Old Channel", ((GuildVoiceMoveEvent) event).getChannelLeft().getName(), true)
@@ -102,6 +109,26 @@ public class VoiceLogListener extends ListenerAdapter {
             );
 
         }
+    }
+
+    HashMap<Long, Long> timeoutlist = new HashMap<>();
+    public void startKickTimeout(JDA jda, long userid, long guildid) {
+        long starttime = System.currentTimeMillis();
+        timeoutlist.remove(userid);
+        timeoutlist.put(userid, starttime);
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (timeoutlist.get(userid)==starttime) {
+                    Member member = jda.getGuildById(guildid).getMemberById(userid);
+                    if (member.getVoiceState().getChannel() != null) {
+                        if (member.getVoiceState().getChannel().getMembers().size() == 1) {
+                            member.getGuild().kickVoiceMember(member).queue();
+                        }
+                    }
+                }
+            }
+        }, 600000);
     }
 
     @Override
