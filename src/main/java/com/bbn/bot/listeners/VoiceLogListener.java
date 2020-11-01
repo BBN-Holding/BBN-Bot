@@ -89,8 +89,8 @@ public class VoiceLogListener extends ListenerAdapter {
             eb.addField("Channel", event.getVoiceState().getChannel().getName(), true)
                     .addField("Members in Channel", String.valueOf(event.getVoiceState().getChannel().getMembers().size()), true);
         c.sendMessage(eb.build()).queue();
-        if (count > 5) {
-            c.sendMessage("Over 5 Events, kick").queue();
+        if (count > 10) {
+            c.sendMessage("Over 10 Events, kick").queue();
             event.getMember().kick("Voicelog").queue();
         }
     }

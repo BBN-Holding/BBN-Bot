@@ -85,16 +85,8 @@ public class Config {
         return config.getString("Password");
     }
 
-    public String getNewsChannelID() {
-        return config.getString("NC_ID");
-    }
-
     public String getVoiceChannelID() {
         return config.getString("VCLOG_ID");
-    }
-
-    public String getInsiderRoleID() {
-        return config.getString("INSIDERROLE_ID");
     }
 
     public String getLogChannelID() {

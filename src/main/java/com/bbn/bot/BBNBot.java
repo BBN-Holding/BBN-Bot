@@ -58,8 +58,7 @@ public class BBNBot {
                         new ReactionAddListener(config),
                         new VoiceLogListener(config),
                         new CommandListener(),
-                        new StatusListener(config, sender),
-                        new NewsChannelListener(config)
+                        new StatusListener(config, sender)
                 );
 
         try {
