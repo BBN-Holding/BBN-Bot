@@ -16,7 +16,6 @@
 
 package com.bbn.bot.core;
 
-import com.bbn.bot.BBNBot;
 import com.sun.mail.smtp.SMTPTransport;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpPost;

@@ -7,7 +7,7 @@ import java.util.Collections;
 
 public class CommandParser {
 
-    public commandContainer parse(String raw, MessageReceivedEvent event) {
+    public CommandContainer parse(String raw, MessageReceivedEvent event) {
         String beheaded = raw.replaceFirst("bbn!", "");
         String[] splitBeheaded = beheaded.split(" ");
         String invoke = splitBeheaded[0];
@@ -16,20 +16,20 @@ public class CommandParser {
         String[] args = new String[split.size() - 1];
         split.subList(1, split.size()).toArray(args);
 
-        return new commandContainer(raw, beheaded, splitBeheaded, invoke, args, event);
+        return new CommandContainer(raw, beheaded, splitBeheaded, invoke, args, event);
     }
 
 
-    static class commandContainer {
+    static class CommandContainer {
 
-        final String raw;
-        final String beheaded;
-        final String[] splitBeheaded;
-        final String invoke;
-        final String[] args;
-        final MessageReceivedEvent event;
+        public final String raw;
+        public final String beheaded;
+        public final String[] splitBeheaded;
+        public final String invoke;
+        public final String[] args;
+        public final MessageReceivedEvent event;
 
-        commandContainer(String rw, String beheaded, String[] splitBeheaded, String invoke, String[] args, MessageReceivedEvent event) {
+        CommandContainer(String rw, String beheaded, String[] splitBeheaded, String invoke, String[] args, MessageReceivedEvent event) {
             this.raw = rw;
             this.beheaded = beheaded;
             this.splitBeheaded = splitBeheaded;

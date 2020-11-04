@@ -18,7 +18,6 @@ package com.bbn.bot.listeners;
 
 import com.bbn.bot.core.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.guild.voice.*;
@@ -28,7 +27,6 @@ import javax.annotation.Nonnull;
 import java.awt.*;
 import java.time.Instant;
 import java.util.*;
-import java.util.List;
 
 public class VoiceLogListener extends ListenerAdapter {
 
@@ -41,12 +39,13 @@ public class VoiceLogListener extends ListenerAdapter {
     }
 
     public void sendMessage(GenericGuildVoiceEvent event) {
+
+        HashMap<Long, Member> temp = new HashMap<>();
+
         TextChannel c = event.getJDA().getTextChannelById(config.getVoiceChannelID());
         event.getGuild().retrieveMember(event.getMember().getUser()).queue();
 
         events.put(System.currentTimeMillis(), event.getMember());
-
-        HashMap<Long, Member> temp = new HashMap<>();
 
         events.forEach((timestamp, member) -> {
                     if (timestamp + 120000 < System.currentTimeMillis()) {
@@ -71,20 +70,20 @@ public class VoiceLogListener extends ListenerAdapter {
                     .setColor(((!event.getVoiceState().isDeafened()) ? Color.GREEN : Color.RED));
         else if (event instanceof GuildVoiceJoinEvent) {
             eb.setTitle(event.getMember().getUser().getAsTag() + " joined").setColor(Color.GREEN);
-            if (((GuildVoiceJoinEvent) event).getChannelJoined().getMembers().size()==1) startKickTimeout(event.getJDA(),
-                    event.getMember().getIdLong(), event.getGuild().getIdLong());
+            if (((GuildVoiceJoinEvent) event).getChannelJoined().getMembers().size() == 1)
+                startKickTimeout(event.getMember());
         } else if (event instanceof GuildVoiceLeaveEvent) {
-            if (((GuildVoiceLeaveEvent) event).getChannelLeft().getMembers().size()==1) startKickTimeout(event.getJDA(),
-                    ((GuildVoiceLeaveEvent) event).getChannelLeft().getMembers().get(0).getIdLong(), event.getGuild().getIdLong());
+            if (((GuildVoiceLeaveEvent) event).getChannelLeft().getMembers().size() == 1)
+                startKickTimeout(((GuildVoiceLeaveEvent) event).getChannelLeft().getMembers().get(0));
             eb.setTitle(event.getMember().getUser().getAsTag() + " left")
                     .addField("Channel", ((GuildVoiceLeaveEvent) event).getChannelLeft().getName(), true)
                     .addField("Members in Channel", String.valueOf(((GuildVoiceLeaveEvent) event).getChannelLeft().getMembers().size()), true)
                     .setColor(Color.RED);
         } else if (event instanceof GuildVoiceMoveEvent) {
-            if (((GuildVoiceMoveEvent) event).getChannelLeft().getMembers().size()==1) startKickTimeout(event.getJDA(),
-                    ((GuildVoiceMoveEvent) event).getChannelLeft().getMembers().get(0).getIdLong(), event.getGuild().getIdLong());
-            if (((GuildVoiceMoveEvent) event).getChannelJoined().getMembers().size()==1) startKickTimeout(event.getJDA(),
-                    ((GuildVoiceMoveEvent) event).getChannelJoined().getMembers().get(0).getIdLong(), event.getGuild().getIdLong());
+            if (((GuildVoiceMoveEvent) event).getChannelLeft().getMembers().size() == 1)
+                startKickTimeout(((GuildVoiceMoveEvent) event).getChannelLeft().getMembers().get(0));
+            if (((GuildVoiceMoveEvent) event).getChannelJoined().getMembers().size() == 1)
+                startKickTimeout(((GuildVoiceMoveEvent) event).getChannelJoined().getMembers().get(0));
             eb.setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
                     .setTitle(event.getMember().getUser().getAsTag() + " switched channel")
                     .addField("Old Channel", ((GuildVoiceMoveEvent) event).getChannelLeft().getName(), true)
@@ -93,7 +92,8 @@ public class VoiceLogListener extends ListenerAdapter {
                     .setColor(Color.ORANGE);
         }
 
-        eb.addField("Events in last 2 Minutes", String.valueOf(count), true).setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
+        eb.addField("Events in last 2 minutes", String.valueOf(count), false)
+                .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
                 .setFooter("Provided by BBN", "https://bigbotnetwork.com/images/avatar.png")
                 .setTimestamp(Instant.now());
         if (event.getVoiceState().getChannel() != null)
@@ -103,24 +103,23 @@ public class VoiceLogListener extends ListenerAdapter {
         if (count > 10) {
             c.sendMessage("Over 10 Events, kick").queue();
             event.getMember().getUser().openPrivateChannel().queue(
-                    privateChannel -> privateChannel.sendMessage("You spammed Voicelog, bb").queue(
-                            ignore -> event.getMember().kick("Voicelog").queue()
-                    )
+                    privateChannel -> privateChannel
+                            .sendMessage("You got rate limited. Please rejoin in 2 minutes. https://discord.gg/nPwjaJk")
+                            .queue(ignore -> event.getMember().kick("Voice Log Spam").queue())
             );
-
         }
     }
 
-    HashMap<Long, Long> timeoutlist = new HashMap<>();
-    public void startKickTimeout(JDA jda, long userid, long guildid) {
-        long starttime = System.currentTimeMillis();
-        timeoutlist.remove(userid);
-        timeoutlist.put(userid, starttime);
+    HashMap<String, Long> timeoutList = new HashMap<>();
+
+    public void startKickTimeout(Member member) {
+        long startTime = System.currentTimeMillis();
+        timeoutList.remove(member.getId());
+        timeoutList.put(member.getId(), startTime);
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                if (timeoutlist.get(userid)==starttime) {
-                    Member member = jda.getGuildById(guildid).getMemberById(userid);
+                if (timeoutList.get(member.getId()) == startTime) {
                     if (member.getVoiceState().getChannel() != null) {
                         if (member.getVoiceState().getChannel().getMembers().size() == 1) {
                             member.getGuild().kickVoiceMember(member).queue();
