@@ -58,19 +58,21 @@ public class MessageReceiveListener extends ListenerAdapter {
     }
 
     public void onPrivateMessageReceived(@NotNull PrivateMessageReceivedEvent e) {
-        e.getJDA().getTextChannelById(config.getLogChannelID()).sendMessage(new EmbedBuilder()
-                .setTitle("Private message received")
-                .setDescription("```" + e.getMessage().getContentRaw() + "```")
-                .setAuthor(e.getAuthor().getAsTag(), null, e.getAuthor().getAvatarUrl())
-                .addField("Mention", e.getAuthor().getAsMention(), true)
-                .addField("User ID", e.getAuthor().getId(), true)
-                .addBlankField(true)
-                .addField("User Creation Time", e.getAuthor().getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
-                .addField("Message ID", e.getMessageId(), true)
-                .setTimestamp(Instant.now())
-                .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
-                .setColor(Color.GREEN)
-                .build()).queue();
+        if (e.getAuthor() != e.getJDA().getSelfUser()) {
+            e.getJDA().getTextChannelById(config.getLogChannelID()).sendMessage(new EmbedBuilder()
+                    .setTitle("Private message received")
+                    .setDescription("```" + e.getMessage().getContentRaw() + "```")
+                    .setAuthor(e.getAuthor().getAsTag(), null, e.getAuthor().getAvatarUrl())
+                    .addField("Mention", e.getAuthor().getAsMention(), true)
+                    .addField("User ID", e.getAuthor().getId(), true)
+                    .addBlankField(true)
+                    .addField("User Creation Time", e.getAuthor().getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
+                    .addField("Message ID", e.getMessageId(), true)
+                    .setTimestamp(Instant.now())
+                    .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
+                    .setColor(Color.GREEN)
+                    .build()).queue();
+        }
         super.onPrivateMessageReceived(e);
     }
 }
