@@ -48,7 +48,7 @@ public class VoiceLogListener extends ListenerAdapter {
         events.put(System.currentTimeMillis(), event.getMember());
 
         events.forEach((timestamp, member) -> {
-                    if (timestamp + 120000 < System.currentTimeMillis()) {
+                    if (timestamp + 30000 < System.currentTimeMillis()) {
                         temp.put(timestamp, member);
                     }
                 }
@@ -92,7 +92,7 @@ public class VoiceLogListener extends ListenerAdapter {
                     .setColor(Color.ORANGE);
         }
 
-        eb.addField("Events in last 2 minutes", String.valueOf(count), false)
+        eb.addField("Events in last 30 seconds", String.valueOf(count), false)
                 .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
                 .setFooter("Provided by BBN", "https://bigbotnetwork.com/images/avatar.png")
                 .setTimestamp(Instant.now());
