@@ -27,6 +27,7 @@ import javax.annotation.Nonnull;
 import java.awt.*;
 import java.time.Instant;
 import java.util.*;
+import java.time.LocalTime;
 
 public class VoiceLogListener extends ListenerAdapter {
 
@@ -92,7 +93,8 @@ public class VoiceLogListener extends ListenerAdapter {
                     .setColor(Color.ORANGE);
         }
 
-        eb.addField("Events in last 30 seconds", String.valueOf(count), false)
+        eb.addField("Current Time", LocalTime.now().toString(),true)
+                .addField("Events in last 30 seconds", String.valueOf(count), true)
                 .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
                 .setFooter("Provided by BBN", "https://bigbotnetwork.com/images/avatar.png")
                 .setTimestamp(Instant.now());
@@ -104,7 +106,7 @@ public class VoiceLogListener extends ListenerAdapter {
             c.sendMessage("Over 10 Events, kick").queue();
             event.getMember().getUser().openPrivateChannel().queue(
                     privateChannel -> privateChannel
-                            .sendMessage("You got rate limited. Please rejoin in 2 minutes. https://discord.gg/nPwjaJk")
+                            .sendMessage("You got rate limited. Please rejoin in 30 seconds. https://discord.gg/nPwjaJk")
                             .queue(ignore -> event.getMember().kick("Voice Log Spam").queue())
             );
         }
