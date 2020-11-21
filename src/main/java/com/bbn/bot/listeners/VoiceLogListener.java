@@ -67,7 +67,7 @@ public class VoiceLogListener extends ListenerAdapter {
             eb.setTitle(event.getMember().getUser().getAsTag() + " " + ((!event.getVoiceState().isMuted()) ? "un" : "") + "muted")
                     .setColor(((!event.getVoiceState().isMuted()) ? Color.GREEN : Color.RED));
         else if (event instanceof GuildVoiceDeafenEvent)
-            eb.setTitle(event.getMember().getUser().getAsTag() + " " + ((!event.getVoiceState().isDeafened()) ? "un" : "") + "deafed")
+            eb.setTitle(event.getMember().getUser().getAsTag() + " " + ((!event.getVoiceState().isDeafened()) ? "un" : "") + "deafened")
                     .setColor(((!event.getVoiceState().isDeafened()) ? Color.GREEN : Color.RED));
         else if (event instanceof GuildVoiceJoinEvent) {
             eb.setTitle(event.getMember().getUser().getAsTag() + " joined").setColor(Color.GREEN);
@@ -78,6 +78,7 @@ public class VoiceLogListener extends ListenerAdapter {
                 startKickTimeout(((GuildVoiceLeaveEvent) event).getChannelLeft().getMembers().get(0));
             eb.setTitle(event.getMember().getUser().getAsTag() + " left")
                     .addField("Channel", ((GuildVoiceLeaveEvent) event).getChannelLeft().getName(), true)
+                    .addBlankField(true)
                     .addField("Members in Channel", String.valueOf(((GuildVoiceLeaveEvent) event).getChannelLeft().getMembers().size()), true)
                     .setColor(Color.RED);
         } else if (event instanceof GuildVoiceMoveEvent) {
@@ -93,14 +94,17 @@ public class VoiceLogListener extends ListenerAdapter {
                     .setColor(Color.ORANGE);
         }
 
+        if (event.getVoiceState().getChannel() != null)
+            eb.addField("Channel", event.getVoiceState().getChannel().getName(), true)
+                    .addBlankField(true)
+                    .addField("Members in Channel", String.valueOf(event.getVoiceState().getChannel().getMembers().size()), true);
+
         eb.addField("Current Time", LocalTime.now().toString(),true)
                 .addField("Events in last 30 seconds", String.valueOf(count), true)
                 .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
                 .setFooter("Provided by BBN", "https://bigbotnetwork.com/images/avatar.png")
                 .setTimestamp(Instant.now());
-        if (event.getVoiceState().getChannel() != null)
-            eb.addField("Channel", event.getVoiceState().getChannel().getName(), true)
-                    .addField("Members in Channel", String.valueOf(event.getVoiceState().getChannel().getMembers().size()), true);
+
         c.sendMessage(eb.build()).queue();
         if (count > 10) {
             c.sendMessage("Over 10 Events, kick").queue();
