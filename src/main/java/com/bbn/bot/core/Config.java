@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 
 public class Config {
 
@@ -108,4 +109,9 @@ public class Config {
     public String getBotRoleID() {
         return config.getString("BOTROLE_ID");
     }
+
+    public Map<String, Object> getSchoolPws() {
+        return config.getJSONObject("SCHOOL_PWS").toMap();
+    }
+
 }
