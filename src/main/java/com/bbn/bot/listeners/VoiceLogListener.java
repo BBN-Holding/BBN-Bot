@@ -70,12 +70,32 @@ public class VoiceLogListener extends ListenerAdapter {
             eb.setTitle(event.getMember().getUser().getAsTag() + " " + ((!event.getVoiceState().isDeafened()) ? "un" : "") + "deafened")
                     .setColor(((!event.getVoiceState().isDeafened()) ? Color.GREEN : Color.RED));
         else if (event instanceof GuildVoiceJoinEvent) {
+            if (((GuildVoiceJoinEvent) event).getChannelJoined().getParent().getName().equalsIgnoreCase("Voice Channels"))
+                if (event.getMember().getUser().getId().equals("261083609148948488") || event.getMember().getUser().getId().equals("401817301919465482"))
+                    event.getMember().getUser().openPrivateChannel().queue(
+                            channel -> channel.sendMessage(new EmbedBuilder()
+                                    .setTitle("Voice Locker")
+                                    .setDescription("Hey Gamer, hier kannst du auswählen was ihr macht und ich stelle den " +
+                                            "Channel richtig ein\n" +
+                                            "<:AmongUs:780057870573109258> - Member limit=10\n" +
+                                            "<:Netflix:780057996712476703> - Member limit=Leute die drin sind\n" +
+                                            "\uD83D\uDED1 - reset time").build()
+                            ).queue(
+                                    msg -> {
+                                        msg.addReaction(event.getGuild().getEmoteById("780057996712476703")).queue();
+                                        msg.addReaction(event.getGuild().getEmoteById("780057870573109258")).queue();
+                                        msg.addReaction("\uD83D\uDED1").queue();
+                                    }
+                            )
+                    );
             eb.setTitle(event.getMember().getUser().getAsTag() + " joined").setColor(Color.GREEN);
             if (((GuildVoiceJoinEvent) event).getChannelJoined().getMembers().size() == 1)
                 startKickTimeout(event.getMember());
         } else if (event instanceof GuildVoiceLeaveEvent) {
-            if (((GuildVoiceLeaveEvent) event).getChannelLeft().getMembers().size() == 1)
+            if (((GuildVoiceLeaveEvent) event).getChannelLeft().getMembers().size() == 1) {
                 startKickTimeout(((GuildVoiceLeaveEvent) event).getChannelLeft().getMembers().get(0));
+            } else if (((GuildVoiceLeaveEvent) event).getChannelLeft().getMembers().size() == 0)
+                ((GuildVoiceLeaveEvent) event).getChannelLeft().getManager().setUserLimit(0).queue();
             eb.setTitle(event.getMember().getUser().getAsTag() + " left")
                     .addField("Channel", ((GuildVoiceLeaveEvent) event).getChannelLeft().getName(), true)
                     .addBlankField(true)
@@ -99,7 +119,7 @@ public class VoiceLogListener extends ListenerAdapter {
                     .addBlankField(true)
                     .addField("Members in Channel", String.valueOf(event.getVoiceState().getChannel().getMembers().size()), true);
 
-        eb.addField("Current Time", LocalTime.now().toString(),true)
+        eb.addField("Current Time", LocalTime.now().toString(), true)
                 .addField("Events in last 30 seconds", String.valueOf(count), true)
                 .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
                 .setFooter("Provided by BBN", "https://bigbotnetwork.com/images/avatar.png")
