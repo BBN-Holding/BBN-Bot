@@ -57,10 +57,10 @@ public class ReactionAddListener extends ListenerAdapter {
             }
 
         }
-        if (!event.getUser().isBot()) {
-            if (event.getChannelType() == ChannelType.PRIVATE) {
-                Guild guild = event.getJDA().getGuildChannelById(config.getLogChannelID()).getGuild();
-                Member member = guild.getMember(event.getUser());
+        if (!event.getUser().isBot() && event.getChannelType() == ChannelType.PRIVATE) {
+            Guild guild = event.getJDA().getGuildChannelById(config.getLogChannelID()).getGuild();
+            Member member = guild.getMember(event.getUser());
+            if (member.getVoiceState().inVoiceChannel()) {
                 VoiceChannel vc = member.getVoiceState().getChannel();
                 switch (event.getReactionEmote().getName()) {
                     case "Netflix":
