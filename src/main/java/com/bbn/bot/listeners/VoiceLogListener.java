@@ -39,6 +39,7 @@ public class VoiceLogListener extends ListenerAdapter {
         this.events = new HashMap<>();
     }
 
+    ArrayList<String> allowedids = new ArrayList(Arrays.asList("261083609148948488", "401817301919465482", "774296154073595934", "771761319544225892"));
     public void sendMessage(GenericGuildVoiceEvent event) {
 
         HashMap<Long, Member> temp = new HashMap<>();
@@ -71,7 +72,7 @@ public class VoiceLogListener extends ListenerAdapter {
                     .setColor(((!event.getVoiceState().isDeafened()) ? Color.GREEN : Color.RED));
         else if (event instanceof GuildVoiceJoinEvent) {
             if (((GuildVoiceJoinEvent) event).getChannelJoined().getParent().getName().equalsIgnoreCase("Voice Channels"))
-                if (event.getMember().getUser().getId().equals("261083609148948488") || event.getMember().getUser().getId().equals("401817301919465482"))
+                if (allowedids.contains(event.getMember().getUser().getId()))
                     event.getMember().getUser().openPrivateChannel().queue(
                             channel -> channel.sendMessage(new EmbedBuilder()
                                     .setTitle("Voice Locker")
