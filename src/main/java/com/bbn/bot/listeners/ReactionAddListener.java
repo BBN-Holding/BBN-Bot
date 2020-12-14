@@ -39,24 +39,28 @@ public class ReactionAddListener extends ListenerAdapter {
 
     public void onMessageReactionAdd(MessageReactionAddEvent event) {
         if (event.getMessageId().equals(config.getVerifyMessageID())) {
-            event.getGuild().addRoleToMember(event.getMember(), event.getGuild().getRoleById(config.getCommunityRoleID())).reason("Verified").queue();
-            event.getGuild().removeRoleFromMember(event.getMember(), event.getGuild().getRoleById(config.getUnVerifiedRoleID())).reason("Verified").queue();
-            event.getReaction().removeReaction(event.getUser()).queue();
-            event.getGuild().getTextChannelById(config.getLogChannelID()).sendMessage(new EmbedBuilder()
-                    .setTitle("User verified")
-                    .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getEffectiveAvatarUrl(), event.getMember().getUser().getEffectiveAvatarUrl())
-                    .addField("User Creation Time", event.getMember().getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
-                    .addField("ID", event.getMember().getId(), true)
-                    .setTimestamp(Instant.now())
-                    .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
-                    .setColor(Color.GREEN)
-                    .build()).queue();
+            if (event.getReactionEmote().getEmoji().equals("✅")) {
+                event.getGuild().addRoleToMember(event.getMember(), event.getGuild().getRoleById(config.getCommunityRoleID())).reason("Verified").queue();
+                event.getGuild().removeRoleFromMember(event.getMember(), event.getGuild().getRoleById(config.getUnVerifiedRoleID())).reason("Verified").queue();
+                event.getReaction().removeReaction(event.getUser()).queue();
+                event.getGuild().getTextChannelById(config.getLogChannelID()).sendMessage(new EmbedBuilder()
+                        .setTitle("User verified")
+                        .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getEffectiveAvatarUrl(), event.getMember().getUser().getEffectiveAvatarUrl())
+                        .addField("User Creation Time", event.getMember().getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
+                        .addField("ID", event.getMember().getId(), true)
+                        .setTimestamp(Instant.now())
+                        .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
+                        .setColor(Color.GREEN)
+                        .build()).queue();
+            } else {
+                event.getReaction().removeReaction(event.getUser()).queue();
+            }
 
         }
-        if (!event.getUser().isBot()) {
-            if (event.getChannelType() == ChannelType.PRIVATE) {
-                Guild guild = event.getJDA().getGuildChannelById(config.getLogChannelID()).getGuild();
-                Member member = guild.getMember(event.getUser());
+        if (!event.getUser().isBot() && event.getChannelType() == ChannelType.PRIVATE) {
+            Guild guild = event.getJDA().getGuildChannelById(config.getLogChannelID()).getGuild();
+            Member member = guild.getMember(event.getUser());
+            if (member.getVoiceState().inVoiceChannel()) {
                 VoiceChannel vc = member.getVoiceState().getChannel();
                 switch (event.getReactionEmote().getName()) {
                     case "Netflix":
