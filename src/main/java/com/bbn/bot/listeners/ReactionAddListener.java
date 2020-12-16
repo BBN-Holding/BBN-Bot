@@ -57,38 +57,25 @@ public class ReactionAddListener extends ListenerAdapter {
             }
 
         }
-        if (!event.getUser().isBot() && event.getChannelType() == ChannelType.PRIVATE) {
+        if (!event.getUser().isBot() && event.getChannelType() == ChannelType.TEXT) {
             Guild guild = event.getJDA().getGuildChannelById(config.getLogChannelID()).getGuild();
-            Member member = guild.getMember(event.getUser());
-            if (member.getVoiceState().inVoiceChannel()) {
-                VoiceChannel vc = member.getVoiceState().getChannel();
-                switch (event.getReactionEmote().getName()) {
-                    case "Netflix":
-                        vc.getManager().setUserLimit(vc.getMembers().size()).queue();
-                        break;
-                    case "AmongUs":
-                        vc.getManager().setUserLimit(10).queue();
-                        break;
-                    case "\uD83D\uDED1":
-                        vc.getManager().setUserLimit(0).queue();
-                        break;
+            if (event.getTextChannel().getId().equals("788844358592888863")) {
+                Member member = guild.getMember(event.getUser());
+                if (member.getVoiceState().inVoiceChannel()) {
+                    VoiceChannel vc = member.getVoiceState().getChannel();
+                    switch (event.getReactionEmote().getName()) {
+                        case "Netflix":
+                            vc.getManager().setUserLimit(vc.getMembers().size()).queue();
+                            break;
+                        case "AmongUs":
+                            vc.getManager().setUserLimit(10).queue();
+                            break;
+                        case "\uD83D\uDED1":
+                            vc.getManager().setUserLimit(0).queue();
+                            break;
+                    }
+                    event.getReaction().removeReaction(event.getUser()).queue();
                 }
-                event.getPrivateChannel().deleteMessageById(event.getMessageId()).queue(
-                        bruh -> event.getPrivateChannel().sendMessage(new EmbedBuilder()
-                                .setTitle("Voice Locker")
-                                .setDescription("Hey Gamer, hier kannst du auswählen was ihr macht und ich stelle den " +
-                                        "Channel richtig ein\n" +
-                                        "<:AmongUs:780057870573109258> - Member limit=10\n" +
-                                        "<:Netflix:780057996712476703> - Member limit=Leute die drin sind\n" +
-                                        "\uD83D\uDED1 - reset time").build()
-                        ).queue(
-                                msg -> {
-                                    msg.addReaction(guild.getEmoteById("780057996712476703")).queue();
-                                    msg.addReaction(guild.getEmoteById("780057870573109258")).queue();
-                                    msg.addReaction("\uD83D\uDED1").queue();
-                                }
-                        )
-                );
             }
         }
     }
