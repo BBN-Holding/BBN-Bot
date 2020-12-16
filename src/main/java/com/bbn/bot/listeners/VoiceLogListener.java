@@ -71,24 +71,6 @@ public class VoiceLogListener extends ListenerAdapter {
             eb.setTitle(event.getMember().getUser().getAsTag() + " " + ((!event.getVoiceState().isDeafened()) ? "un" : "") + "deafened")
                     .setColor(((!event.getVoiceState().isDeafened()) ? Color.GREEN : Color.RED));
         else if (event instanceof GuildVoiceJoinEvent) {
-            if (((GuildVoiceJoinEvent) event).getChannelJoined().getParent().getName().equalsIgnoreCase("Voice Channels"))
-                if (allowedids.contains(event.getMember().getUser().getId()))
-                    event.getMember().getUser().openPrivateChannel().queue(
-                            channel -> channel.sendMessage(new EmbedBuilder()
-                                    .setTitle("Voice Locker")
-                                    .setDescription("Hey Gamer, hier kannst du auswählen was ihr macht und ich stelle den " +
-                                            "Channel richtig ein\n" +
-                                            "<:AmongUs:780057870573109258> - Member limit=10\n" +
-                                            "<:Netflix:780057996712476703> - Member limit=Leute die drin sind\n" +
-                                            "\uD83D\uDED1 - reset time").build()
-                            ).queue(
-                                    msg -> {
-                                        msg.addReaction(event.getGuild().getEmoteById("780057996712476703")).queue();
-                                        msg.addReaction(event.getGuild().getEmoteById("780057870573109258")).queue();
-                                        msg.addReaction("\uD83D\uDED1").queue();
-                                    }
-                            )
-                    );
             eb.setTitle(event.getMember().getUser().getAsTag() + " joined").setColor(Color.GREEN);
             if (((GuildVoiceJoinEvent) event).getChannelJoined().getMembers().size() == 1)
                 startKickTimeout(event.getMember());
