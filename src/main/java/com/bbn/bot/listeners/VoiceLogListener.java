@@ -26,8 +26,8 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import javax.annotation.Nonnull;
 import java.awt.*;
 import java.time.Instant;
-import java.util.*;
 import java.time.LocalTime;
+import java.util.*;
 
 public class VoiceLogListener extends ListenerAdapter {
 
@@ -40,6 +40,7 @@ public class VoiceLogListener extends ListenerAdapter {
     }
 
     ArrayList<String> allowedids = new ArrayList(Arrays.asList("261083609148948488", "401817301919465482", "774296154073595934", "771761319544225892"));
+
     public void sendMessage(GenericGuildVoiceEvent event) {
 
         HashMap<Long, Member> temp = new HashMap<>();
@@ -64,10 +65,11 @@ public class VoiceLogListener extends ListenerAdapter {
         }
 
         EmbedBuilder eb = new EmbedBuilder();
-        if (event instanceof GuildVoiceMuteEvent)
+        if (event instanceof GuildVoiceMuteEvent) {
             eb.setTitle(event.getMember().getUser().getAsTag() + " " + ((!event.getVoiceState().isMuted()) ? "un" : "") + "muted")
                     .setColor(((!event.getVoiceState().isMuted()) ? Color.GREEN : Color.RED));
-        else if (event instanceof GuildVoiceDeafenEvent)
+            startKickTimeout(event.getMember());
+        } else if (event instanceof GuildVoiceDeafenEvent)
             eb.setTitle(event.getMember().getUser().getAsTag() + " " + ((!event.getVoiceState().isDeafened()) ? "un" : "") + "deafened")
                     .setColor(((!event.getVoiceState().isDeafened()) ? Color.GREEN : Color.RED));
         else if (event instanceof GuildVoiceJoinEvent) {
@@ -89,6 +91,10 @@ public class VoiceLogListener extends ListenerAdapter {
                 startKickTimeout(((GuildVoiceMoveEvent) event).getChannelLeft().getMembers().get(0));
             if (((GuildVoiceMoveEvent) event).getChannelJoined().getMembers().size() == 1)
                 startKickTimeout(((GuildVoiceMoveEvent) event).getChannelJoined().getMembers().get(0));
+            if (((GuildVoiceMoveEvent) event).getChannelLeft().getMembers().size() == 0)
+                ((GuildVoiceMoveEvent) event).getChannelLeft().getManager().setUserLimit(0).queue();
+            if (((GuildVoiceMoveEvent) event).getChannelJoined().getMembers().size() == 0)
+                ((GuildVoiceMoveEvent) event).getChannelJoined().getManager().setUserLimit(0).queue();
             eb.setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
                     .setTitle(event.getMember().getUser().getAsTag() + " switched channel")
                     .addField("Old Channel", ((GuildVoiceMoveEvent) event).getChannelLeft().getName(), true)
@@ -123,6 +129,7 @@ public class VoiceLogListener extends ListenerAdapter {
     HashMap<String, Long> timeoutList = new HashMap<>();
 
     public void startKickTimeout(Member member) {
+        member.getJDA().getTextChannelById(config.getVoiceChannelID()).sendMessage("Started Timeout for "+member.getUser().getAsTag()).queue();
         long startTime = System.currentTimeMillis();
         timeoutList.remove(member.getId());
         timeoutList.put(member.getId(), startTime);
@@ -131,13 +138,20 @@ public class VoiceLogListener extends ListenerAdapter {
             public void run() {
                 if (timeoutList.get(member.getId()) == startTime) {
                     if (member.getVoiceState().getChannel() != null) {
-                        if (member.getVoiceState().getChannel().getMembers().size() == 1) {
+                        member.getJDA().getTextChannelById(config.getVoiceChannelID()).sendMessage("Checking Activity for "+member.getUser().getAsTag()).queue();
+                        int count = 0;
+                        for (Member member : member.getVoiceState().getChannel().getMembers()) {
+                            if (!member.getUser().isBot()) count++;
+                        }
+
+                        if (member.getVoiceState().isMuted() || count==1) {
+                            member.getJDA().getTextChannelById(config.getVoiceChannelID()).sendMessage("Kicking "+member.getUser().getAsTag()+" because of afk").queue();
                             member.getGuild().kickVoiceMember(member).queue();
                         }
                     }
                 }
             }
-        }, 600000);
+        }, 60000*5);
     }
 
     @Override
