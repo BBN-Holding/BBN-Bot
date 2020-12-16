@@ -59,9 +59,8 @@ public class MessageReceiveListener extends ListenerAdapter {
 
     public void onPrivateMessageReceived(@NotNull PrivateMessageReceivedEvent e) {
         if (e.getAuthor() != e.getJDA().getSelfUser()) {
-            e.getJDA().getTextChannelById(config.getLogChannelID()).sendMessage(new EmbedBuilder()
+            EmbedBuilder eb = new EmbedBuilder()
                     .setTitle("Private message received")
-                    .setDescription("```" + e.getMessage().getContentRaw() + "```")
                     .setAuthor(e.getAuthor().getAsTag(), null, e.getAuthor().getAvatarUrl())
                     .addField("Mention", e.getAuthor().getAsMention(), true)
                     .addField("User ID", e.getAuthor().getId(), true)
@@ -70,8 +69,20 @@ public class MessageReceiveListener extends ListenerAdapter {
                     .addField("Message ID", e.getMessageId(), true)
                     .setTimestamp(Instant.now())
                     .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
-                    .setColor(Color.GREEN)
-                    .build()).queue();
+                    .setColor(Color.GREEN);
+
+            if (e.getMessage().getAttachments().isEmpty()) {
+                eb.setDescription("```" + e.getMessage().getContentRaw() + "```");
+                e.getJDA().getTextChannelById(config.getLogChannelID()).sendMessage(eb.build()).queue();
+            } else if (e.getMessage().getContentRaw().length() > 0 && !e.getMessage().getAttachments().isEmpty()) {
+                eb.setDescription("```" + e.getMessage().getContentRaw() + "```");
+                e.getJDA().getTextChannelById(config.getLogChannelID()).sendMessage(eb.build()).queue();
+                e.getJDA().getTextChannelById(config.getLogChannelID()).sendMessage(e.getMessage().getAttachments().get(0).getUrl()).queue();
+            } else {
+                e.getJDA().getTextChannelById(config.getLogChannelID()).sendMessage(eb.build()).queue();
+                e.getJDA().getTextChannelById(config.getLogChannelID()).sendMessage(e.getMessage().getAttachments().get(0).getUrl()).queue();
+            }
+
         }
         super.onPrivateMessageReceived(e);
     }
