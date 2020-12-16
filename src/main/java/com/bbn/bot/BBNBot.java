@@ -18,6 +18,7 @@ package com.bbn.bot;
 
 import com.bbn.bot.commands.MergeCommand;
 import com.bbn.bot.commands.SchoolCommand;
+import com.bbn.bot.commands.VCLockCommand;
 import com.bbn.bot.commands.WarnCommand;
 import com.bbn.bot.core.CommandHandler;
 import com.bbn.bot.core.Config;
@@ -46,6 +47,7 @@ public class BBNBot {
         CommandHandler.commands.put("warn", new WarnCommand());
         CommandHandler.commands.put("merge", new MergeCommand(config));
         CommandHandler.commands.put("school", new SchoolCommand(config));
+        CommandHandler.commands.put("vclock", new VCLockCommand());
 
         JDABuilder builder = JDABuilder.createDefault(config.getToken(), GatewayIntent.getIntents(GatewayIntent.ALL_INTENTS));
         builder.setActivity(Activity.streaming("on the BBN", "https://twitch.tv/bigbotnetwork"))
