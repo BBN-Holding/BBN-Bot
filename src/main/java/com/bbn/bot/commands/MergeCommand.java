@@ -1,6 +1,5 @@
 package com.bbn.bot.commands;
 
-import com.bbn.bot.BBNBot;
 import com.bbn.bot.core.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
