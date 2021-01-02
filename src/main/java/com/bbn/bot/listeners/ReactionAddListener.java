@@ -67,11 +67,14 @@ public class ReactionAddListener extends ListenerAdapter {
                         case "Netflix":
                             vc.getManager().setUserLimit(vc.getMembers().size()).queue();
                             break;
-                        case "AmongUs":
-                            vc.getManager().setUserLimit(10).queue();
-                            break;
                         case "\uD83D\uDED1":
                             vc.getManager().setUserLimit(0).queue();
+                            vc.getManager().setName(vc.getName().replace(" - Sleep", "")).queue();
+                            break;
+                        case "\uD83C\uDF1B":
+                            vc.getManager().setName((vc.getName().endsWith(" - Sleep")) ?
+                                    vc.getName().replace(" - Sleep", "") :
+                                    vc.getName()+" - Sleep").queue();
                             break;
                     }
                     event.getReaction().removeReaction(event.getUser()).queue();

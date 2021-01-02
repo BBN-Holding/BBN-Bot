@@ -79,8 +79,11 @@ public class VoiceLogListener extends ListenerAdapter {
         } else if (event instanceof GuildVoiceLeaveEvent) {
             if (((GuildVoiceLeaveEvent) event).getChannelLeft().getMembers().size() == 1) {
                 startKickTimeout(((GuildVoiceLeaveEvent) event).getChannelLeft().getMembers().get(0));
-            } else if (((GuildVoiceLeaveEvent) event).getChannelLeft().getMembers().size() == 0)
+            } else if (((GuildVoiceLeaveEvent) event).getChannelLeft().getMembers().size() == 0) {
                 ((GuildVoiceLeaveEvent) event).getChannelLeft().getManager().setUserLimit(0).queue();
+                ((GuildVoiceLeaveEvent) event).getChannelLeft().getManager().setName(((GuildVoiceLeaveEvent) event).getChannelLeft()
+                        .getName().replace(" - Sleep", "")).queue();
+            }
             eb.setTitle(event.getMember().getUser().getAsTag() + " left")
                     .addField("Channel", ((GuildVoiceLeaveEvent) event).getChannelLeft().getName(), true)
                     .addBlankField(true)
@@ -91,10 +94,11 @@ public class VoiceLogListener extends ListenerAdapter {
                 startKickTimeout(((GuildVoiceMoveEvent) event).getChannelLeft().getMembers().get(0));
             if (((GuildVoiceMoveEvent) event).getChannelJoined().getMembers().size() == 1)
                 startKickTimeout(((GuildVoiceMoveEvent) event).getChannelJoined().getMembers().get(0));
-            if (((GuildVoiceMoveEvent) event).getChannelLeft().getMembers().size() == 0)
+            if (((GuildVoiceMoveEvent) event).getChannelLeft().getMembers().size() == 0) {
                 ((GuildVoiceMoveEvent) event).getChannelLeft().getManager().setUserLimit(0).queue();
-            if (((GuildVoiceMoveEvent) event).getChannelJoined().getMembers().size() == 0)
-                ((GuildVoiceMoveEvent) event).getChannelJoined().getManager().setUserLimit(0).queue();
+                ((GuildVoiceLeaveEvent) event).getChannelLeft().getManager().setName(((GuildVoiceLeaveEvent) event).getChannelLeft()
+                        .getName().replace(" - Sleep", "")).queue();
+            }
             eb.setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
                     .setTitle(event.getMember().getUser().getAsTag() + " switched channel")
                     .addField("Old Channel", ((GuildVoiceMoveEvent) event).getChannelLeft().getName(), true)
