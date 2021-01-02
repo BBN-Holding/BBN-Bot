@@ -96,7 +96,7 @@ public class VoiceLogListener extends ListenerAdapter {
                 startKickTimeout(((GuildVoiceMoveEvent) event).getChannelJoined().getMembers().get(0));
             if (((GuildVoiceMoveEvent) event).getChannelLeft().getMembers().size() == 0) {
                 ((GuildVoiceMoveEvent) event).getChannelLeft().getManager().setUserLimit(0).queue();
-                ((GuildVoiceLeaveEvent) event).getChannelLeft().getManager().setName(((GuildVoiceLeaveEvent) event).getChannelLeft()
+                ((GuildVoiceMoveEvent) event).getChannelLeft().getManager().setName(((GuildVoiceMoveEvent) event).getChannelLeft()
                         .getName().replace(" - Sleep", "")).queue();
             }
             eb.setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
