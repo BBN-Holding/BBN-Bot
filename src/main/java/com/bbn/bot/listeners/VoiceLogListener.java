@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2020 GregTCLTK and Schlauer-Hax
+ * Copyright 2018-2021 GregTCLTK and Schlauer-Hax
  *
  * Licensed under the MIT License;
  * you may not use this file except in compliance with the License.
