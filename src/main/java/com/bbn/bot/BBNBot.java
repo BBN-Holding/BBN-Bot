@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2020 GregTCLTK and Schlauer-Hax
+ * Copyright 2018-2021 GregTCLTK and Schlauer-Hax
  *
  * Licensed under the MIT License;
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package com.bbn.bot;
 
 import com.bbn.bot.commands.MergeCommand;
-import com.bbn.bot.commands.SchoolCommand;
 import com.bbn.bot.commands.VCLockCommand;
 import com.bbn.bot.commands.WarnCommand;
 import com.bbn.bot.core.CommandHandler;
@@ -46,7 +45,6 @@ public class BBNBot {
 
         CommandHandler.commands.put("warn", new WarnCommand());
         CommandHandler.commands.put("merge", new MergeCommand(config));
-        CommandHandler.commands.put("school", new SchoolCommand(config));
         CommandHandler.commands.put("vclock", new VCLockCommand());
 
         JDABuilder builder = JDABuilder.createDefault(config.getToken(), GatewayIntent.getIntents(GatewayIntent.ALL_INTENTS));
