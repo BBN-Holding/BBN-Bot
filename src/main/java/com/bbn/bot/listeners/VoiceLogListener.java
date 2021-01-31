@@ -39,8 +39,6 @@ public class VoiceLogListener extends ListenerAdapter {
         this.events = new HashMap<>();
     }
 
-    ArrayList<String> allowedids = new ArrayList(Arrays.asList("261083609148948488", "401817301919465482", "774296154073595934", "771761319544225892"));
-
     public void sendMessage(GenericGuildVoiceEvent event) {
 
         HashMap<Long, Member> temp = new HashMap<>();
@@ -75,9 +73,11 @@ public class VoiceLogListener extends ListenerAdapter {
             eb.setTitle(event.getMember().getUser().getAsTag() + " joined").setColor(Color.GREEN);
         } else if (event instanceof GuildVoiceLeaveEvent) {
             if (((GuildVoiceLeaveEvent) event).getChannelLeft().getMembers().size() == 0) {
-                ((GuildVoiceLeaveEvent) event).getChannelLeft().getManager().setUserLimit(0).queue();
-                ((GuildVoiceLeaveEvent) event).getChannelLeft().getManager().setName(((GuildVoiceLeaveEvent) event).getChannelLeft()
-                        .getName().replace(" - Sleep", "")).queue();
+                if (((GuildVoiceLeaveEvent) event).getChannelLeft().getUserLimit() != 0)
+                    ((GuildVoiceLeaveEvent) event).getChannelLeft().getManager().setUserLimit(0).queue();
+                if (((GuildVoiceLeaveEvent) event).getChannelLeft().getName().contains(" - Sleep"))
+                    ((GuildVoiceLeaveEvent) event).getChannelLeft().getManager().setName(((GuildVoiceLeaveEvent) event).getChannelLeft()
+                            .getName().replace(" - Sleep", "")).queue();
             }
             eb.setTitle(event.getMember().getUser().getAsTag() + " left")
                     .addField("Channel", ((GuildVoiceLeaveEvent) event).getChannelLeft().getName(), true)
