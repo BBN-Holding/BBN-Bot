@@ -49,7 +49,7 @@ public class StatusListener extends ListenerAdapter {
     }
 
     @Override
-    public void onReconnect(@Nonnull ReconnectedEvent event) {
+    public void onReconnected(@Nonnull ReconnectedEvent event) {
         run(event);
     }
 
