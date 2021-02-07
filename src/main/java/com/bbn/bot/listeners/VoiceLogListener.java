@@ -19,6 +19,7 @@ package com.bbn.bot.listeners;
 import com.bbn.bot.core.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.guild.voice.*;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -111,13 +112,22 @@ public class VoiceLogListener extends ListenerAdapter {
                 .setTimestamp(Instant.now());
 
         c.sendMessage(eb.build()).queue();
-        if (count > 10) {
-            c.sendMessage("Over 10 Events, kick").queue();
+        if (count == 10) {
+            c.sendMessage("10 Events, kick").queue();
             event.getMember().getUser().openPrivateChannel().queue(
                     privateChannel -> privateChannel
-                            .sendMessage("You got rate limited. Please rejoin in 30 seconds. https://discord.gg/nPwjaJk")
-                            .queue(ignore -> event.getMember().kick("Voice Log Spam").queue())
+                            .sendMessage("You got rate limited. Please rejoin in 2 minutes.")
+                            .queue()
             );
+            event.getGuild().kickVoiceMember(event.getMember()).queue();
+            Role role = event.getGuild().getRoleById(784850371431759893L);
+            event.getGuild().addRoleToMember(event.getMember(), role).queue();
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    event.getGuild().removeRoleFromMember(event.getMember(), role).queue();
+                }
+            }, 120000);
         }
     }
 
