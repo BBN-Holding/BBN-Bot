@@ -57,7 +57,7 @@ public class MemberBanListener extends ListenerAdapter {
                 .addField("ID", user.getId(), true)
                 .addField("Reason", reason==null ? "Not specified" : reason, false)
                 .setTimestamp(Instant.now())
-                .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
+                .setFooter("BBN", "https://bbn.one/images/avatar.png")
                 .setColor(Color.RED)
                 .build()).queue();
     }

@@ -108,7 +108,7 @@ public class VoiceLogListener extends ListenerAdapter {
                 .addBlankField(true)
                 .addField("Events in last 30 seconds", String.valueOf(count), true)
                 .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
-                .setFooter("Provided by BBN", "https://bigbotnetwork.com/images/avatar.png")
+                .setFooter("Provided by BBN", "https://bbn.one/images/avatar.png")
                 .setTimestamp(Instant.now());
 
         c.sendMessage(eb.build()).queue();

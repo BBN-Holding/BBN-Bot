@@ -46,7 +46,7 @@ public class MergeCommand implements Command {
                             .setTitle("Successfully created")
                             .setDescription("[Successfully created the PR on GitHub](" + pr.getHtmlUrl() + ")")
                             .setTimestamp(Instant.now())
-                            .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
+                            .setFooter("BBN", "https://bbn.one/images/avatar.png")
                             .setColor(Color.GREEN)
                             .build()).queue();
                 } catch (HttpException e) {
@@ -54,7 +54,7 @@ public class MergeCommand implements Command {
                             .setTitle("Invalid branch")
                             .setDescription("One or both branch names are invalid.")
                             .setTimestamp(Instant.now())
-                            .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
+                            .setFooter("BBN", "https://bbn.one/images/avatar.png")
                             .setColor(Color.RED)
                             .build()).queue();
                 } catch (Exception e) {
@@ -62,7 +62,7 @@ public class MergeCommand implements Command {
                             .setTitle("Error while creating")
                             .setDescription("```" + e.toString() + "```")
                             .setTimestamp(Instant.now())
-                            .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
+                            .setFooter("BBN", "https://bbn.one/images/avatar.png")
                             .setColor(Color.RED)
                             .build()).queue();
                 }
@@ -71,7 +71,7 @@ public class MergeCommand implements Command {
                         .setTitle("Missing branch(es)")
                         .setDescription("You have to specify two different branch names. Separated by a space.")
                         .setTimestamp(Instant.now())
-                        .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
+                        .setFooter("BBN", "https://bbn.one/images/avatar.png")
                         .setColor(Color.RED)
                         .build()).queue();
             }
@@ -80,7 +80,7 @@ public class MergeCommand implements Command {
                     .setTitle("No permission")
                     .setDescription("You aren't allowed to use this command.")
                     .setTimestamp(Instant.now())
-                    .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
+                    .setFooter("BBN", "https://bbn.one/images/avatar.png")
                     .setColor(Color.RED)
                     .build()).queue();
         }

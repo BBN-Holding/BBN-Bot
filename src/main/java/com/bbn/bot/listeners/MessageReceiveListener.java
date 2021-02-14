@@ -48,7 +48,7 @@ public class MessageReceiveListener extends ListenerAdapter {
                         .addField("User Creation Time", e.getMember().getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
                         .addField("ID", e.getMember().getId(), true)
                         .setTimestamp(Instant.now())
-                        .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
+                        .setFooter("BBN", "https://bbn.one/images/avatar.png")
                         .setColor(Color.GREEN)
                         .build()).queue();
             } else {
@@ -68,7 +68,7 @@ public class MessageReceiveListener extends ListenerAdapter {
                     .addField("User Creation Time", e.getAuthor().getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
                     .addField("Message ID", e.getMessageId(), true)
                     .setTimestamp(Instant.now())
-                    .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
+                    .setFooter("BBN", "https://bbn.one/images/avatar.png")
                     .setColor(Color.GREEN);
 
             if (e.getMessage().getAttachments().isEmpty()) {

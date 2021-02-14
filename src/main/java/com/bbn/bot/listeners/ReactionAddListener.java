@@ -49,7 +49,7 @@ public class ReactionAddListener extends ListenerAdapter {
                         .addField("User Creation Time", event.getMember().getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
                         .addField("ID", event.getMember().getId(), true)
                         .setTimestamp(Instant.now())
-                        .setFooter("BigBotNetwork", "https://bigbotnetwork.com/images/avatar.png")
+                        .setFooter("BBN", "https://bbn.one/images/avatar.png")
                         .setColor(Color.GREEN)
                         .build()).queue();
             } else {
