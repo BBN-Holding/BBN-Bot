@@ -22,6 +22,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.guild.voice.*;
+import net.dv8tion.jda.api.exceptions.MissingAccessException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import javax.annotation.Nonnull;
@@ -87,9 +88,13 @@ public class VoiceLogListener extends ListenerAdapter {
                     .setColor(Color.RED);
         } else if (event instanceof GuildVoiceMoveEvent) {
             if (((GuildVoiceMoveEvent) event).getChannelLeft().getMembers().size() == 0) {
-                ((GuildVoiceMoveEvent) event).getChannelLeft().getManager().setUserLimit(0).queue();
-                ((GuildVoiceMoveEvent) event).getChannelLeft().getManager().setName(((GuildVoiceMoveEvent) event).getChannelLeft()
-                        .getName().replace(" - Sleep", "")).queue();
+                try {
+                    ((GuildVoiceMoveEvent) event).getChannelLeft().getManager().setUserLimit(0).queue();
+                    ((GuildVoiceMoveEvent) event).getChannelLeft().getManager().setName(((GuildVoiceMoveEvent) event).getChannelLeft()
+                            .getName().replace(" - Sleep", "")).queue();
+                } catch (MissingAccessException ignore) {} catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
             eb.setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getAvatarUrl(), event.getMember().getUser().getAvatarUrl())
                     .setTitle(event.getMember().getUser().getAsTag() + " switched channel")

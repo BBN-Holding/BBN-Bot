@@ -66,15 +66,42 @@ public class ReactionAddListener extends ListenerAdapter {
                     switch (event.getReactionEmote().getName()) {
                         case "Netflix":
                             vc.getManager().setUserLimit(vc.getMembers().size()).queue();
+                            event.getGuild().getTextChannelById(config.getLogChannelID()).sendMessage(new EmbedBuilder()
+                                    .setTitle("Netflix Mode activated")
+                                    .setAuthor(member.getUser().getAsTag(), member.getUser().getEffectiveAvatarUrl(), member.getUser().getEffectiveAvatarUrl())
+                                    .addField("Channel", vc.getName(), true)
+                                    .addField("Users", String.valueOf(vc.getMembers().size()), true)
+                                    .setTimestamp(Instant.now())
+                                    .setFooter("BBN", "https://bbn.one/images/avatar.png")
+                                    .setColor(Color.GREEN)
+                                    .build()).queue();
                             break;
                         case "\uD83D\uDED1":
                             vc.getManager().setUserLimit(0).queue();
                             vc.getManager().setName(vc.getName().replace(" - Sleep", "")).queue();
+                            event.getGuild().getTextChannelById(config.getLogChannelID()).sendMessage(new EmbedBuilder()
+                                    .setTitle("Voice Locker deactivated")
+                                    .setAuthor(member.getUser().getAsTag(), member.getUser().getEffectiveAvatarUrl(), member.getUser().getEffectiveAvatarUrl())
+                                    .addField("Channel", vc.getName(), true)
+                                    .addField("Users", String.valueOf(vc.getMembers().size()), true)
+                                    .setTimestamp(Instant.now())
+                                    .setFooter("BBN", "https://bbn.one/images/avatar.png")
+                                    .setColor(Color.GREEN)
+                                    .build()).queue();
                             break;
                         case "\uD83C\uDF1B":
                             vc.getManager().setName((vc.getName().endsWith(" - Sleep")) ?
                                     vc.getName().replace(" - Sleep", "") :
                                     vc.getName()+" - Sleep").queue();
+                            event.getGuild().getTextChannelById(config.getLogChannelID()).sendMessage(new EmbedBuilder()
+                                    .setTitle("Sleep Mode activated")
+                                    .setAuthor(member.getUser().getAsTag(), member.getUser().getEffectiveAvatarUrl(), member.getUser().getEffectiveAvatarUrl())
+                                    .addField("Channel", vc.getName(), true)
+                                    .addField("Users", String.valueOf(vc.getMembers().size()), true)
+                                    .setTimestamp(Instant.now())
+                                    .setFooter("BBN", "https://bbn.one/images/avatar.png")
+                                    .setColor(Color.GREEN)
+                                    .build()).queue();
                             break;
                     }
                     event.getReaction().removeReaction(event.getUser()).queue();
