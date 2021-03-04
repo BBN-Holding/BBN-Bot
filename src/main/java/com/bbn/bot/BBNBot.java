@@ -32,7 +32,7 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 
 public class BBNBot {
 
-    public Config config = new Config("./BBN_config.json");
+    public Config config = new Config("./config.json");
     public JDA jda;
 
     public static void main(String[] args) {

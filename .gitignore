@@ -23,6 +23,6 @@
 hs_err_pid*
 .idea/
 target/
-BBN_config.json
+config.json
 
 BBNBot.iml
