@@ -64,7 +64,7 @@ public class ReactionAddListener extends ListenerAdapter {
                 if (member.getVoiceState().inVoiceChannel()) {
                     VoiceChannel vc = member.getVoiceState().getChannel();
                     switch (event.getReactionEmote().getName()) {
-                        case "Netflix":
+                        case "Netflix" -> {
                             vc.getManager().setUserLimit(vc.getMembers().size()).queue();
                             event.getGuild().getTextChannelById(config.getVoiceChannelID()).sendMessage(new EmbedBuilder()
                                     .setTitle("Netflix Mode activated")
@@ -75,8 +75,8 @@ public class ReactionAddListener extends ListenerAdapter {
                                     .setFooter("BBN", "https://bbn.one/images/avatar.png")
                                     .setColor(Color.GREEN)
                                     .build()).queue();
-                            break;
-                        case "\uD83D\uDED1":
+                        }
+                        case "\uD83D\uDED1" -> {
                             vc.getManager().setUserLimit(0).queue();
                             vc.getManager().setName(vc.getName().replace(" - Sleep", "")).queue();
                             event.getGuild().getTextChannelById(config.getVoiceChannelID()).sendMessage(new EmbedBuilder()
@@ -88,11 +88,11 @@ public class ReactionAddListener extends ListenerAdapter {
                                     .setFooter("BBN", "https://bbn.one/images/avatar.png")
                                     .setColor(Color.GREEN)
                                     .build()).queue();
-                            break;
-                        case "\uD83C\uDF1B":
+                        }
+                        case "\uD83C\uDF1B" -> {
                             vc.getManager().setName((vc.getName().endsWith(" - Sleep")) ?
                                     vc.getName().replace(" - Sleep", "") :
-                                    vc.getName()+" - Sleep").queue();
+                                    vc.getName() + " - Sleep").queue();
                             event.getGuild().getTextChannelById(config.getVoiceChannelID()).sendMessage(new EmbedBuilder()
                                     .setTitle("Sleep Mode activated")
                                     .setAuthor(member.getUser().getAsTag(), member.getUser().getEffectiveAvatarUrl(), member.getUser().getEffectiveAvatarUrl())
@@ -102,10 +102,10 @@ public class ReactionAddListener extends ListenerAdapter {
                                     .setFooter("BBN", "https://bbn.one/images/avatar.png")
                                     .setColor(Color.GREEN)
                                     .build()).queue();
-                            break;
+                        }
                     }
-                    event.getReaction().removeReaction(event.getUser()).queue();
                 }
+                event.getReaction().removeReaction(event.getUser()).queue();
             }
         }
     }
