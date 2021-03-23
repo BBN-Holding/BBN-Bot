@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.bbn.bot.core;
+package one.bbn.bot.core;
 
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 

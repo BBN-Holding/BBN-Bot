@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.bbn.bot.listeners;
+package one.bbn.bot.listeners;
 
-import com.bbn.bot.core.CommandHandler;
+import one.bbn.bot.core.CommandHandler;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;

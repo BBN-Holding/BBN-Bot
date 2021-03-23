@@ -14,38 +14,35 @@
  * limitations under the License.
  */
 
-package com.bbn.bot.listeners;
+package one.bbn.bot.listeners;
 
-import com.bbn.bot.core.Config;
+import one.bbn.bot.core.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.awt.*;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 
-public class MemberJoinListener extends ListenerAdapter {
+public class MemberLeaveListener extends ListenerAdapter {
+
     Config config;
 
-    public MemberJoinListener(Config config) {
+    public MemberLeaveListener(Config config) {
         this.config = config;
     }
 
-    public void onGuildMemberJoin(GuildMemberJoinEvent event) {
-        event.getGuild().retrieveMember(event.getUser());
-        event.getGuild().addRoleToMember(event.getMember(), event.getGuild().getRoleById(((!event.getMember().getUser().isBot())
-                ? config.getUnVerifiedRoleID() : config.getBotRoleID())))
-                .reason("Auto " + ((!event.getMember().getUser().isBot()) ? "User" : "Bot") + " Role onJoin").queue();
-
+    public void onGuildMemberRemove(GuildMemberRemoveEvent event) {
         event.getGuild().getTextChannelById(config.getLogChannelID()).sendMessage(new EmbedBuilder()
-                .setTitle(((!event.getMember().getUser().isBot()) ? "User" : "Bot") + " joined")
+                .setTitle(((!event.getMember().getUser().isBot()) ? "User" : "Bot") + " left")
                 .setAuthor(event.getMember().getUser().getAsTag(), event.getMember().getUser().getEffectiveAvatarUrl(), event.getMember().getUser().getEffectiveAvatarUrl())
                 .addField(((!event.getMember().getUser().isBot()) ? "User" : "Bot") + " Creation Time", event.getMember().getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
                 .addField("ID", event.getMember().getId(), true)
                 .setTimestamp(Instant.now())
                 .setFooter("BBN", "https://bbn.one/images/avatar.png")
-                .setColor(Color.YELLOW)
+                .setColor(Color.RED)
                 .build()).queue();
+        super.onGuildMemberRemove(event);
     }
 }

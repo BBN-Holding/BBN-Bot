@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.bbn.bot;
+package one.bbn.bot;
 
-import com.bbn.bot.commands.MergeCommand;
-import com.bbn.bot.commands.VCLockCommand;
-import com.bbn.bot.commands.WarnCommand;
-import com.bbn.bot.core.CommandHandler;
-import com.bbn.bot.core.Config;
-import com.bbn.bot.core.Sender;
+import one.bbn.bot.commands.MergeCommand;
+import one.bbn.bot.commands.VCLockCommand;
+import one.bbn.bot.commands.WarnCommand;
+import one.bbn.bot.core.CommandHandler;
+import one.bbn.bot.core.Config;
+import one.bbn.bot.core.Sender;
 import com.bbn.bot.listeners.*;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -29,6 +29,7 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
+import one.bbn.bot.listeners.*;
 
 public class BBNBot {
 

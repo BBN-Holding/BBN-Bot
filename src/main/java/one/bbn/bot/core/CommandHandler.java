@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.bbn.bot.core;
+package one.bbn.bot.core;
 
-import com.bbn.bot.commands.Command;
+import one.bbn.bot.commands.Command;
 
 import java.util.HashMap;
 

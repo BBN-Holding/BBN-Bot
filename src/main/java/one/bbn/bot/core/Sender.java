@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.bbn.bot.core;
+package one.bbn.bot.core;
 
 import com.sun.mail.smtp.SMTPTransport;
 import org.apache.http.HttpEntity;

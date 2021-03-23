@@ -14,14 +14,10 @@
  * limitations under the License.
  */
 
-package com.bbn.bot.commands;
+package one.bbn.bot.commands;
 
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
-public class WarnCommand implements Command {
-
-    @Override
-    public void action(String[] args, MessageReceivedEvent event) {
-
-    }
+public interface Command {
+    void action(String[] args, MessageReceivedEvent event);
 }

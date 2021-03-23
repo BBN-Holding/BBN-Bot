@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.bbn.bot.listeners;
+package one.bbn.bot.listeners;
 
-import com.bbn.bot.core.Config;
-import com.bbn.bot.core.Sender;
+import one.bbn.bot.core.Config;
+import one.bbn.bot.core.Sender;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.Event;

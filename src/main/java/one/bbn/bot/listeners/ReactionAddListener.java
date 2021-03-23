@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.bbn.bot.listeners;
+package one.bbn.bot.listeners;
 
-import com.bbn.bot.core.Config;
+import one.bbn.bot.core.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;

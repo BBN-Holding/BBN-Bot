@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.bbn.bot.commands;
+package one.bbn.bot.commands;
 
-import com.bbn.bot.core.Config;
+import one.bbn.bot.core.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.kohsuke.github.*;
