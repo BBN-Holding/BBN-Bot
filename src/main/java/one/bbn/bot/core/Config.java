@@ -110,4 +110,24 @@ public class Config {
         return config.getString("BOTROLE_ID");
     }
 
+    public String getDBUsername() {
+        return config.getString("DB_USERNAME");
+    }
+
+    public String getDBPassword() {
+        return config.getString("DB_PASSWORD");
+    }
+
+    public String getDBPort() {
+        return config.getString("DB_PORT");
+    }
+
+    public String getDBHost() {
+        return config.getString("DB_HOST");
+    }
+
+    public String getRole() {
+        return config.getString("ROLE_ID");
+    }
+
 }

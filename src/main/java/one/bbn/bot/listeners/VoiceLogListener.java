@@ -16,29 +16,37 @@
 
 package one.bbn.bot.listeners;
 
-import one.bbn.bot.core.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.guild.voice.*;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.MissingAccessException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import one.bbn.bot.core.Config;
+import one.bbn.bot.core.Mongo;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
 import java.time.Instant;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.*;
 
 public class VoiceLogListener extends ListenerAdapter {
 
     Config config;
     HashMap<Long, Member> events;
+    Mongo mongo;
 
-    public VoiceLogListener(Config config) {
+    public VoiceLogListener(Config config, Mongo mongo) {
         this.config = config;
         this.events = new HashMap<>();
+        this.mongo = mongo;
     }
 
     public void sendMessage(GenericGuildVoiceEvent event) {
@@ -92,7 +100,8 @@ public class VoiceLogListener extends ListenerAdapter {
                     ((GuildVoiceMoveEvent) event).getChannelLeft().getManager().setUserLimit(0).queue();
                     ((GuildVoiceMoveEvent) event).getChannelLeft().getManager().setName(((GuildVoiceMoveEvent) event).getChannelLeft()
                             .getName().replace(" - Sleep", "")).queue();
-                } catch (MissingAccessException ignore) {} catch (Exception e) {
+                } catch (MissingAccessException ignore) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -116,7 +125,6 @@ public class VoiceLogListener extends ListenerAdapter {
                 .setFooter("Provided by BBN", "https://bbn.one/images/avatar.png")
                 .setTimestamp(Instant.now());
 
-        c.sendMessage(eb.build()).queue();
         if (count == 10) {
             c.sendMessage("10 Events, kick").queue();
             event.getMember().getUser().openPrivateChannel().queue(
@@ -133,7 +141,75 @@ public class VoiceLogListener extends ListenerAdapter {
                     event.getGuild().removeRoleFromMember(event.getMember(), role).queue();
                 }
             }, 120000);
+        } else if (count < 10) {
+            c.sendMessage(eb.build()).queue();
         }
+        checkRoles(event);
+    }
+
+    public void checkRoles(GenericGuildVoiceEvent event) {
+        new Thread(() -> {
+            List<JSONObject> datas = mongo.getVoicestatsData(event.getGuild().getId());
+            HashMap<Long, String> longtoid = new HashMap<>();
+            datas.forEach(data -> {
+                if (data.get("conversations") instanceof JSONArray) {
+                    JSONArray array = data.getJSONArray("conversations");
+                    long totalsum = 0;
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject json = array.getJSONObject(i);
+                        if (json.has("endTime") || array.length()-1==i) {
+                            long sum = (json.has("endTime") ? Long.parseLong(json.getString("endTime")) : System.currentTimeMillis()) - Long.parseLong(json.getString("startTime"));
+                            sum -= getSum("idleTimes", json);
+                            sum -= getSum("muteTimes", json);
+                            sum -= getSum("deafTimes", json);
+                            totalsum += sum;
+                        }
+                        System.out.println(json);
+                    }
+                    longtoid.put(totalsum, data.getString("userid"));
+                }
+            });
+
+            // Sort and reverse the list
+            Set<Map.Entry<Long, String>> set = longtoid.entrySet();
+            List<Map.Entry<Long, String>> list = new ArrayList<>(set);
+            list.sort((Map.Entry.comparingByKey()));
+            Collections.reverse(list);
+
+            updateRoles(event, list);
+        }).start();
+    }
+
+    public void updateRoles(GenericGuildVoiceEvent event, List<Map.Entry<Long, String>> list) {
+        Role role = event.getGuild().getRoleById(config.getRole());
+        for (Map.Entry<Long, String> entry : list) {
+            Member member = event.getGuild().getMemberById(entry.getValue());
+            if (list.indexOf(entry) < 11) {
+                if (!member.getPermissions().contains(Permission.ADMINISTRATOR)) {
+                    if (!member.getRoles().contains(role)) {
+                        event.getGuild().addRoleToMember(member, role).queue();
+                    }
+                }
+            } else if (member.getRoles().contains(role)) {
+                event.getGuild().removeRoleFromMember(member, role).queue();
+            }
+        }
+    }
+
+    public long getSum(String name, JSONObject json) {
+        if (json.has(name)) {
+            JSONArray data = json.getJSONArray(name);
+            String endtime = json.has("endTime") ? json.getString("endTime") : String.valueOf(System.currentTimeMillis());
+            long sum = 0;
+            if (data == null) return 0;
+            for (Object datobj : data) {
+                String dat = (String) datobj;
+                if (dat.endsWith("-")) dat += endtime;
+                sum += Long.parseLong(dat.split("-")[1]) - Long.parseLong(dat.split("-")[0]);
+            }
+            return sum;
+        }
+        return 0;
     }
 
     @Override

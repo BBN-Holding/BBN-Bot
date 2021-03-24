@@ -21,15 +21,15 @@ import one.bbn.bot.commands.VCLockCommand;
 import one.bbn.bot.commands.WarnCommand;
 import one.bbn.bot.core.CommandHandler;
 import one.bbn.bot.core.Config;
+import one.bbn.bot.core.Mongo;
 import one.bbn.bot.core.Sender;
-import com.bbn.bot.listeners.*;
+import one.bbn.bot.listeners.*;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
-import one.bbn.bot.listeners.*;
 
 public class BBNBot {
 
@@ -43,6 +43,9 @@ public class BBNBot {
     public void main() {
         Sender sender = new Sender(config);
         config.load();
+
+        Mongo mongo = new Mongo(config);
+        mongo.connect();
 
         CommandHandler.commands.put("warn", new WarnCommand());
         CommandHandler.commands.put("merge", new MergeCommand(config));
@@ -59,7 +62,7 @@ public class BBNBot {
                         new MemberBanListener(config),
                         new MessageReceiveListener(config),
                         new ReactionAddListener(config),
-                        new VoiceLogListener(config),
+                        new VoiceLogListener(config, mongo),
                         new CommandListener(),
                         new StatusListener(config, sender)
                 );

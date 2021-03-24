@@ -16,16 +16,17 @@
 
 package one.bbn.bot.listeners;
 
-import one.bbn.bot.core.Config;
-import one.bbn.bot.core.Sender;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.Event;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.ReconnectedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import one.bbn.bot.core.Config;
+import one.bbn.bot.core.Sender;
 
 import javax.annotation.Nonnull;
+import java.io.File;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Timer;
@@ -54,27 +55,29 @@ public class StatusListener extends ListenerAdapter {
     }
 
     public void run(Event event) {
-        new Thread(() -> new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                sender.updateMetric(String.valueOf(event.getJDA().getGatewayPing()), String.valueOf(Instant.now().getEpochSecond()), config.getDCGID());
-                event.getJDA().getRestPing().queue(ping ->
-                        sender.updateMetric(String.valueOf(ping), String.valueOf(Instant.now().getEpochSecond()), config.getDCRID())
-                );
+        if (!new File("DEBUG").exists()) {
+            new Thread(() -> new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    sender.updateMetric(String.valueOf(event.getJDA().getGatewayPing()), String.valueOf(Instant.now().getEpochSecond()), config.getDCGID());
+                    event.getJDA().getRestPing().queue(ping ->
+                            sender.updateMetric(String.valueOf(ping), String.valueOf(Instant.now().getEpochSecond()), config.getDCRID())
+                    );
 
-                int length = config.getBotIDs().length();
-                for (int i = 0; i < length; i++) {
-                    BotIDs.add(config.getBotIDs().get(i).toString());
-                }
+                    int length = config.getBotIDs().length();
+                    for (int i = 0; i < length; i++) {
+                        BotIDs.add(config.getBotIDs().get(i).toString());
+                    }
 
-                for (String id : BotIDs) {
-                    Guild g = event.getJDA().getGuildById("757966278936756345");
-                    g.retrieveMemberById(id.split("/")[0]).queue((member) -> {
-                        boolean online = !member.getOnlineStatus().equals(OnlineStatus.OFFLINE);
-                        sender.setState(id.split("/")[1], online);
-                    });
+                    for (String id : BotIDs) {
+                        Guild g = event.getJDA().getGuildById("757966278936756345");
+                        g.retrieveMemberById(id.split("/")[0]).queue((member) -> {
+                            boolean online = !member.getOnlineStatus().equals(OnlineStatus.OFFLINE);
+                            sender.setState(id.split("/")[1], online);
+                        });
+                    }
                 }
-            }
-        }, 1000, 100000)).start();
+            }, 1000, 100000)).start();
+        }
     }
 }
