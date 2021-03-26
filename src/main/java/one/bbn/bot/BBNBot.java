@@ -22,14 +22,13 @@ import one.bbn.bot.commands.WarnCommand;
 import one.bbn.bot.core.CommandHandler;
 import one.bbn.bot.core.Config;
 import one.bbn.bot.core.Sender;
-import com.bbn.bot.listeners.*;
+import one.bbn.bot.listeners.*;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
-import one.bbn.bot.listeners.*;
 
 public class BBNBot {
 
