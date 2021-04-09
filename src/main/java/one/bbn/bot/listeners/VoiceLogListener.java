@@ -51,7 +51,7 @@ public class VoiceLogListener extends ListenerAdapter {
         events.put(System.currentTimeMillis(), event.getMember());
 
         events.forEach((timestamp, member) -> {
-                    if (timestamp + 30000 < System.currentTimeMillis()) {
+                    if (timestamp + 60000 < System.currentTimeMillis()) {
                         temp.put(timestamp, member);
                     }
                 }
@@ -132,7 +132,7 @@ public class VoiceLogListener extends ListenerAdapter {
                 public void run() {
                     event.getGuild().removeRoleFromMember(event.getMember(), role).queue();
                 }
-            }, 120000);
+            }, 300000);
         }
     }
 
