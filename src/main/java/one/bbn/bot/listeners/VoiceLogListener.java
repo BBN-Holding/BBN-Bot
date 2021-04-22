@@ -16,6 +16,7 @@
 
 package one.bbn.bot.listeners;
 
+import one.bbn.bot.core.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -43,7 +44,7 @@ public class VoiceLogListener extends ListenerAdapter {
     HashMap<Long, Member> events;
     Mongo mongo;
 
-    public VoiceLogListener(Config config, Mongo mongo) {
+    public VoiceLogListener(Config config) {
         this.config = config;
         this.events = new HashMap<>();
         this.mongo = mongo;
@@ -100,8 +101,7 @@ public class VoiceLogListener extends ListenerAdapter {
                     ((GuildVoiceMoveEvent) event).getChannelLeft().getManager().setUserLimit(0).queue();
                     ((GuildVoiceMoveEvent) event).getChannelLeft().getManager().setName(((GuildVoiceMoveEvent) event).getChannelLeft()
                             .getName().replace(" - Sleep", "")).queue();
-                } catch (MissingAccessException ignore) {
-                } catch (Exception e) {
+                } catch (MissingAccessException ignore) {} catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -125,6 +125,7 @@ public class VoiceLogListener extends ListenerAdapter {
                 .setFooter("Provided by BBN", "https://bbn.one/images/avatar.png")
                 .setTimestamp(Instant.now());
 
+        c.sendMessage(eb.build()).queue();
         if (count == 10) {
             c.sendMessage("10 Events, kick").queue();
             event.getMember().getUser().openPrivateChannel().queue(
