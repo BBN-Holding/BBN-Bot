@@ -125,7 +125,6 @@ public class VoiceLogListener extends ListenerAdapter {
                 .setFooter("Provided by BBN", "https://bbn.one/images/avatar.png")
                 .setTimestamp(Instant.now());
 
-        c.sendMessage(eb.build()).queue();
         if (count == 10) {
             c.sendMessage("10 Events, kick").queue();
             event.getMember().getUser().openPrivateChannel().queue(
