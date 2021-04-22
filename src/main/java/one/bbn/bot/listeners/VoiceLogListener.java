@@ -44,7 +44,7 @@ public class VoiceLogListener extends ListenerAdapter {
     HashMap<Long, Member> events;
     Mongo mongo;
 
-    public VoiceLogListener(Config config) {
+    public VoiceLogListener(Config config, Mongo mongo) {
         this.config = config;
         this.events = new HashMap<>();
         this.mongo = mongo;
