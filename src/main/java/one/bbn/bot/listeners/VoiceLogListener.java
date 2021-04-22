@@ -184,14 +184,16 @@ public class VoiceLogListener extends ListenerAdapter {
         Role role = event.getGuild().getRoleById(config.getRole());
         for (Map.Entry<Long, String> entry : list) {
             Member member = event.getGuild().getMemberById(entry.getValue());
-            if (list.indexOf(entry) < 11) {
-                if (!member.getPermissions().contains(Permission.ADMINISTRATOR)) {
-                    if (!member.getRoles().contains(role)) {
-                        event.getGuild().addRoleToMember(member, role).queue();
+            if (member!=null) {
+                if (list.indexOf(entry) < 11) {
+                    if (!member.getPermissions().contains(Permission.ADMINISTRATOR)) {
+                        if (!member.getRoles().contains(role)) {
+                            event.getGuild().addRoleToMember(member, role).queue();
+                        }
                     }
+                } else if (member.getRoles().contains(role)) {
+                    event.getGuild().removeRoleFromMember(member, role).queue();
                 }
-            } else if (member.getRoles().contains(role)) {
-                event.getGuild().removeRoleFromMember(member, role).queue();
             }
         }
     }
