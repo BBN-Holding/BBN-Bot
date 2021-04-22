@@ -165,7 +165,6 @@ public class VoiceLogListener extends ListenerAdapter {
                             sum -= getSum("deafTimes", json);
                             totalsum += sum;
                         }
-                        System.out.println(json);
                     }
                     longtoid.put(totalsum, data.getString("userid"));
                 }
