@@ -21,9 +21,12 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.Event;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.ReconnectedEvent;
+import net.dv8tion.jda.api.events.StatusChangeEvent;
+import net.dv8tion.jda.api.events.user.update.UserUpdateOnlineStatusEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import one.bbn.bot.core.Config;
 import one.bbn.bot.core.Sender;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.io.File;
@@ -42,7 +45,6 @@ public class StatusListener extends ListenerAdapter {
     }
 
     private Sender sender;
-    private ArrayList<String> BotIDs = new ArrayList<>();
 
     @Override
     public void onReady(@Nonnull ReadyEvent event) {
@@ -64,12 +66,8 @@ public class StatusListener extends ListenerAdapter {
                             sender.updateMetric(String.valueOf(ping), String.valueOf(Instant.now().getEpochSecond()), config.getDCRID())
                     );
 
-                    int length = config.getBotIDs().length();
-                    for (int i = 0; i < length; i++) {
-                        BotIDs.add(config.getBotIDs().get(i).toString());
-                    }
-
-                    for (String id : BotIDs) {
+                    for (Object tempid : config.getBotIDs()) {
+                        String id = (String) tempid;
                         Guild g = event.getJDA().getGuildById("757966278936756345");
                         g.retrieveMemberById(id.split("/")[0]).queue((member) -> {
                             boolean online = !member.getOnlineStatus().equals(OnlineStatus.OFFLINE);
