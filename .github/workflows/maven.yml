@@ -31,10 +31,10 @@ jobs:
         with:
           local: ./target/BBNBot-Build.jar
           remote: /root/bots/BBNBot/BBNBot-Build.jar
-          host: ${{ secrets.HOST }}
-          port: ${{ secrets.PORT }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
+          host: ${{ secrets.WORKER_HOST }}
+          port: ${{ secrets.WORKER_PORT }}
+          username: ${{ secrets.WORKER_USERNAME }}
+          password: ${{ secrets.WORKER_PASSWORD }}
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@master
         with:
