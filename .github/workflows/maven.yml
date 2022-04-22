@@ -38,10 +38,10 @@ jobs:
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          port: ${{ secrets.PORT }}
+          host: ${{ secrets.WORKER_HOST }}
+          username: ${{ secrets.WORKER_USERNAME }}
+          password: ${{ secrets.WORKER_PASSWORD }}
+          port: ${{ secrets.WORKER_PORT }}
           script: sh /root/bots/BBNBot/deploy.sh
       - name: Send Webhook Notification
         if: always()
