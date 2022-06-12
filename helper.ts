@@ -37,7 +37,6 @@ export function sendLeaveMessage(member: PartialGuildMember | GuildMember) {
 }
 
 export function sendPrivateMessage(message: Message, client: Client) {
-    console.log(message.channel.type)
     if (message.channel.type == 'DM') {
         const embed = defaultEmbed(message.author);
         embed.fields[1].name = 'User ID'
