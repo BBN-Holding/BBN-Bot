@@ -1,0 +1,28 @@
+{
+  "name": "bbn-bot",
+  "version": "1.0.0",
+  "description": "The bot which regulates the internal affairs on the BBN Discord Server.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BBN-Holding/BBN-Bot.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BBN-Holding/BBN-Bot/issues"
+  },
+  "homepage": "https://github.com/BBN-Holding/BBN-Bot#readme",
+  "dependencies": {
+    "discord-api-types": "^0.33.5",
+    "discord.js": "^13.8.0",
+    "nodemailer": "^6.7.5",
+    "typescript": "^4.7.3"
+  },
+  "devDependencies": {
+    "@types/nodemailer": "^6.4.4"
+  }
+}
