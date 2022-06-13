@@ -1,4 +1,5 @@
 import { Client, Intents } from 'discord.js'
+//@ts-ignore
 import * as config from './config.json'
 
 import { sendBanMessage, handleRules, sendJoinMessage, sendLeaveMessage, sendPrivateMessage } from './helper';

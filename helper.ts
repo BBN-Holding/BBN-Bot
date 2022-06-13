@@ -1,5 +1,6 @@
 import { ChannelType } from 'discord-api-types/v10';
 import { Client, TextChannel, MessageEmbed, GuildBan, GuildMember, PartialGuildMember, User, Message } from 'discord.js'
+//@ts-ignore
 import * as config from './config.json'
 import { createTransport } from 'nodemailer';
 
