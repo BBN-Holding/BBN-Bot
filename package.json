@@ -4,7 +4,7 @@
   "description": "The bot which regulates the internal affairs on the BBN Discord Server.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
