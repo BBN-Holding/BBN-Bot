@@ -1,14 +1,12 @@
-import { ChannelType } from 'discord-api-types/v10';
 import { Client, TextChannel, MessageEmbed, GuildBan, GuildMember, PartialGuildMember, User, Message, VoiceState } from 'discord.js'
 //@ts-ignore
 import * as config from './config.json'
-import { createTransport } from 'nodemailer';
 
 export function sendBanMessage(ban: GuildBan, banned: boolean) {
     ban.client.channels.fetch(config.log_channel).then(channel => {
         const embed = defaultEmbed(ban.user);
         embed.setTitle(`${embed.title} ${banned ? '' : 'un'}banned`).addField('Reason', ban.reason ?? 'Not specified');
-        (channel as TextChannel).send({ embeds: [embed] })
+        (channel as TextChannel).send({ embeds: [ embed ] })
     })
 }
 
@@ -20,7 +18,7 @@ export function handleRules(oldMember: PartialGuildMember | GuildMember, newMemb
         newMember.guild.channels.fetch(config.log_channel).then(channel => {
             const embed = defaultEmbed(newMember.user);
             embed.setTitle(`${embed.title} verified`).setColor('#57F287');
-            (channel as TextChannel).send({ embeds: [embed] })
+            (channel as TextChannel).send({ embeds: [ embed ] })
         })
     }
 }
@@ -28,26 +26,26 @@ export function handleRules(oldMember: PartialGuildMember | GuildMember, newMemb
 export function sendJoinMessage(member: GuildMember) {
     const embed = defaultEmbed(member.user);
     embed.setTitle(`${embed.title} joined`).setColor('#FEE75C');
-    member.guild.channels.fetch(config.log_channel).then(channel => (channel as TextChannel).send({ embeds: [embed] }));
+    member.guild.channels.fetch(config.log_channel).then(channel => (channel as TextChannel).send({ embeds: [ embed ] }));
 }
 
 export function sendLeaveMessage(member: PartialGuildMember | GuildMember) {
     const embed = defaultEmbed(member.user);
     embed.setTitle(`${embed.title} left`)
-    member.guild.channels.fetch(config.log_channel).then(channel => (channel as TextChannel).send({ embeds: [embed] }))
+    member.guild.channels.fetch(config.log_channel).then(channel => (channel as TextChannel).send({ embeds: [ embed ] }))
 }
 
 export function sendPrivateMessage(message: Message, client: Client) {
     if (message.channel.type == 'DM') {
         const embed = defaultEmbed(message.author);
-        embed.fields[1].name = 'User ID'
+        embed.fields[ 1 ].name = 'User ID'
         embed.setTitle("Private message received")
             .addField('\u200b', '\u200b', true)
             .addField("Mention", `<@${message.author.id}>`, true)
             .setDescription('```' + message.content + '```')
             .addField('Message ID', message.id, true)
             .setColor('#57F287');
-        client.channels.fetch(config.log_channel).then(channel => (channel as TextChannel).send({ embeds: [embed], files: [...message.attachments.values()] }))
+        client.channels.fetch(config.log_channel).then(channel => (channel as TextChannel).send({ embeds: [ embed ], files: [ ...message.attachments.values() ] }))
     }
 }
 
@@ -63,10 +61,10 @@ export function sendVoice(oldState: VoiceState, newState: VoiceState) {
     }
     if (oldState.mute && !newState.mute) {
         sendVoiceMessage(generateVoiceEmbed('unmuted', false, newState, oldState), newState);
-        }
+    }
     if (!oldState.deaf && newState.deaf) {
         sendVoiceMessage(generateVoiceEmbed('deafened', true, newState, oldState), newState);
-        }
+    }
     if (oldState.deaf && !newState.deaf) {
         sendVoiceMessage(generateVoiceEmbed('undeafened', false, newState, oldState), newState);
     }
@@ -76,7 +74,7 @@ export function sendVoice(oldState: VoiceState, newState: VoiceState) {
 }
 
 function sendVoiceMessage(embed: MessageEmbed, newState: VoiceState) {
-    newState.guild.channels.fetch(config.voice_log_channel).then(channel => (channel as TextChannel).send({ embeds: [embed] }))
+    newState.guild.channels.fetch(config.voice_log_channel).then(channel => (channel as TextChannel).send({ embeds: [ embed ] }))
 }
 
 function generateVoiceEmbed(word: string, negative: boolean, newState: VoiceState, oldState: VoiceState) {
@@ -86,7 +84,7 @@ function generateVoiceEmbed(word: string, negative: boolean, newState: VoiceStat
         .addField('Members in Channel', String(newState.channel?.members.size ?? oldState.channel!.members.size), true)
         .addField('Current Time', new Date().toISOString(), true)
         .setColor(negative ? '#ED4245' : '#57F287');
-    
+
 
 }
 
