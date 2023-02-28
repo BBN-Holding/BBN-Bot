@@ -54,7 +54,7 @@ export function sendVoice(oldState: VoiceState, newState: VoiceState) {
         sendVoiceMessage(generateVoiceEmbed('joined', false, newState, oldState), newState);
     }
     if (oldState.channel && !newState.channel) {
-        sendVoiceMessage(generateVoiceEmbed('left', false, newState, oldState), newState);
+        sendVoiceMessage(generateVoiceEmbed('left', true, newState, oldState), newState);
     }
     if (!oldState.mute && newState.mute) {
         sendVoiceMessage(generateVoiceEmbed('muted', true, newState, oldState), newState);
@@ -84,8 +84,6 @@ function generateVoiceEmbed(word: string, negative: boolean, newState: VoiceStat
         .addField('Members in Channel', String(newState.channel?.members.size ?? oldState.channel!.members.size), true)
         .addField('Current Time', new Date().toISOString(), true)
         .setColor(negative ? '#ED4245' : '#57F287');
-
-
 }
 
 function defaultEmbed(user: User) {

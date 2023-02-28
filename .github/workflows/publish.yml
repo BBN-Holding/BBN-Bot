@@ -31,13 +31,13 @@ jobs:
         with:
           local: ./dist/
           remote: /root/bots/BBN-Bot/
-          host: ${{ secrets.WORKER_HOST }}
-          port: ${{ secrets.WORKER_PORT }}
+          host: ${{ secrets.HOST }}
+          port: ${{ secrets.PORT }}
           privateKey: ${{ secrets.KEY }}
       - name: Deploying to Docker
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.WORKER_HOST }}
+          host: ${{ secrets.HOST }}
           key: ${{ secrets.KEY }}
-          port: ${{ secrets.WORKER_PORT }}
+          port: ${{ secrets.PORT }}
           script: /root/bots/BBN-Bot/deploy.sh
