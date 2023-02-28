@@ -33,11 +33,14 @@ jobs:
           remote: /root/bots/BBN-Bot/
           host: ${{ secrets.HOST }}
           port: ${{ secrets.PORT }}
+          username: ${{ secrets.USERNAME }}
           privateKey: ${{ secrets.KEY }}
+
       - name: Deploying to Docker
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
           port: ${{ secrets.PORT }}
           script: /root/bots/BBN-Bot/deploy.sh
