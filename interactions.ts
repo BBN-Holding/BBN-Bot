@@ -31,6 +31,6 @@ export async function handleInteraction(interaction: Interaction) {
 
         const row_username = new ActionRowBuilder<UserSelectMenuBuilder>().addComponents(verify_modal);
 
-        await interaction.reply({ content: 'Which user do you want to verify?', components: [ row_username ] })
+        await interaction.reply({ content: 'Which user do you want to verify?', components: [ row_username ], ephemeral: true })
     }
 }
