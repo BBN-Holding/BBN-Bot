@@ -1,11 +1,11 @@
-import { ActivityType, Client, GatewayIntentBits, REST, Routes } from 'discord.js'
+import { ActivityType, Client, REST, Routes } from 'discord.js'
 //@ts-ignore
 import * as config from './config.json'
 
 import { sendBanMessage, handleRules, sendJoinMessage, sendLeaveMessage, sendPrivateMessage, sendVoice } from './helper';
 import { handleInteraction } from "./interactions";
 
-const client = new Client({ intents: [ GatewayIntentBits.Guilds ] });
+const client = new Client({ intents: [ 7796 ] });
 
 client.on("ready", async () => {
     console.log(`Logged in as ${client.user!.tag}!`);
