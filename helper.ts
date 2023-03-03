@@ -84,7 +84,7 @@ function generateVoiceEmbed(word: string, negative: boolean, newState: VoiceStat
     return new EmbedBuilder()
         .setTitle(`${newState.member?.user.tag!} ${word}`)
         .addFields([
-            { name: 'Channel', value: newState.channel?.name ?? oldState.channel!.name },
+            { name: 'Channel', value: newState.channel?.name ?? oldState.channel!.name, inline: true },
             { name: 'Members in Channel', value: String(newState.channel?.members.size ?? oldState.channel!.members.size), inline: true },
             { name: 'Current Time', value: new Date().toISOString(), inline: true }
         ])
