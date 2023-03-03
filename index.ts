@@ -5,7 +5,7 @@ import * as config from './config.json'
 import { sendBanMessage, handleRules, sendJoinMessage, sendLeaveMessage, sendPrivateMessage, sendVoice } from './helper';
 import { handleInteraction } from "./interactions";
 
-const client = new Client({ intents: [ 7796 ] });
+const client = new Client({ intents: [ 3244031 ] });
 
 client.on("ready", async () => {
     console.log(`Logged in as ${client.user!.tag}!`);
