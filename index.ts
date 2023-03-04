@@ -42,7 +42,7 @@ client.on('guildBanAdd', (ban) => sendBanMessage(ban, true))
 client.on('guildBanRemove', (ban) => sendBanMessage(ban, false))
 
 client.on('guildMemberAdd', sendJoinMessage);
-client.on('guildMemberUpdate', handleRules)
+//client.on('guildMemberUpdate', handleRules)
 client.on('guildMemberRemove', sendLeaveMessage)
 
 client.on('messageCreate', (message) => sendPrivateMessage(message, client))
