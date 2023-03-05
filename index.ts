@@ -20,10 +20,10 @@ client.on("ready", async () => {
             await rest.put(Routes.applicationCommands(client.user!.id), {
                 body:
                     [
-                        {
-                            name: 'ping',
-                            description: 'Replies with Pong!',
-                        },
+                        /*{
+                            name: 'setup',
+                            description: 'Setup the Voice Locker',
+                        },*/
                         {
                             name: 'verify',
                             description: 'Verify a User',
