@@ -1,11 +1,13 @@
 import { ActivityType, Client, REST, Routes } from 'discord.js'
+import { sendBanMessage, handleRules, sendJoinMessage, sendLeaveMessage, sendPrivateMessage, sendVoice } from './helper';
+import { handleInteraction } from "./interactions";
+import DB from "./sqlite";
 //@ts-ignore
 import * as config from './config.json'
 
-import { sendBanMessage, handleRules, sendJoinMessage, sendLeaveMessage, sendPrivateMessage, sendVoice } from './helper';
-import { handleInteraction } from "./interactions";
-
 const client = new Client({ intents: [ 3244031 ] });
+
+const db = new DB();
 
 client.on("ready", async () => {
     console.log(`Logged in as ${client.user!.tag}!`);
@@ -28,6 +30,14 @@ client.on("ready", async () => {
                             name: 'verify',
                             description: 'Verify a User',
                         },
+                        {
+                            name: 'daily',
+                            description: 'Claim your daily reward',
+                        },
+                        {
+                            name: 'balance',
+                            description: 'See your current balance',
+                        },
                     ]
             });
 
@@ -35,6 +45,7 @@ client.on("ready", async () => {
         } catch (error) {
             console.error(error);
         }
+        await db.connect();
     })();
 });
 
@@ -49,6 +60,6 @@ client.on('messageCreate', (message) => sendPrivateMessage(message, client))
 
 client.on('voiceStateUpdate', sendVoice);
 
-client.on('interactionCreate', handleInteraction);
+client.on('interactionCreate', (interaction) => handleInteraction(interaction, db));
 
 client.login(config.token);

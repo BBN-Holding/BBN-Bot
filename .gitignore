@@ -40,3 +40,5 @@ dist/
 # ignore yarn.lock
 yarn.lock
 config.json
+.vsls.json
+*.sqlite
