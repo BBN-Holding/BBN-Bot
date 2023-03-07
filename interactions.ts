@@ -38,7 +38,7 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
                     content: `> We're closing your ticket. Please be patient.`,
                 });
                 setTimeout(() => {
-                    channel.permissionOverwrites.delete(interaction.user.id);
+                    channel.setParent("1082672434777428128", { lockPermissions: true });
                 }, 5000);
                 break;
             }
