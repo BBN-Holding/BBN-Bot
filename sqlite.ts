@@ -75,6 +75,18 @@ export default class DB {
         }
     }
 
+    async removeCoins(id: string, coins: number) {
+        // check if user exists
+        const res = await this.get("SELECT * FROM keyv WHERE key = ?", [ "keyv:coins-" + id ]);
+        if (!res) {
+            // create user
+            return await this.run("INSERT INTO keyv (key, value) VALUES (?, ?)", [ "keyv:coins-" + id, JSON.stringify({ value: 0 }) ]);
+        } else {
+            // update user
+            return await this.run("UPDATE keyv SET value = ? WHERE key = ?", [ JSON.stringify({ value: JSON.parse(res.value).value - coins }), "keyv:coins-" + id ]);
+        }
+    }
+
     async getLastDaily(id: string) {
         const res = await this.get("SELECT * FROM keyv WHERE key = ?", [ "keyv:lastDaily-" + id ]);
         if (!res) return null;

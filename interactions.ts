@@ -188,7 +188,17 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
 
     if (interaction.commandName == "balance") {
         // Retrieve the user's balance from the database
-        await db.getCoins(interaction.user.id).then(result => {
+        const possiblemember = interaction.options.getMentionable("user", false);
+        let id = interaction.user.id;
+        if (possiblemember) {
+            if (!interaction.memberPermissions?.has(PermissionsBitField.Flags.Administrator)) {
+                interaction.reply("You do not have permission to view other users' balances.");
+                return;
+            }
+            const member = possiblemember as GuildMember;
+            id = member.id;
+        }
+        await db.getCoins(id).then(result => {
             if (result !== null) {
                 interaction.reply(`Your balance is ${result} coins.`);
             } else {
@@ -196,6 +206,30 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
             }
         });
     }
+
+    if (interaction.commandName == "addcoins") {
+        if (!interaction.memberPermissions?.has(PermissionsBitField.Flags.Administrator)) {
+            interaction.reply("You do not have permission to add coins.");
+            return;
+        }
+        const member = interaction.options.getMentionable("user", true) as GuildMember;
+        const coins = interaction.options.getInteger("coins", true);
+        await db.addCoins(member.id, coins);
+        interaction.reply(`Added ${coins} coins to ${member.user.username}'s balance.`);
+    }
+
+    if (interaction.commandName == "removecoins") {
+        if (!interaction.memberPermissions?.has(PermissionsBitField.Flags.Administrator)) {
+            interaction.reply("You do not have permission to remove coins.");
+            return;
+        }
+        const member = interaction.options.getMentionable("user", true) as GuildMember;
+        const coins = interaction.options.getInteger("coins", true);
+        await db.removeCoins(member.id, coins);
+        interaction.reply(`Removed ${coins} coins from ${member.user.username}'s balance.`);
+    }
+
+    
 }
 
 function lockVoice(interaction: ButtonInteraction, lock: boolean) {
