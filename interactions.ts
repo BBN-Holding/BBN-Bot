@@ -4,13 +4,14 @@ import DB from "./sqlite";
 export async function handleInteraction(interaction: Interaction, db: DB) {
 
     if (interaction.isButton()) {
-
         switch (interaction.customId) {
             case "lock": {
                 lockVoice(interaction, true)
+                break;
             }
             case "unlock": {
                 lockVoice(interaction, false)
+                break;
             }
             case "create_ticket": {
                 const ticket_modal = new ModalBuilder()
@@ -29,6 +30,7 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
                 ticket_modal.addComponents(row_user_reason);
 
                 await interaction.showModal(ticket_modal);
+                break;
             }
             case "delete_ticket": {
                 let channel = interaction.channel as TextChannel;
@@ -36,8 +38,9 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
                     content: `> We're closing your ticket. Please be patient.`,
                 });
                 setTimeout(() => {
-                    channel.permissionOverwrites.delete(interaction.user.id);
+                    channel.setParent("1082672434777428128", { lockPermissions: true });
                 }, 5000);
+                break;
             }
         }
     }
@@ -64,14 +67,9 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
                 type: ChannelType.GuildText,
                 topic: `ticket of ${interaction.user.tag}`,
                 parent: "1081347349462405221",
-                permissionOverwrites: [
-                    {
-                        id: interaction.user.id,
-                        allow: [ PermissionsBitField.Flags.ViewChannel ]
-                    }
-                ]
+
             })
-            .then(async (ch: any) => {
+            .then(async (ch: TextChannel) => {
                 let embed = new EmbedBuilder()
                     .setColor("#5539cc")
                     .setTitle(`Ticket of ${interaction.user.username}`)
@@ -82,7 +80,11 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
                         }
                     ]);
 
-                let btnrow = new ActionRowBuilder().addComponents([
+                ch.permissionOverwrites.create(interaction.user.id, {
+                    "ViewChannel": true
+                })
+
+                let btnrow = new ActionRowBuilder<ButtonBuilder>().addComponents([
                     new ButtonBuilder()
                         .setCustomId(`delete_ticket`)
                         .setStyle(ButtonStyle.Danger)
