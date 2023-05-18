@@ -30,7 +30,7 @@ jobs:
         uses: garygrossgarten/github-action-scp@release
         with:
           local: ./dist/
-          remote: /root/bots/BBN-Bot/
+          remote: /root/bbn/bots/BBN-Bot/
           host: ${{ secrets.HOST }}
           port: ${{ secrets.PORT }}
           username: ${{ secrets.USERNAME }}
@@ -43,4 +43,4 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
           port: ${{ secrets.PORT }}
-          script: /root/bots/BBN-Bot/deploy.sh
+          script: /root/bbn/bots/BBN-Bot/deploy.sh

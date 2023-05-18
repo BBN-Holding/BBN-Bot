@@ -1,13 +1,13 @@
 import { ActivityType, Client, REST, Routes } from 'discord.js'
 import { sendBanMessage, handleRules, sendJoinMessage, sendLeaveMessage, sendPrivateMessage, sendVoice } from './helper';
 import { handleInteraction } from "./interactions";
-import DB from "./sqlite";
+import DB from "./db";
 //@ts-ignore
 import * as config from './config.json'
 
 const client = new Client({ intents: [ 3244031 ] });
 
-const db = new DB();
+const db = new DB(config.dburl);
 
 client.on("ready", async () => {
     console.log(`Logged in as ${client.user!.tag}!`);

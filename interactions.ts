@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChannelType, EmbedBuilder, GuildMember, Interaction, ModalBuilder, PermissionsBitField, TextChannel, TextInputBuilder, TextInputStyle, UserSelectMenuBuilder, VoiceChannel } from "discord.js"
-import DB from "./sqlite";
+import DB from "./db";
 
 export async function handleInteraction(interaction: Interaction, db: DB) {
 
@@ -182,9 +182,13 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
 
             // Give the user their daily reward
             const reward = 10 + (Math.floor(Math.random() * 10));
-            interaction.reply(`You have received ${reward} coins as your daily reward!`);
-            await db.addCoins(interaction.user.id, reward);
+            const res = (await db.addCoins(interaction.user.id, reward));
+            if (res === null) {
+                interaction.reply("We couldn't find your account. Please [log in via discord here](<https://mc4u.xyz/login>)");
+                return;
+            }
             await db.setLastDaily(interaction.user.id, Date.now());
+            interaction.reply(`You have received ${reward} coins as your daily reward!`);
         });
     }
 
@@ -204,7 +208,7 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
             if (result !== null) {
                 interaction.reply(`Your balance is ${result} coins.`);
             } else {
-                interaction.reply("You have not claimed your daily reward yet. Use the daily command to claim your reward and start earning coins.");
+                interaction.reply("We couldn't find your account. Please [log in via discord here](<https://mc4u.xyz/login>)");
             }
         });
     }
@@ -216,7 +220,11 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
         }
         const member = interaction.options.getMentionable("user", true) as GuildMember;
         const coins = interaction.options.getInteger("coins", true);
-        await db.addCoins(member.id, coins);
+        const res = await db.addCoins(member.id, coins);
+        if (res === null) {
+            interaction.reply("We couldnt find the account in our database");
+            return;
+        }
         interaction.reply(`Added ${coins} coins to ${member.user.username}'s balance.`);
     }
 
@@ -227,7 +235,11 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
         }
         const member = interaction.options.getMentionable("user", true) as GuildMember;
         const coins = interaction.options.getInteger("coins", true);
-        await db.removeCoins(member.id, coins);
+        const res = await db.removeCoins(member.id, coins);
+        if (res === null) {
+            interaction.reply("We couldnt find the account in our database");
+            return;
+        }
         interaction.reply(`Removed ${coins} coins from ${member.user.username}'s balance.`);
     }
 
