@@ -1,5 +1,5 @@
 import { ActivityType, Client, REST, Routes } from 'discord.js'
-import { sendBanMessage, handleRules, sendJoinMessage, sendLeaveMessage, sendPrivateMessage, sendVoice } from './helper';
+import { sendBanMessage, sendJoinMessage, sendLeaveMessage, sendPrivateMessage, sendVoice } from './helper';
 import { handleInteraction } from "./interactions";
 import DB from "./db";
 //@ts-ignore
@@ -97,7 +97,6 @@ client.on('guildBanAdd', (ban) => sendBanMessage(ban, true))
 client.on('guildBanRemove', (ban) => sendBanMessage(ban, false))
 
 client.on('guildMemberAdd', sendJoinMessage);
-//client.on('guildMemberUpdate', handleRules)
 client.on('guildMemberRemove', sendLeaveMessage)
 
 client.on('messageCreate', (message) => sendPrivateMessage(message, client))

@@ -11,19 +11,6 @@ export function sendBanMessage(ban: GuildBan, banned: boolean) {
     })
 }
 
-export function handleRules(oldMember: PartialGuildMember | GuildMember, newMember: GuildMember) {
-    if (oldMember.pending !== newMember.pending) {
-        newMember.guild.roles.fetch(config.role_id).then(role => {
-            newMember.roles.add(role!, 'Verified');
-        })
-        newMember.guild.channels.fetch(config.log_channel).then(channel => {
-            const embed = defaultEmbed(newMember.user);
-            embed.setTitle(`${embed.data.title} verified`).setColor('#57F287');
-            (channel as TextChannel).send({ embeds: [ embed ] })
-        })
-    }
-}
-
 export function sendJoinMessage(member: GuildMember) {
     const embed = defaultEmbed(member.user);
     const role = member.guild.roles.cache.get(config.role_id);

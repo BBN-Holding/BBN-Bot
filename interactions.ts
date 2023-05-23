@@ -32,13 +32,13 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
                 await interaction.showModal(ticket_modal);
                 break;
             }
-            case "delete_ticket": {
+            case "close_ticket": {
                 let channel = interaction.channel as TextChannel;
                 interaction.reply({
                     content: `> We're closing your ticket. Please be patient.`,
                 });
                 setTimeout(() => {
-                    channel.setParent("1082672434777428128", { lockPermissions: true });
+                    channel.setParent("1110636030824042638", { lockPermissions: true });
                 }, 5000);
                 break;
             }
@@ -86,9 +86,9 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
 
                 let btnrow = new ActionRowBuilder<ButtonBuilder>().addComponents([
                     new ButtonBuilder()
-                        .setCustomId(`delete_ticket`)
+                        .setCustomId(`close_ticket`)
                         .setStyle(ButtonStyle.Danger)
-                        .setLabel(`Delete Ticket`),
+                        .setLabel(`Close Ticket`),
                 ]);
                 ch.send({
                     content: `${interaction.member} || <@&757969277063266407>`,
@@ -184,7 +184,7 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
             const reward = 10 + (Math.floor(Math.random() * 10));
             const res = (await db.addCoins(interaction.user.id, reward));
             if (res === null) {
-                interaction.reply("We couldn't find your account. Please [log in via discord here](<https://mc4u.xyz/login>)");
+                interaction.reply("We couldn't find your account. Please [log in via Discord here](<https://mc4u.xyz/login>)");
                 return;
             }
             await db.setLastDaily(interaction.user.id, Date.now());
@@ -206,9 +206,9 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
         }
         await db.getCoins(id).then(result => {
             if (result !== null) {
-                interaction.reply(`Your balance is ${result} coins.`);
+                interaction.reply(`You currently have ${result} coins.`);
             } else {
-                interaction.reply("We couldn't find your account. Please [log in via discord here](<https://mc4u.xyz/login>)");
+                interaction.reply("We couldn't find your account. Please [log in via Discord here](<https://mc4u.xyz/login>)");
             }
         });
     }
@@ -222,7 +222,7 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
         const coins = interaction.options.getInteger("coins", true);
         const res = await db.addCoins(member.id, coins);
         if (res === null) {
-            interaction.reply("We couldnt find the account in our database");
+            interaction.reply("We couldn't find the account in our database");
             return;
         }
         interaction.reply(`Added ${coins} coins to ${member.user.username}'s balance.`);
@@ -237,13 +237,13 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
         const coins = interaction.options.getInteger("coins", true);
         const res = await db.removeCoins(member.id, coins);
         if (res === null) {
-            interaction.reply("We couldnt find the account in our database");
+            interaction.reply("We couldn't find the account in our database");
             return;
         }
         interaction.reply(`Removed ${coins} coins from ${member.user.username}'s balance.`);
     }
 
-    
+
 }
 
 function lockVoice(interaction: ButtonInteraction, lock: boolean) {
