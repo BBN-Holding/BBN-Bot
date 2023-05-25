@@ -13,8 +13,6 @@ export function sendBanMessage(ban: GuildBan, banned: boolean) {
 
 export function sendJoinMessage(member: GuildMember) {
     const embed = defaultEmbed(member.user);
-    const role = member.guild.roles.cache.get(config.role_id);
-    member.roles.add(role!, 'Verified');
     embed.setTitle(`${embed.data.title} joined`).setColor('#FEE75C');
     member.guild.channels.fetch(config.log_channel).then(channel => (channel as TextChannel).send({ embeds: [ embed ] }));
 }
