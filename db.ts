@@ -24,7 +24,8 @@ export default class DB {
                     type: "oauth",
                     provider: "discord"
                 }
-            }
+            },
+            "profile.verified.email": true
         })
 
         if (!user) return null;
