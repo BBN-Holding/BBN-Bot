@@ -18,9 +18,13 @@ export default class DB {
 
     async finduser(id: string) {
         const user = await this.usercollection.findOne({
-            "authentication.type": "oauth",
-            "authentication.provider": "discord",
-            "authentication.id": id
+            authentication: {
+                $elemMatch: {
+                    id,
+                    type: "oauth",
+                    provider: "discord"
+                }
+            }
         })
 
         if (!user) return null;
