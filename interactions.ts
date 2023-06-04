@@ -20,9 +20,7 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
 
                 const user_reason = new TextInputBuilder()
                     .setCustomId("ticket_reason")
-                    .setLabel(`Why do you want to open a ticket?`.substring(0, 45))
-                    .setMinLength(30)
-                    .setMaxLength(250)
+                    .setLabel(`Why do you want to open a ticket?`)
                     .setRequired(true)
                     .setStyle(TextInputStyle.Paragraph);
 
@@ -46,20 +44,20 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
     }
 
     if (interaction.isUserSelectMenu() && interaction.guild && interaction.customId === 'verify_modal') {
-        const member = interaction.guild.members.cache.get(interaction.values[ 0 ])
+        const member = interaction.guild.members.cache.get(interaction.values[0])
         const role = interaction.guild.roles.cache.get("757983851032215673")
 
         if (member && role) {
             member.roles.add(role, "Verified by " + interaction.user.tag)
-            interaction.reply("Successfully verified <@" + interaction.values[ 0 ] + ">!")
+            interaction.reply("Successfully verified <@" + interaction.values[0] + ">!")
         } else {
-            interaction.reply("An error occured while assigning the role to <@" + interaction.values[ 0 ] + ">")
+            interaction.reply("An error occured while assigning the role to <@" + interaction.values[0] + ">")
         }
     }
 
     if (interaction.isModalSubmit()) {
         const ticket_user_reason = interaction.fields.getTextInputValue("ticket_reason");
-
+        const dbuser = await db.finduser(interaction.user.id);
         let ticketname = `ticket-${interaction.user.id}`;
         await interaction.guild!.channels
             .create({
@@ -70,19 +68,45 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
 
             })
             .then(async (ch: TextChannel) => {
+                const fields = [
+                    {
+                        name: `Reason:`,
+                        value: `> ${ticket_user_reason}`,
+                    }
+                ];
                 let embed = new EmbedBuilder()
                     .setColor("#5539cc")
                     .setTitle(`Ticket of ${interaction.user.username}`)
-                    .addFields([
-                        {
-                            name: `Reason:`,
-                            value: `> ${ticket_user_reason}`,
-                        }
-                    ]);
+                    .addFields(fields);
+                if (dbuser) {
+                    const login = await db.lastLogin(interaction.user.id) || [];
+                    embed.addFields({
+                        name: `User ID:`,
+                        value: `> ${dbuser.toHexString()}`,
+                    }, {
+                        name: `Server URLs:`,
+                        value: `> ${await db.getServerURLs(interaction.user.id)}`,
+                    }, {
+                        name: `Last Login:`,
+                        value: '```'+JSON.stringify(login[0])+'```',
+                    });
+                    embed.setFooter({
+                        text: login[1] as string,
+                        iconURL: interaction.user.displayAvatarURL(),
+                    })
+                    embed.setTimestamp(new Date(new Date().toLocaleString('en-US', { timeZone: login[2] })))
+                }
+                
 
-                ch.permissionOverwrites.create(interaction.user.id, {
-                    "ViewChannel": true
-                })
+                setTimeout(() => {
+                    ch.permissionOverwrites.create(interaction.user.id, {
+                        "ViewChannel": true
+                    }).then((channel) => {
+
+                    }, (err) => {
+                        console.log(err);
+                    });
+                }, 1000);
 
                 let btnrow = new ActionRowBuilder<ButtonBuilder>().addComponents([
                     new ButtonBuilder()
@@ -92,8 +116,8 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
                 ]);
                 ch.send({
                     content: `${interaction.member} || <@&757969277063266407>`,
-                    embeds: [ embed ],
-                    components: [ btnrow ],
+                    embeds: [embed],
+                    components: [btnrow],
                 });
                 interaction.reply({
                     content: `> Successfully created your ticket here: ${ch}`,
@@ -105,7 +129,7 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
     if (!interaction.isChatInputCommand()) return
 
     /*if (interaction.commandName === 'setup') {
-        const channel = interaction.guild?.channels.cache.get("788844358592888863") as TextChannel
+        const channel = interaction.guild?.channels.cache.get("757992735171936347") as TextChannel
 
         const embed = new EmbedBuilder()
             .setTitle("Voicelocker")
@@ -134,7 +158,7 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
         interaction.reply("message sent!")
 
         // code
-        let ticketChannel = interaction.guild!.channels.cache.get("1081337337704886392") as TextChannel;
+        let ticketChannel = interaction.guild!.channels.cache.get("757992735171936347") as TextChannel;
         if (!ticketChannel) return;
 
         let embed = new EmbedBuilder()
@@ -150,8 +174,8 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
 
         ]);
         await ticketChannel.send({
-            embeds: [ embed ],
-            components: [ btnrow ],
+            embeds: [embed],
+            components: [btnrow],
         });
 
         interaction.reply({
@@ -165,7 +189,7 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
 
         const row_username = new ActionRowBuilder<UserSelectMenuBuilder>().addComponents(verify_modal)
 
-        await interaction.reply({ content: 'Which user do you want to verify?', components: [ row_username ], ephemeral: true })
+        await interaction.reply({ content: 'Which user do you want to verify?', components: [row_username], ephemeral: true })
     }
 
     if (interaction.commandName == "daily") {
