@@ -48,8 +48,13 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
         const role = interaction.guild.roles.cache.get("757983851032215673")
 
         if (member && role) {
-            member.roles.add(role, "Verified by " + interaction.user.tag)
-            interaction.reply("Successfully verified <@" + interaction.values[0] + ">!")
+            if (member.roles.cache.has(role.id)) {
+                member.roles.remove(role, "Unverified by " + interaction.user.tag)
+                interaction.reply("Successfully unverified <@" + interaction.values[0] + ">!")
+            } else {
+                member.roles.add(role, "Verified by " + interaction.user.tag)
+                interaction.reply("Successfully verified <@" + interaction.values[0] + ">!")
+            }
         } else {
             interaction.reply("An error occured while assigning the role to <@" + interaction.values[0] + ">")
         }
@@ -88,7 +93,7 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
                         value: `> ${await db.getServerURLs(interaction.user.id)}`,
                     }, {
                         name: `Last Login:`,
-                        value: '```'+JSON.stringify(login[0])+'```',
+                        value: '```' + JSON.stringify(login[0]) + '```',
                     });
                     embed.setFooter({
                         text: login[1] as string,
@@ -96,7 +101,7 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
                     })
                     embed.setTimestamp(new Date(new Date().toLocaleString('en-US', { timeZone: login[2] })))
                 }
-                
+
 
                 setTimeout(() => {
                     ch.permissionOverwrites.create(interaction.user.id, {
