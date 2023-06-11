@@ -35,9 +35,29 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
                 interaction.reply({
                     content: `> We're closing your ticket. Please be patient.`,
                 });
-                setTimeout(() => {
-                    channel.setParent("1110636030824042638", { lockPermissions: true });
-                }, 5000);
+                const messages = await channel.messages.fetch();
+                const transcript: any = {
+                    messages: [],
+                    closed: "Ticket closed by " + interaction.user.tag
+                };
+                for (const message of messages.values()) {
+                    const obj: any = {
+                        author: message.author.tag,
+                        authorid: message.author.id,
+                        content: message.content,
+                        timestamp: message.createdTimestamp,
+                        id: message.id,
+                    };
+                    if (message.attachments.size > 0) {
+                        obj.attachments = message.attachments.map((a) => a.url);
+                    }
+                    if (message.embeds.length > 0) {
+                        obj.embed = message.embeds[0].toJSON();
+                    }
+                    transcript.messages.push(obj);
+                }
+                await db.saveTranscript(transcript)
+                await channel.delete();
                 break;
             }
         }
