@@ -47,7 +47,6 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
                         authorid: message.author.id,
                         content: message.content,
                         timestamp: message.createdTimestamp,
-                        id: message.id,
                         avatar: message.author.displayAvatarURL(),
                     };
                     if (message.attachments.size > 0) {
