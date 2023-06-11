@@ -38,7 +38,8 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
                 const messages = await channel.messages.fetch();
                 const transcript: any = {
                     messages: [],
-                    closed: "Ticket closed by " + interaction.user.tag
+                    closed: "Ticket closed by " + interaction.user.tag,
+                    with: interaction.guild?.members.fetch(channel.name.split("-")[1])?.then((m) => m.user.tag)
                 };
                 for (const message of messages.values()) {
                     const obj: any = {
@@ -47,6 +48,7 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
                         content: message.content,
                         timestamp: message.createdTimestamp,
                         id: message.id,
+                        avatar: message.author.displayAvatarURL(),
                     };
                     if (message.attachments.size > 0) {
                         obj.attachments = message.attachments.map((a) => a.url);
