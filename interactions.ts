@@ -39,7 +39,7 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
                 const transcript: any = {
                     messages: [],
                     closed: "Ticket closed by " + interaction.user.tag,
-                    with: interaction.guild?.members.fetch(channel.name.split("-")[1])?.then((m) => m.user.tag)
+                    with: await interaction.guild?.members.fetch(channel.name.split("-")[1])?.then((m) => m.user.tag)
                 };
                 for (const message of messages.values()) {
                     const obj: any = {
