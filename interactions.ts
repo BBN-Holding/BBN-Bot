@@ -36,10 +36,14 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
                     content: `> We're closing your ticket. Please be patient.`,
                 });
                 const messages = await channel.messages.fetch();
+                let member;
+                try {
+                    member = await interaction.guild?.members.fetch(channel.name.split("-")[ 1 ]);
+                } catch (e) { }
                 const transcript: any = {
                     messages: [],
                     closed: "Ticket closed by " + interaction.user.tag,
-                    with: await interaction.guild?.members.fetch(channel.name.split("-")[1])?.then((m) => m.user.tag)
+                    with: `${member ? member.user.tag : "Unknown User"} (${channel.name.split("-")[ 1 ]})`
                 };
                 for (const message of messages.values()) {
                     const obj: any = {
@@ -53,7 +57,7 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
                         obj.attachments = message.attachments.map((a) => a.url);
                     }
                     if (message.embeds.length > 0) {
-                        obj.embed = message.embeds[0].toJSON();
+                        obj.embed = message.embeds[ 0 ].toJSON();
                     }
                     transcript.messages.push(obj);
                 }
@@ -65,19 +69,19 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
     }
 
     if (interaction.isUserSelectMenu() && interaction.guild && interaction.customId === 'verify_modal') {
-        const member = interaction.guild.members.cache.get(interaction.values[0])
+        const member = interaction.guild.members.cache.get(interaction.values[ 0 ])
         const role = interaction.guild.roles.cache.get("757983851032215673")
 
         if (member && role) {
             if (member.roles.cache.has(role.id)) {
                 member.roles.remove(role, "Unverified by " + interaction.user.tag)
-                interaction.reply("Successfully unverified <@" + interaction.values[0] + ">!")
+                interaction.reply("Successfully unverified <@" + interaction.values[ 0 ] + ">!")
             } else {
                 member.roles.add(role, "Verified by " + interaction.user.tag)
-                interaction.reply("Successfully verified <@" + interaction.values[0] + ">!")
+                interaction.reply("Successfully verified <@" + interaction.values[ 0 ] + ">!")
             }
         } else {
-            interaction.reply("An error occured while assigning the role to <@" + interaction.values[0] + ">")
+            interaction.reply("An error occured while assigning the role to <@" + interaction.values[ 0 ] + ">")
         }
     }
 
@@ -114,13 +118,13 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
                         value: `> ${await db.getServerURLs(interaction.user.id)}`,
                     }, {
                         name: `Last Login:`,
-                        value: '```' + JSON.stringify(login[0]) + '```',
+                        value: '```' + JSON.stringify(login[ 0 ]) + '```',
                     });
                     embed.setFooter({
-                        text: login[1] as string,
+                        text: login[ 1 ] as string,
                         iconURL: interaction.user.displayAvatarURL(),
                     })
-                    embed.setTimestamp(new Date(new Date().toLocaleString('en-US', { timeZone: login[2] })))
+                    embed.setTimestamp(new Date(new Date().toLocaleString('en-US', { timeZone: login[ 2 ] })))
                 }
 
 
@@ -142,8 +146,8 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
                 ]);
                 ch.send({
                     content: `${interaction.member} || <@&757969277063266407>`,
-                    embeds: [embed],
-                    components: [btnrow],
+                    embeds: [ embed ],
+                    components: [ btnrow ],
                 });
                 interaction.reply({
                     content: `> Successfully created your ticket here: ${ch}`,
@@ -215,7 +219,7 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
 
         const row_username = new ActionRowBuilder<UserSelectMenuBuilder>().addComponents(verify_modal)
 
-        await interaction.reply({ content: 'Which user do you want to verify?', components: [row_username], ephemeral: true })
+        await interaction.reply({ content: 'Which user do you want to verify?', components: [ row_username ], ephemeral: true })
     }
 
     if (interaction.commandName == "daily") {
