@@ -158,43 +158,43 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
 
     if (!interaction.isChatInputCommand()) return
 
-    /*if (interaction.commandName === 'setup') {
-        const channel = interaction.guild?.channels.cache.get("757992735171936347") as TextChannel
+    if (interaction.commandName === 'setup') {
+        // const channel = interaction.guild?.channels.cache.get("757992735171936347") as TextChannel
 
-        const embed = new EmbedBuilder()
-            .setTitle("Voicelocker")
-            .setDescription("🔒 - Lock Voice Channel\n\n🔓 - Unlock Voice Channel")
-            .setFooter({ text: "Provided by BBN", iconURL: "https://bbn.one/images/avatar.png" })
-            .setColor('#f55a00')
+        // const embed = new EmbedBuilder()
+        //     .setTitle("Voicelocker")
+        //     .setDescription("🔒 - Lock Voice Channel\n\n🔓 - Unlock Voice Channel")
+        //     .setFooter({ text: "Provided by BBN", iconURL: "https://bbn.one/images/avatar.png" })
+        //     .setColor('#f55a00')
 
-        const builder = new ActionRowBuilder<ButtonBuilder>().addComponents([
-            new ButtonBuilder()
-                .setCustomId(`lock`)
-                .setStyle(ButtonStyle.Success)
-                .setEmoji("🔒")
-                .setLabel(`Lock`),
-            new ButtonBuilder()
-                .setCustomId(`unlock`)
-                .setStyle(ButtonStyle.Danger)
-                .setEmoji("🔓")
-                .setLabel(`Unlock`),
-        ])
+        // const builder = new ActionRowBuilder<ButtonBuilder>().addComponents([
+        //     new ButtonBuilder()
+        //         .setCustomId(`lock`)
+        //         .setStyle(ButtonStyle.Success)
+        //         .setEmoji("🔒")
+        //         .setLabel(`Lock`),
+        //     new ButtonBuilder()
+        //         .setCustomId(`unlock`)
+        //         .setStyle(ButtonStyle.Danger)
+        //         .setEmoji("🔓")
+        //         .setLabel(`Unlock`),
+        // ])
 
-        channel.send({
-            embeds: [ embed ],
-            components: [ builder ]
-        })
+        // channel.send({
+        //     embeds: [ embed ],
+        //     components: [ builder ]
+        // })
 
-        interaction.reply("message sent!")
+        // interaction.reply("message sent!")
 
         // code
-        let ticketChannel = interaction.guild!.channels.cache.get("757992735171936347") as TextChannel;
+        let ticketChannel = interaction.guild!.channels.cache.get("1081337337704886392") as TextChannel;
         if (!ticketChannel) return;
 
         let embed = new EmbedBuilder()
             .setColor("#f55a00")
-            .setTitle(`mc4u.xyz - Ticket Support`)
-            .setDescription(`If you have a problem or question regarding mc4u, create a ticket and we will get back to you as soon as possible.\ To create a ticket click the button below.`)
+            .setTitle(`BBN - Ticket Support`)
+            .setDescription(`If you have a problem or question regarding BBN, create a ticket and we will get back to you as soon as possible.\ To create a ticket click the button below.`)
             .setFooter({ text: "Provided by BBN", iconURL: "https://bbn.one/images/avatar.png" })
         let btnrow = new ActionRowBuilder<ButtonBuilder>().addComponents([
             new ButtonBuilder()
@@ -204,14 +204,14 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
 
         ]);
         await ticketChannel.send({
-            embeds: [embed],
-            components: [btnrow],
+            embeds: [ embed ],
+            components: [ btnrow ],
         });
 
         interaction.reply({
             content: `Ticket System Setup in ${ticketChannel}`,
         });
-    }*/
+    }
 
     if (interaction.commandName === 'verify') {
         const verify_modal = new UserSelectMenuBuilder()
@@ -238,7 +238,7 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
             const reward = 10 + (Math.floor(Math.random() * 10));
             const res = (await db.addCoins(interaction.user.id, reward));
             if (res === null) {
-                interaction.reply("We couldn't find your account. Please [log in via Discord here](<https://mc4u.xyz/login>)");
+                interaction.reply("We couldn't find your account. Please [log in via Discord here](<https://bbn.one/api/@bbn/auth/redirect/discord?goal=/hosting>)");
                 return;
             }
             await db.setLastDaily(interaction.user.id, Date.now());
@@ -262,7 +262,7 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
             if (result !== null) {
                 interaction.reply(`You currently have ${result} coins.`);
             } else {
-                interaction.reply("We couldn't find your account. Please [log in via Discord here](<https://mc4u.xyz/login>)");
+                interaction.reply("We couldn't find your account. Please [log in via Discord here](<https://bbn.one/api/@bbn/auth/redirect/discord?goal=/hosting>)");
             }
         });
     }

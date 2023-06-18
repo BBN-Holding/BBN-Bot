@@ -22,10 +22,10 @@ client.on("ready", async () => {
             await rest.put(Routes.applicationCommands(client.user!.id), {
                 body:
                     [
-                        /*{
-                            name: 'setup',
-                            description: 'Setup the Voice Locker',
-                        },*/
+                        // {
+                        //     name: 'setup',
+                        //     description: 'Setup the Voice Locker',
+                        // },
                         {
                             name: 'verify',
                             description: 'Verify a User',
