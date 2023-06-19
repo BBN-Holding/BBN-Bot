@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChannelType, EmbedBuilder, GuildMember, Interaction, ModalBuilder, PermissionsBitField, TextChannel, TextInputBuilder, TextInputStyle, UserSelectMenuBuilder, VoiceChannel } from "discord.js"
+import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChannelType, EmbedBuilder, GuildMember, GuildMemberRoleManager, Interaction, ModalBuilder, PermissionsBitField, TextChannel, TextInputBuilder, TextInputStyle, UserSelectMenuBuilder, VoiceChannel } from "discord.js"
 import DB from "./db";
 
 export async function handleInteraction(interaction: Interaction, db: DB) {
@@ -145,7 +145,7 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
                         .setLabel(`Close Ticket`),
                 ]);
                 ch.send({
-                    content: `${interaction.member} || <@&757969277063266407>`,
+                    content: `${interaction.member} || <@&1120392307087261787>`,
                     embeds: [ embed ],
                     components: [ btnrow ],
                 });
@@ -210,6 +210,27 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
 
         interaction.reply({
             content: `Ticket System Setup in ${ticketChannel}`,
+        });
+    }
+
+    if (interaction.commandName === 'escalate') {
+        if (!(interaction.member?.roles as GuildMemberRoleManager).cache.has("1120392307087261787")) {
+            interaction.reply("You do not have permission to escalate this ticket.");
+            return;
+        }
+        // check if ticket channel
+        if (!(interaction.channel?.type === ChannelType.GuildText && interaction.channel?.parent?.id === "1081347349462405221")) {
+            interaction.reply("This command can only be used in a ticket channel.");
+            return;
+        }
+        // move to escalation category
+        interaction.channel?.setParent("1120395441138315345", {
+            lockPermissions: false,
+            reason: "Ticket escalated",
+        });
+        interaction.reply({
+            allowedMentions: {roles: ['757969277063266407']},
+            content: "Ticket escalated. || <@&757969277063266407>"
         });
     }
 

@@ -81,6 +81,10 @@ client.on("ready", async () => {
                                     required: true,
                                 }
                             ]
+                        },
+                        {
+                            name: 'escalate',
+                            description: 'Escalate a ticket to the next support level'
                         }
                     ]
             });
