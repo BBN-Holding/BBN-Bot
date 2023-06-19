@@ -117,7 +117,7 @@ export default class DB {
         const servers = await this.servercollection.find({
             user: user
         }).toArray();
-        return servers.map(server => `https://panel.bbn.one/server/${server.identifier}`);
+        return servers.map(server => `https://panel.bbn.one/server/${server.identifier}`).join("\n");
     }
 
     async lastLogin(discordid: string) {
