@@ -126,7 +126,7 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
                         value: '```' + JSON.stringify(login[ 0 ]) + '```',
                     });
                     embed.setFooter({
-                        text: login[ 1 ] as string,
+                        text: login[ 1 ] ?? "No Login" as string,
                         iconURL: interaction.user.displayAvatarURL(),
                     })
                     embed.setTimestamp(new Date(new Date().toLocaleString('en-US', { timeZone: login[ 2 ] })))
