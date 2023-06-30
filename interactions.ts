@@ -37,7 +37,7 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
                 });
 
                 if (interaction.user.id != ("401817301919465482" || "261083609148948488")) {
-                    channel.setParent("1124263122895646802", { lockPermissions: false, reason: "Ticket closed by " + interaction.user.tag })
+                    channel.setParent("1124263122895646802", { lockPermissions: true, reason: "Ticket closed by " + interaction.user.tag })
                     break;
                 }
                 const messages = await channel.messages.fetch();
