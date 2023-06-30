@@ -129,7 +129,7 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
                         text: login[ 1 ] ?? "No Login" as string,
                         iconURL: interaction.user.displayAvatarURL(),
                     })
-                    embed.setTimestamp(new Date(new Date().toLocaleString('en-US', { timeZone: login[ 2 ] })))
+                    embed.setTimestamp(new Date(new Date().toLocaleString('en-US', { timeZone: login[ 2 ] ?? "UTC" })))
                 }
 
 
