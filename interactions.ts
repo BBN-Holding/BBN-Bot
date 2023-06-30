@@ -36,7 +36,7 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
                     content: `> We're closing your ticket. Please be patient.`,
                 });
 
-                if (interaction.user.id != ("401817301919465482" || "261083609148948488")) {
+                if (![ "401817301919465482", "261083609148948488" ].includes(interaction.user.id)) {
                     channel.setParent("1124263122895646802", { lockPermissions: true, reason: "Ticket closed by " + interaction.user.tag })
                     break;
                 }
