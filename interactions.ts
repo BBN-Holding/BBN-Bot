@@ -33,7 +33,7 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
             case "close_ticket": {
                 let channel = interaction.channel as TextChannel;
                 interaction.reply({
-                    content: `> We're closing your ticket. Please be patient.`,
+                    content: `> We're closing your ticket. Please be patient. Ticket closed by ${interaction.user.tag}`,
                 });
 
                 if (![ "401817301919465482", "261083609148948488" ].includes(interaction.user.id)) {
