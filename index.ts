@@ -1,11 +1,11 @@
-import { ActivityType, Client, REST, Routes } from 'discord.js'
+import { ActivityType, Client, Message, MessageType, REST, Routes } from 'discord.js'
 import { sendBanMessage, sendJoinMessage, sendLeaveMessage, sendPrivateMessage, sendVoice } from './helper';
 import { handleInteraction } from "./interactions";
 import DB from "./db";
 //@ts-ignore
 import * as config from './config.json'
 
-const client = new Client({ intents: [ 3244031 ] });
+const client = new Client({ intents: [3244031] });
 
 const db = new DB(config.dburl);
 
@@ -108,5 +108,64 @@ client.on('messageCreate', (message) => sendPrivateMessage(message, client))
 client.on('voiceStateUpdate', sendVoice);
 
 client.on('interactionCreate', (interaction) => handleInteraction(interaction, db));
+client.on('messageCreate', async (message) => {
+    if (message.type === MessageType.GuildBoost && message.channelId === config.log_channel) {
+        const dbuser = await db.finduser(message.author.id);
+        if (!dbuser) {
+            const channel = await message.guild?.channels.create({
+                name: 'link-'+message.author.id,
+                parent: config.link_category,
+                permissionOverwrites: [
+                    {
+                        id: message.author.id,
+                        allow: ['ViewChannel']
+                    }
+                ]
+            });
+            await channel?.send({ content: `<@${message.author.id}> Looks like you just boosted the server! Unfortunately, you are not linked to your BBN account yet. Please send your Email address to this channel to link your account. Our Team will respond as soon as possible.`, allowedMentions: { users: [message.author.id] }});
+        } else {
+            await db.addBoosterRewards(message.author.id);
+            await message.channel.send(`Added booster rewards for https://discord.com/channels/${message.guildId}/${message.channelId}/${message.id}`);
+        }
+    }
+})
 
-client.login(config.token);
+async function checkBoosts() {
+    console.log('Checking boosts');
+    const guild = await client.guilds.fetch(config.guild_id);
+    const log_channel = await guild.channels.fetch(config.log_channel);
+    if (!log_channel?.isTextBased()) return;
+    // Get all messages in the last 32 days
+    const messages: Message[] = [];
+    let scan = true;
+    let last_id = await log_channel.messages.fetch({ limit: 1 }).then((msgs) => msgs.first()!.id);
+    while (scan) {
+        const msgs = await log_channel.messages.fetch({ limit: 100, before: last_id });
+        last_id = msgs.last()!.id;
+        if (msgs.size === 0 || msgs.last()!.createdAt.getTime() < Date.now() - 33 * 24 * 60 * 60 * 1000) {
+            scan = false;
+        } else {
+            msgs.forEach((msg) => {
+                if (msg.type === MessageType.GuildBoost && msgs.last()!.createdAt.getTime() < Date.now() - 30 * 24 * 60 * 60 * 1000) {
+                    messages.push(msg);
+                }
+            })
+        }
+    }
+    messages.forEach(async (msg) => {
+        const user = await db.finduser(msg.author.id);
+        if (user) {
+            await db.removeBoosterRewards(msg.author.id);
+            await msg.channel.send(`Removed booster rewards for https://discord.com/channels/${guild.id}/${msg.channelId}/${msg.id}`);
+        } else {
+            await msg.channel.send({ content: 'User not found, <@757969277063266407> please check this user https://discord.com/channels/${guild.id}/${msg.channelId}/${msg.id}', allowedMentions: { roles: ['757969277063266407'] } });
+        }
+    });
+}
+
+setInterval(checkBoosts, 24 * 60 * 60 * 1000);
+
+client.login(config.token).then(() => {
+    console.log('Logged in'); 
+    checkBoosts();
+});

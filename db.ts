@@ -136,10 +136,40 @@ export default class DB {
             platform: userevent.source.platform,
             platformVersion: userevent.source.platformVersion,
             legacyUserAgent: userevent.source.legacyUserAgent,
-        }, String.fromCodePoint(...(location.country as string).toUpperCase().split('').map(char =>  127397 + char.charCodeAt(0))) + " " + location.city + " (" + location.timezone + ")", location.timezone];
+        }, String.fromCodePoint(...(location.country as string).toUpperCase().split('').map(char => 127397 + char.charCodeAt(0))) + " " + location.city + " (" + location.timezone + ")", location.timezone];
     }
 
     async saveTranscript(transcript: any) {
         await this.db.collection("@bbn/bot/transcripts").insertOne(transcript);
+    }
+
+    async addBoosterRewards(discordid: string) {
+        const user = await this.finduser(discordid);
+        if (!user) return null;
+        return await this.accesscollection.updateOne({
+            owner: user
+        }, {
+            $inc: {
+                "limits.memory": 1500,
+                "limits.disk": 2000,
+                "limits.cpu": 100,
+                "limits.slots": 1
+            }
+        });
+    }
+
+    async removeBoosterRewards(discordid: string) {
+        const user = await this.finduser(discordid);
+        if (!user) return null;
+        return await this.accesscollection.updateOne({
+            owner: user
+        }, {
+            $inc: {
+                "limits.memory": -1500,
+                "limits.disk": -2000,
+                "limits.cpu": -100,
+                "limits.slots": -1
+            }
+        });
     }
 }
