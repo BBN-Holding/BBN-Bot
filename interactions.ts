@@ -1,6 +1,7 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChannelType, EmbedBuilder, GuildMember, GuildMemberRoleManager, Interaction, ModalBuilder, PermissionsBitField, TextChannel, TextInputBuilder, TextInputStyle, UserSelectMenuBuilder, VoiceChannel } from "discord.js"
 import DB from "./db";
-import config from "./config.json";
+//@ts-ignore
+import * as config from './config.json'
 
 export async function handleInteraction(interaction: Interaction, db: DB) {
 

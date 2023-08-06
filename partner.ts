@@ -1,5 +1,6 @@
 import { Client, Collection, GuildMember, Invite, TextChannel } from "discord.js";
-import config from "./config.json";
+//@ts-ignore
+import * as config from './config.json'
 import DB from "./db";
 import { defaultEmbed } from "./helper";
 
