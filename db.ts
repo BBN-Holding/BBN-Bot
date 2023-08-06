@@ -1,4 +1,4 @@
-import { Collection, Db, MongoClient } from "mongodb";
+import { Collection, Db, MongoClient, ObjectId } from "mongodb";
 
 export default class DB {
     client: MongoClient;
@@ -7,6 +7,7 @@ export default class DB {
     accesscollection: Collection;
     servercollection: Collection;
     usereventcollection: Collection;
+    partnercollection: Collection;
     constructor(url: string) {
         this.client = new MongoClient(url);
         this.db = this.client.db("one_bbn");
@@ -14,6 +15,7 @@ export default class DB {
         this.accesscollection = this.db.collection("@bbn/hosting/access");
         this.servercollection = this.db.collection("@bbn/hosting/servers");
         this.usereventcollection = this.db.collection("user-events");
+        this.partnercollection = this.db.collection("@bbn/bot/partners");
     }
 
     async connect() {
@@ -171,5 +173,74 @@ export default class DB {
                 "limits.slots": -1
             }
         });
+    }
+
+    addPartner(member: ObjectId, cpu: number, memory: number, disk: number, slots: number, invite: string) {
+        this.partnercollection.insertOne({
+            owner: member,
+            cpu: cpu,
+            memory: memory,
+            disk: disk,
+            slots: slots,
+            invite: invite,
+            lastinvite: Date.now()
+        });
+        this.accesscollection.updateOne({
+            owner: member
+        }, {
+            $inc: {
+                "limits.memory": memory,
+                "limits.disk": disk,
+                "limits.cpu": cpu,
+                "limits.slots": slots
+            }
+        });
+    }
+
+    async removePartner(member: ObjectId) {
+        const partner = await this.partnercollection.findOne({
+            owner: member
+        });
+        if (!partner) return null;
+        this.accesscollection.updateOne({
+            owner: member
+        }, {
+            $inc: {
+                "limits.memory": -partner.memory,
+                "limits.disk": -partner.disk,
+                "limits.cpu": -partner.cpu,
+                "limits.slots": -partner.slots
+                
+            }
+        });
+        this.partnercollection.deleteOne({
+            owner: member
+        });
+    }
+    
+    getPartnerFromInvite(invite: string) {
+        return this.partnercollection.findOne({
+            invite: invite
+        });
+    }
+
+    getMemberFromBBNId(bbnid: ObjectId) {
+        return this.usercollection.findOne({
+            _id: bbnid
+        }).then(user => user?.authentication.find((auth: any) => auth.type === "oauth" && auth.provider === "discord")?.id);
+    }
+
+    updateLastInvite(member: ObjectId) {
+        this.partnercollection.updateOne({
+            owner: member
+        }, {
+            $set: {
+                lastinvite: Date.now()
+            }
+        })
+    }
+
+    getPartners() {
+        return this.partnercollection.find().toArray();
     }
 }

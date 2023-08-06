@@ -1,5 +1,6 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChannelType, EmbedBuilder, GuildMember, GuildMemberRoleManager, Interaction, ModalBuilder, PermissionsBitField, TextChannel, TextInputBuilder, TextInputStyle, UserSelectMenuBuilder, VoiceChannel } from "discord.js"
 import DB from "./db";
+import config from "./config.json";
 
 export async function handleInteraction(interaction: Interaction, db: DB) {
 
@@ -323,7 +324,59 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
         interaction.reply(`Removed ${coins} coins from ${member.user.username}'s balance.`);
     }
 
+    if (interaction.commandName == "addpartner") {
+        if (!interaction.memberPermissions?.has(PermissionsBitField.Flags.Administrator)) {
+            interaction.reply("You do not have permission to add partners.");
+            return;
+        }
 
+        const member = interaction.options.getMentionable("user", true) as GuildMember;
+        const dbmember = await db.finduser(member.id);
+        if (!dbmember) {
+            interaction.reply("We couldn't find an bbn account in our database");
+            return;
+        }
+        
+        const cpu = interaction.options.getInteger("cpu", true);
+        const ram = interaction.options.getInteger("ram", true);
+        const storage = interaction.options.getInteger("storage", true);
+        const slots = interaction.options.getInteger("slots", true);
+        const invite = await interaction.guild?.invites.create(config.getstarted_channel_id, {
+            maxAge: 0,
+            unique: true,
+            reason: "Partner invite",
+        });
+        if (!invite) {
+            interaction.reply("We couldn't create an invite for the partner");
+            return;
+        }
+        db.addPartner(dbmember, cpu, ram, storage, slots, invite.code);
+        interaction.reply(`Added ${member.user.username} as a partner.\n\nFollowing resources got added: \nCPU: ${cpu} \nMemory: ${ram} \nStorage: ${storage} \nSlots: ${slots} \nInvite code: https://discord.gg/${invite.code}`);
+    }
+    if (interaction.commandName == "removepartner") {
+        if (!interaction.memberPermissions?.has(PermissionsBitField.Flags.Administrator)) {
+            interaction.reply("You do not have permission to remove partners.");
+            return;
+        }
+        const member = interaction.options.getMentionable("user", true) as GuildMember;
+        const dbmember = await db.finduser(member.id);
+        if (!dbmember) {
+            interaction.reply("We couldn't find an bbn account in our database");
+            return;
+        }
+        db.removePartner(dbmember);
+        interaction.reply(`Removed ${member.user.username} as a partner.`);
+    }
+    if (interaction.commandName == "partners") {
+        if (!interaction.memberPermissions?.has(PermissionsBitField.Flags.Administrator)) {
+            interaction.reply("You do not have permission to list partners.");
+            return;
+        }
+        let out = "Owner - CPU, RAM, Storage, Slots, Invitecode, last invite\n";
+        const partners = await db.getPartners();
+        out += (await Promise.all(partners.map(async partner => `<@${(await interaction.guild?.members.fetch(await db.getMemberFromBBNId(partner.owner)))?.user.id}> (${partner.owner}) - ${partner.cpu}, ${partner.memory}, ${partner.disk}, ${partner.slots}, ${partner.invite}, <t:${Math.round(partner.lastinvite/1000)}:R>`))).join("\n");
+        interaction.reply(out);
+    }
 }
 
 function lockVoice(interaction: ButtonInteraction, lock: boolean) {

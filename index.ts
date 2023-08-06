@@ -1,9 +1,10 @@
 import { ActivityType, Client, Message, MessageType, REST, Routes } from 'discord.js'
-import { sendBanMessage, sendJoinMessage, sendLeaveMessage, sendPrivateMessage, sendVoice } from './helper';
+import { sendBanMessage, sendLeaveMessage, sendPrivateMessage, sendVoice } from './helper';
 import { handleInteraction } from "./interactions";
 import DB from "./db";
 //@ts-ignore
 import * as config from './config.json'
+import { PartnerManager } from './partner';
 
 const client = new Client({ intents: [3244031] });
 
@@ -85,6 +86,58 @@ client.on("ready", async () => {
                         {
                             name: 'escalate',
                             description: 'Escalate a ticket to the next support level'
+                        },
+                        {
+                            name: 'addpartner',
+                            description: 'Add a partner to the partner list',
+                            options: [
+                                {
+                                    name: 'user',
+                                    description: 'The user to remove coins from',
+                                    type: 9,
+                                    required: true,
+                                },
+                                {
+                                    name: 'cpu',
+                                    description: 'The amount of cpu to add',
+                                    type: 4,
+                                    required: true,
+                                },
+                                {
+                                    name: 'ram',
+                                    description: 'The amount of ram to add',
+                                    type: 4,
+                                    required: true,
+                                },
+                                {
+                                    name: 'storage',
+                                    description: 'The amount of storage to add',
+                                    type: 4,
+                                    required: true,
+                                },
+                                {
+                                    name: 'slots',
+                                    description: 'The amount of slots to add',
+                                    type: 4,
+                                    required: true,
+                                }
+                            ]
+                        },
+                        {
+                            name: 'removepartner',
+                            description: 'Remove a partner from the partner list',
+                            options: [
+                                {
+                                    name: 'user',
+                                    description: 'The user to remove coins from',
+                                    type: 9,
+                                    required: true,
+                                }
+                            ]
+                        },
+                        {
+                            name: 'partners',
+                            description: 'List all partners'
                         }
                     ]
             });
@@ -93,16 +146,28 @@ client.on("ready", async () => {
         } catch (error) {
             console.error(error);
         }
-        await db.connect();
+        await db.connect(); 
     })();
+});
+
+const partnerManager = new PartnerManager(client, db);
+
+client.on('inviteCreate', async (invite) => {
+    partnerManager.cacheInvites();
+});
+
+client.on('inviteDelete', async (invite) => {
+    partnerManager.cacheInvites();
+});
+
+client.on('guildMemberAdd', async (member) => {
+    partnerManager.onMember(member, 'join');
 });
 
 client.on('guildBanAdd', (ban) => sendBanMessage(ban, true))
 client.on('guildBanRemove', (ban) => sendBanMessage(ban, false))
 
-client.on('guildMemberAdd', sendJoinMessage);
 client.on('guildMemberRemove', sendLeaveMessage)
-
 client.on('messageCreate', (message) => sendPrivateMessage(message, client))
 
 client.on('voiceStateUpdate', sendVoice);
@@ -168,4 +233,5 @@ setInterval(checkBoosts, 24 * 60 * 60 * 1000);
 client.login(config.token).then(() => {
     console.log('Logged in'); 
     checkBoosts();
+    partnerManager.cacheInvites();
 });

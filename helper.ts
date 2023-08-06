@@ -10,19 +10,11 @@ export function sendBanMessage(ban: GuildBan, banned: boolean) {
         (channel as TextChannel).send({ embeds: [ embed ] })
     })
 }
-
-export function sendJoinMessage(member: GuildMember) {
-    const embed = defaultEmbed(member.user);
-    embed.setTitle(`${embed.data.title} joined`).setColor('#FEE75C');
-    member.guild.channels.fetch(config.log_channel).then(channel => (channel as TextChannel).send({ embeds: [ embed ] }));
-}
-
 export function sendLeaveMessage(member: PartialGuildMember | GuildMember) {
     const embed = defaultEmbed(member.user);
     embed.setTitle(`${embed.data.title} left`)
     member.guild.channels.fetch(config.log_channel).then(channel => (channel as TextChannel).send({ embeds: [ embed ] }))
 }
-
 export function sendPrivateMessage(message: Message, client: Client) {
     if (message.channel.isDMBased()) {
         const embed = defaultEmbed(message.author);
@@ -78,7 +70,7 @@ function generateVoiceEmbed(word: string, negative: boolean, newState: VoiceStat
         .setColor(negative ? '#ED4245' : '#57F287');
 }
 
-function defaultEmbed(user: User) {
+export function defaultEmbed(user: User) {
     return new EmbedBuilder()
         .setTitle(((!user.bot) ? "User" : "Bot"))
         .setAuthor({ name: user.tag, iconURL: user.displayAvatarURL(), url: user.displayAvatarURL() })
