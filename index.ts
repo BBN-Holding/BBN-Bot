@@ -1,5 +1,6 @@
-import { ActivityType, Client, Message, MessageType, REST, Routes } from 'discord.js'
+import { ActivityType, CategoryChannel, Client, Message, MessageType, REST, Routes } from 'discord.js'
 import { sendBanMessage, sendLeaveMessage, sendPrivateMessage, sendVoice } from './helper';
+
 import { handleInteraction } from "./interactions";
 import DB from "./db";
 //@ts-ignore
@@ -174,12 +175,16 @@ client.on('voiceStateUpdate', sendVoice);
 
 client.on('interactionCreate', (interaction) => handleInteraction(interaction, db));
 client.on('messageCreate', async (message) => {
-    if (message.type === MessageType.GuildBoost && message.channelId === config.log_channel) {
+    if (message.type === MessageType.GuildBoost && message.channelId === config.log_channel && message.guild) {
         const dbuser = await db.finduser(message.author.id);
         if (!dbuser) {
-            const channel = await message.guild?.channels.create({
+            if (message.guild.channels.cache.find((channel) => channel.name === 'link-'+message.author.id)) {
+                await message.channel.send(`https://discord.com/channels/${message.guildId}/${message.channelId}/${message.id} already has a link channel`);
+                return;
+            }
+            const channel = await message.guild.channels.create({
                 name: 'link-'+message.author.id,
-                parent: config.link_category,
+                parent: await message.guild.channels.fetch(config.link_category) as CategoryChannel,
                 permissionOverwrites: [
                     {
                         id: message.author.id,
@@ -188,6 +193,7 @@ client.on('messageCreate', async (message) => {
                 ]
             });
             await channel?.send({ content: `<@${message.author.id}> Looks like you just boosted the server! Unfortunately, you are not linked to your BBN account yet. Please send your Email address to this channel to link your account. Our Team will respond as soon as possible.`, allowedMentions: { users: [message.author.id] }});
+            await message.channel.send(`https://discord.com/channels/${message.guildId}/${message.channelId}/${message.id} created channel https://discord.com/channels/${message.guildId}/${channel?.id} to link`);
         } else {
             await db.addBoosterRewards(message.author.id);
             await message.channel.send(`Added booster rewards for https://discord.com/channels/${message.guildId}/${message.channelId}/${message.id}`);
