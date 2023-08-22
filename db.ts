@@ -138,7 +138,7 @@ export default class DB {
             platform: userevent.source.platform,
             platformVersion: userevent.source.platformVersion,
             legacyUserAgent: userevent.source.legacyUserAgent,
-        }, String.fromCodePoint(...(location.country as string).toUpperCase().split('').map(char => 127397 + char.charCodeAt(0))) + " " + location.city + " (" + location.timezone + ")", location.timezone];
+        }, (location.country ? String.fromCodePoint(...(location.country as string).toUpperCase().split('').map(char => 127397 + char.charCodeAt(0))) : "") + " " + location.city + " (" + location.timezone + ")", location.timezone];
     }
 
     async saveTranscript(transcript: any) {
