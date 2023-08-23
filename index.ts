@@ -216,8 +216,8 @@ async function checkBoosts() {
         if (msgs.size === 0 || msgs.last()!.createdAt.getTime() < Date.now() - 33 * 24 * 60 * 60 * 1000) {
             scan = false;
         } else {
-            msgs.forEach((msg) => {
-                if (msg.type === MessageType.GuildBoost && msgs.last()!.createdAt.getTime() < Date.now() - 30 * 24 * 60 * 60 * 1000) {
+            msgs.forEach((msg: Message) => {
+                if (msg.type === MessageType.GuildBoost && msg.createdAt.getTime() < Date.now() - 30 * 24 * 60 * 60 * 1000) {
                     messages.push(msg);
                 }
             })

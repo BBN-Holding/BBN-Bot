@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChannelType, EmbedBuilder, GuildMember, GuildMemberRoleManager, Interaction, ModalBuilder, PermissionsBitField, TextChannel, TextInputBuilder, TextInputStyle, UserSelectMenuBuilder, VoiceChannel } from "discord.js"
+import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChannelType, EmbedBuilder, GuildMember, GuildMemberRoleManager, Interaction, Message, ModalBuilder, PermissionsBitField, TextChannel, TextInputBuilder, TextInputStyle, UserSelectMenuBuilder, VoiceChannel } from "discord.js"
 import DB from "./db";
 //@ts-ignore
 import * as config from './config.json'
@@ -38,19 +38,35 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
                     content: `> We're closing your ticket. Please be patient. Ticket closed by ${interaction.user.tag}`,
                 });
 
-                if (![ "401817301919465482", "261083609148948488" ].includes(interaction.user.id)) {
+                if (!["401817301919465482", "261083609148948488"].includes(interaction.user.id)) {
                     channel.setParent("1124263122895646802", { lockPermissions: true, reason: "Ticket closed by " + interaction.user.tag })
                     break;
                 }
-                const messages = await channel.messages.fetch();
+                // get all messages from channel
+                const messages: Message[] = [];
+
+                // Create message pointer
+                let message = await channel.messages
+                    .fetch({ limit: 1 })
+                    .then(messagePage => (messagePage.size === 1 ? messagePage.at(0) : null));
+
+                while (message) {
+                    await channel.messages
+                        .fetch({ limit: 100, before: message.id })
+                        .then(messagePage => {
+                            messagePage.forEach(msg => messages.push(msg));
+                            // Update our message pointer to be the last message on the page of messages
+                            message = 0 < messagePage.size ? messagePage.at(messagePage.size - 1) : null;
+                        });
+                }
                 let member;
                 try {
-                    member = await interaction.guild?.members.fetch(channel.name.split("-")[ 1 ]);
+                    member = await interaction.guild?.members.fetch(channel.name.split("-")[1]);
                 } catch (e) { }
                 const transcript: any = {
                     messages: [],
                     closed: "Ticket closed by " + interaction.user.tag,
-                    with: `${member ? member.user.tag : "Unknown User"} (${channel.name.split("-")[ 1 ]})`
+                    with: `${member ? member.user.tag : "Unknown User"} (${channel.name.split("-")[1]})`
                 };
                 for (const message of messages.values()) {
                     const obj: any = {
@@ -64,7 +80,7 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
                         obj.attachments = message.attachments.map((a) => a.url);
                     }
                     if (message.embeds.length > 0) {
-                        obj.embed = message.embeds[ 0 ].toJSON();
+                        obj.embed = message.embeds[0].toJSON();
                     }
                     transcript.messages.push(obj);
                 }
@@ -76,19 +92,19 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
     }
 
     if (interaction.isUserSelectMenu() && interaction.guild && interaction.customId === 'verify_modal') {
-        const member = interaction.guild.members.cache.get(interaction.values[ 0 ])
+        const member = interaction.guild.members.cache.get(interaction.values[0])
         const role = interaction.guild.roles.cache.get("757983851032215673")
 
         if (member && role) {
             if (member.roles.cache.has(role.id)) {
                 member.roles.remove(role, "Unverified by " + interaction.user.tag)
-                interaction.reply("Successfully unverified <@" + interaction.values[ 0 ] + ">!")
+                interaction.reply("Successfully unverified <@" + interaction.values[0] + ">!")
             } else {
                 member.roles.add(role, "Verified by " + interaction.user.tag)
-                interaction.reply("Successfully verified <@" + interaction.values[ 0 ] + ">!")
+                interaction.reply("Successfully verified <@" + interaction.values[0] + ">!")
             }
         } else {
-            interaction.reply("An error occured while assigning the role to <@" + interaction.values[ 0 ] + ">")
+            interaction.reply("An error occured while assigning the role to <@" + interaction.values[0] + ">")
         }
     }
 
@@ -125,13 +141,13 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
                         value: `> ${await db.getServerURLs(interaction.user.id)}`,
                     }, {
                         name: `Last Login:`,
-                        value: '```' + JSON.stringify(login[ 0 ]) + '```',
+                        value: '```' + JSON.stringify(login[0]) + '```',
                     });
                     embed.setFooter({
-                        text: login[ 1 ] ?? "No Login" as string,
+                        text: login[1] ?? "No Login" as string,
                         iconURL: interaction.user.displayAvatarURL(),
                     })
-                    embed.setTimestamp(new Date(new Date().toLocaleString('en-US', { timeZone: login[ 2 ] ?? "UTC" })))
+                    embed.setTimestamp(new Date(new Date().toLocaleString('en-US', { timeZone: login[2] ?? "UTC" })))
                 }
 
 
@@ -153,8 +169,8 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
                 ]);
                 ch.send({
                     content: `${interaction.member} || <@&1120392307087261787>`,
-                    embeds: [ embed ],
-                    components: [ btnrow ],
+                    embeds: [embed],
+                    components: [btnrow],
                 });
                 interaction.reply({
                     content: `> Successfully created your ticket here: ${ch}`,
@@ -211,8 +227,8 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
 
         ]);
         await ticketChannel.send({
-            embeds: [ embed ],
-            components: [ btnrow ],
+            embeds: [embed],
+            components: [btnrow],
         });
 
         interaction.reply({
@@ -236,7 +252,7 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
             reason: "Ticket escalated",
         });
         interaction.reply({
-            allowedMentions: { roles: [ '757969277063266407' ] },
+            allowedMentions: { roles: ['757969277063266407'] },
             content: "Ticket escalated. || <@&757969277063266407>"
         });
     }
@@ -247,7 +263,7 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
 
         const row_username = new ActionRowBuilder<UserSelectMenuBuilder>().addComponents(verify_modal)
 
-        await interaction.reply({ content: 'Which user do you want to verify?', components: [ row_username ], ephemeral: true })
+        await interaction.reply({ content: 'Which user do you want to verify?', components: [row_username], ephemeral: true })
     }
 
     if (interaction.commandName == "daily") {
@@ -337,7 +353,7 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
             interaction.reply("We couldn't find an bbn account in our database");
             return;
         }
-        
+
         const cpu = interaction.options.getInteger("cpu", true);
         const ram = interaction.options.getInteger("ram", true);
         const storage = interaction.options.getInteger("storage", true);
@@ -373,9 +389,9 @@ export async function handleInteraction(interaction: Interaction, db: DB) {
             interaction.reply("You do not have permission to list partners.");
             return;
         }
-        let out = "Owner - CPU, RAM, Storage, Slots, Invitecode, last invite\n";
+        let out = "Owner - CPU, RAM, Storage, Slots, Invitecode, last invite, uses\n";
         const partners = await db.getPartners();
-        out += (await Promise.all(partners.map(async partner => `<@${(await interaction.guild?.members.fetch(await db.getMemberFromBBNId(partner.owner)))?.user.id}> (${partner.owner}) - ${partner.cpu}, ${partner.memory}, ${partner.disk}, ${partner.slots}, ${partner.invite}, <t:${Math.round(partner.lastinvite/1000)}:R>`))).join("\n");
+        out += (await Promise.all(partners.map(async partner => `<@${(await interaction.guild?.members.fetch(await db.getMemberFromBBNId(partner.owner)))?.user.id}> (${partner.owner}) - ${partner.cpu}, ${partner.memory}, ${partner.disk}, ${partner.slots}, ${partner.invite}, <t:${Math.round(partner.lastinvite / 1000)}:R>, ${(await interaction.guild?.invites.fetch(partner.invite))?.uses}`))).join("\n");
         interaction.reply(out);
     }
 }
