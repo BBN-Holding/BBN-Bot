@@ -1,24 +1,26 @@
 import { Client, TextChannel, GuildBan, GuildMember, PartialGuildMember, User, Message, VoiceState, EmbedBuilder } from 'discord.js'
 //@ts-ignore
 import * as config from './config.json'
+import dns from 'dns';
+import * as util from 'minecraft-server-util';
 
 export function sendBanMessage(ban: GuildBan, banned: boolean) {
     ban.client.channels.fetch(config.log_channel).then(channel => {
         const embed = defaultEmbed(ban.user);
         embed.setTitle(`${embed.data.title} ${banned ? '' : 'un'}banned`)
-            .addFields([ { name: 'Reason', value: ban.reason ?? 'Not specified' } ]);
-        (channel as TextChannel).send({ embeds: [ embed ] })
+            .addFields([{ name: 'Reason', value: ban.reason ?? 'Not specified' }]);
+        (channel as TextChannel).send({ embeds: [embed] })
     })
 }
 export function sendLeaveMessage(member: PartialGuildMember | GuildMember) {
     const embed = defaultEmbed(member.user);
     embed.setTitle(`${embed.data.title} left`)
-    member.guild.channels.fetch(config.log_channel).then(channel => (channel as TextChannel).send({ embeds: [ embed ] }))
+    member.guild.channels.fetch(config.log_channel).then(channel => (channel as TextChannel).send({ embeds: [embed] }))
 }
 export function sendPrivateMessage(message: Message, client: Client) {
     if (message.channel.isDMBased()) {
         const embed = defaultEmbed(message.author);
-        embed.data.fields![ 1 ].name = 'User ID'
+        embed.data.fields![1].name = 'User ID'
         embed.setTitle("Private message received")
             .addFields([
                 { name: '\u200b', value: '\u200b', inline: true },
@@ -27,8 +29,64 @@ export function sendPrivateMessage(message: Message, client: Client) {
             ])
             .setDescription('```' + message.content + '```')
             .setColor('#57F287');
-        client.channels.fetch(config.log_channel).then(channel => (channel as TextChannel).send({ embeds: [ embed ], files: [ ...message.attachments.values() ] }))
+        client.channels.fetch(config.log_channel).then(channel => (channel as TextChannel).send({ embeds: [embed], files: [...message.attachments.values()] }))
     }
+}
+
+export async function handleShowcaseMessage(message: Message, client: Client) {
+    if (message.channel.id === config.showcase_channel) {
+        if (message.author.bot) return; // Ignore messages from bots
+        const domainPattern = /(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9.-]+(?:\.[a-zA-Z]{2,}))(?::([0-9]+))?/;
+        const match = domainPattern.exec(message.content);
+        if (match) {
+            const userDomain = match[1];
+            let userPort = match[2];
+
+            if (!config.bbn_domains.includes(userDomain)) {
+                const userIp = (await resolve([userDomain]))[0];
+                const bbnIps = await resolve(config.bbn_domains);
+                if (!bbnIps.includes(userIp)) {
+                    replyAndDelete(message, `Your server \`${userDomain}\` is not hosted by BBN. Please use a BBN domain.`);
+                    return;
+                }
+            }
+
+            if (!userPort) {
+                userPort = '25565';
+            }
+
+            try {
+                await util.status(userDomain, parseInt(userPort));
+                message.react('🆙');
+            } catch (e) {
+                replyAndDelete(message, `Your server \`${userDomain}:${userPort}\` is not online. Please start your server and try again.`);
+                return;
+            }
+        } else {
+            replyAndDelete(message, `Your message does not contain a valid domain. Please use the format \`<domain>:<port>\` or \`<domain>\`.`);
+            return;
+        }
+    }
+}
+
+async function replyAndDelete(message: Message, content: string) {
+    await message.reply(content).then(reply => setTimeout(() => reply.delete(), 10000));
+    message.delete();
+}
+
+export function resolve(domains: string[]) {
+    return new Promise<string[]>((resolve, reject) => {
+        const resolved: string[] = [];
+        domains.forEach(domain => {
+            dns.resolve(domain, (err, addresses) => {
+                if (err) reject(err);
+                else {
+                    resolved.push(...addresses);
+                }
+            })
+        })
+        resolve(resolved);
+    })
 }
 
 export function sendVoice(oldState: VoiceState, newState: VoiceState) {
@@ -56,7 +114,7 @@ export function sendVoice(oldState: VoiceState, newState: VoiceState) {
 }
 
 function sendVoiceMessage(embed: EmbedBuilder, newState: VoiceState) {
-    newState.guild.channels.fetch(config.voice_log_channel).then(channel => (channel as TextChannel).send({ embeds: [ embed ] }))
+    newState.guild.channels.fetch(config.voice_log_channel).then(channel => (channel as TextChannel).send({ embeds: [embed] }))
 }
 
 function generateVoiceEmbed(word: string, negative: boolean, newState: VoiceState, oldState: VoiceState) {

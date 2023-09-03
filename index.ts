@@ -1,5 +1,5 @@
 import { ActivityType, CategoryChannel, Client, Message, MessageType, REST, Routes } from 'discord.js'
-import { sendBanMessage, sendLeaveMessage, sendPrivateMessage, sendVoice } from './helper';
+import { handleShowcaseMessage, sendBanMessage, sendLeaveMessage, sendPrivateMessage, sendVoice } from './helper';
 
 import { handleInteraction } from "./interactions";
 import DB from "./db";
@@ -7,7 +7,7 @@ import DB from "./db";
 import * as config from './config.json'
 import { PartnerManager } from './partner';
 
-const client = new Client({ intents: [3244031] });
+const client = new Client({ intents: [3244031, 'MessageContent'] });
 
 const db = new DB(config.dburl);
 
@@ -170,6 +170,7 @@ client.on('guildBanRemove', (ban) => sendBanMessage(ban, false))
 
 client.on('guildMemberRemove', sendLeaveMessage)
 client.on('messageCreate', (message) => sendPrivateMessage(message, client))
+client.on('messageCreate', (message) => handleShowcaseMessage(message, client));
 
 client.on('voiceStateUpdate', sendVoice);
 
