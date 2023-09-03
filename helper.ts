@@ -35,7 +35,7 @@ export function sendPrivateMessage(message: Message, client: Client) {
 export async function handleShowcaseMessage(message: Message, client: Client) {
     if (message.channel.id === config.showcase_channel) {
         if (message.author.bot) return; // Ignore messages from bots
-        const domainPattern = /(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9.-]+(?:\.[a-zA-Z]{2,}))(?::([0-9]+))?/;
+        const domainPattern = /(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9.-]+(?:\.[a-zA-Z]{2,}))(?::([0-9]+))?/g;
         const match = Array.from(message.content.matchAll(domainPattern));
          
         if (match.length === 1) {
