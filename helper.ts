@@ -2,7 +2,6 @@ import { Client, TextChannel, GuildBan, GuildMember, PartialGuildMember, User, M
 //@ts-ignore
 import * as config from './config.json'
 import dns from 'dns';
-import * as util from 'minecraft-server-util';
 
 export function sendBanMessage(ban: GuildBan, banned: boolean) {
     ban.client.channels.fetch(config.log_channel).then(channel => {
@@ -40,7 +39,6 @@ export async function handleShowcaseMessage(message: Message, client: Client) {
         const match = domainPattern.exec(message.content);
         if (match) {
             const userDomain = match[1];
-            let userPort = match[2];
 
             if (!config.bbn_domains.includes(userDomain)) {
                 const userIp = (await resolve([userDomain]))[0];
@@ -50,18 +48,7 @@ export async function handleShowcaseMessage(message: Message, client: Client) {
                     return;
                 }
             }
-
-            if (!userPort) {
-                userPort = '25565';
-            }
-
-            try {
-                await util.status(userDomain, parseInt(userPort));
-                message.react('🆙');
-            } catch (e) {
-                replyAndDelete(message, `Your server \`${userDomain}:${userPort}\` is not online. Please start your server and try again.`);
-                return;
-            }
+            message.react('✅');
         } else {
             replyAndDelete(message, `Your message does not contain a valid domain. Please use the format \`<domain>:<port>\` or \`<domain>\`.`);
             return;
