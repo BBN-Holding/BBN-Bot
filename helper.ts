@@ -36,9 +36,10 @@ export async function handleShowcaseMessage(message: Message, client: Client) {
     if (message.channel.id === config.showcase_channel) {
         if (message.author.bot) return; // Ignore messages from bots
         const domainPattern = /(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9.-]+(?:\.[a-zA-Z]{2,}))(?::([0-9]+))?/;
-        const match = domainPattern.exec(message.content);
-        if (match) {
-            const userDomain = match[1];
+        const match = Array.from(message.content.matchAll(domainPattern));
+         
+        if (match.length === 1) {
+            const userDomain = match[1][1];
 
             if (!config.bbn_domains.includes(userDomain)) {
                 const userIp = (await resolve([userDomain]))[0];
@@ -50,7 +51,7 @@ export async function handleShowcaseMessage(message: Message, client: Client) {
             }
             message.react('✅');
         } else {
-            replyAndDelete(message, `Your message does not contain a valid domain. Please use the format \`<domain>:<port>\` or \`<domain>\`.`);
+            replyAndDelete(message, `Your message does not contain a valid domain or contains multiple domains. Please only send one domain.`);
             return;
         }
     }
