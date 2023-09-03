@@ -39,7 +39,7 @@ export async function handleShowcaseMessage(message: Message, client: Client) {
         const match = Array.from(message.content.matchAll(domainPattern));
          
         if (match.length === 1) {
-            const userDomain = match[1][1];
+            const userDomain = match[0][1];
 
             if (!config.bbn_domains.includes(userDomain)) {
                 const userIp = (await resolve([userDomain]))[0];
