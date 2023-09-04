@@ -1,21 +1,17 @@
-import { Client, Collection, GuildMember, Invite, TextChannel } from "discord.js";
-//@ts-ignore
-import * as config from './config.json'
-import DB from "./db";
-import { defaultEmbed } from "./helper";
+import { Client, Collection, GuildMember, Invite, TextChannel } from "npm:discord.js";
+import { getMemberFromBBNId, getPartnerFromInvite, updateLastInvite } from "./db.ts";
+import { defaultEmbed } from "./helper.ts";
 
 export class PartnerManager {
 
     client: Client;
-    db: DB;
-    constructor(client: Client, db: DB) {
+    constructor(client: Client) {
         this.client = client;
-        this.db = db;
     }
 
     invites: Collection<string, Invite> = new Collection();
     async cacheInvites() {
-        const guild = await this.client.guilds.fetch(config.guild_id);
+        const guild = await this.client.guilds.fetch(Deno.env.get("GUILD_ID")!);
         const invites = await guild.invites.fetch({
             cache: false
         });
@@ -24,7 +20,7 @@ export class PartnerManager {
     }
 
     async getLastInvite() {
-        const guild = await this.client.guilds.fetch(config.guild_id);
+        const guild = await this.client.guilds.fetch(Deno.env.get("GUILD_ID")!);
         const invites = await guild.invites.fetch({
             cache: false
         });
@@ -36,22 +32,21 @@ export class PartnerManager {
     async onMember(member: GuildMember, action: 'join' | 'leave') {
         let invitetext = '';
         const lastinvite = await this.getLastInvite();
-        if (!lastinvite) invitetext = 'No invite found';
-        else {
-            const partner = await this.db.getPartnerFromInvite(lastinvite);
-            if (!partner) invitetext = 'No partner found using code ' + lastinvite;
-            else {
-                this.db.updateLastInvite(partner.owner);
-                const partnermember = await this.db.getMemberFromBBNId(partner.owner);
-                if (!partnermember) invitetext = 'No member found for partner ' + partner.owner + ' using code ' + lastinvite;
-                else invitetext = `<@${partnermember}> (BBN ID: ${partner.owner}) using code ${lastinvite}`;
+        if (lastinvite) {
+            const partner = await getPartnerFromInvite(lastinvite);
+            if (partner) {
+                updateLastInvite(partner.owner);
+                const partnermember = await getMemberFromBBNId(partner.owner);
+                invitetext = partnermember ? `<@${partnermember}> (BBN ID: ${partner.owner}) using code ${lastinvite}` : `No member found for partner ${partner.owner} using code ${lastinvite}`;
             }
+            else invitetext = `No partner found using code ${lastinvite}`;
         }
+        else invitetext = 'No invite found';
 
         const embed = defaultEmbed(member.user);
         embed.setTitle(`${member.user.tag} ${action === 'join' ? 'joined' : 'left'}`)
             .setColor(action === 'join' ? '#FEE75C' : '#F57F7F')
             .setDescription(invitetext);
-        member.guild.channels.fetch(config.log_channel).then(channel => (channel as TextChannel).send({ embeds: [embed] }));
+        member.guild.channels.fetch(Deno.env.get("LOG_CHANNEL")!).then(channel => (channel as TextChannel).send({ embeds: [ embed ] }));
     }
 }

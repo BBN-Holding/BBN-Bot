@@ -1,60 +1,55 @@
-import { Client, TextChannel, GuildBan, GuildMember, PartialGuildMember, User, Message, VoiceState, EmbedBuilder } from 'discord.js'
-//@ts-ignore
-import * as config from './config.json'
-import dns from 'dns';
+import { Client, TextChannel, GuildBan, GuildMember, PartialGuildMember, User, Message, VoiceState, EmbedBuilder } from 'npm:discord.js'
 
 export function sendBanMessage(ban: GuildBan, banned: boolean) {
-    ban.client.channels.fetch(config.log_channel).then(channel => {
+    ban.client.channels.fetch(Deno.env.get("LOG_CHANNEL")!).then(channel => {
         const embed = defaultEmbed(ban.user);
         embed.setTitle(`${embed.data.title} ${banned ? '' : 'un'}banned`)
-            .addFields([{ name: 'Reason', value: ban.reason ?? 'Not specified' }]);
-        (channel as TextChannel).send({ embeds: [embed] })
+            .addFields([ { name: 'Reason', value: ban.reason ?? 'Not specified' } ]);
+        (channel as TextChannel).send({ embeds: [ embed ] })
     })
 }
 export function sendLeaveMessage(member: PartialGuildMember | GuildMember) {
     const embed = defaultEmbed(member.user);
     embed.setTitle(`${embed.data.title} left`)
-    member.guild.channels.fetch(config.log_channel).then(channel => (channel as TextChannel).send({ embeds: [embed] }))
+    member.guild.channels.fetch(Deno.env.get("LOG_CHANNEL")!).then(channel => (channel as TextChannel).send({ embeds: [ embed ] }))
 }
 export function sendPrivateMessage(message: Message, client: Client) {
     if (message.channel.isDMBased()) {
         const embed = defaultEmbed(message.author);
-        embed.data.fields![1].name = 'User ID'
+        embed.data.fields![ 1 ].name = 'User ID'
         embed.setTitle("Private message received")
             .addFields([
                 { name: '\u200b', value: '\u200b', inline: true },
                 { name: "Mention", value: `<@${message.author.id}>`, inline: true },
                 { name: 'Message ID', value: message.id, inline: true }
             ])
-            .setDescription('```' + message.content + '```')
+            .setDescription(`\`\`\`${message.content}\`\`\``)
             .setColor('#57F287');
-        client.channels.fetch(config.log_channel).then(channel => (channel as TextChannel).send({ embeds: [embed], files: [...message.attachments.values()] }))
+        client.channels.fetch(Deno.env.get("LOG_CHANNEL")!).then(channel => (channel as TextChannel).send({ embeds: [ embed ], files: [ ...message.attachments.values() ] }))
     }
 }
 
-export async function handleShowcaseMessage(message: Message, client: Client) {
-    if (message.channel.id === config.showcase_channel) {
-        if (message.author.bot) return; // Ignore messages from bots
-        const domainPattern = /(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9.-]+(?:\.[a-zA-Z]{2,}))(?::([0-9]+))?/g;
-        const match = Array.from(message.content.matchAll(domainPattern));
-         
-        if (match.length === 1) {
-            const userDomain = match[0][1];
+export async function handleShowcaseMessage(message: Message) {
+    if (message.channel.id !== Deno.env.get("SHOWCASE_CHANNEL")! || message.author.bot) return;
+    const domainPattern = /(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9.-]+(?:\.[a-zA-Z]{2,}))(?::([0-9]+))?/g;
+    const match = Array.from(message.content.matchAll(domainPattern));
 
-            if (!config.bbn_domains.includes(userDomain)) {
-                const userIp = (await resolve([userDomain]))[0];
-                const bbnIps = await resolve(config.bbn_domains);
-                if (!bbnIps.includes(userIp)) {
-                    replyAndDelete(message, `Your server \`${userDomain}\` is not hosted by BBN. Please use a BBN domain.`);
-                    return;
-                }
+    if (match.length === 1) {
+        const userDomain = match[ 0 ][ 1 ];
+
+        if (!Deno.env.get("BBN_DOMAINS")!.split(",").includes(userDomain)) {
+            const userIp = (await resolve([ userDomain ]))[ 0 ];
+            const bbnIps = await resolve(Deno.env.get("BBN_DOMAINS")!.split(','));
+            if (!bbnIps.includes(userIp)) {
+                replyAndDelete(message, `Your server \`${userDomain}\` is not hosted by BBN. Please use a BBN domain.`);
+                return;
             }
-            message.react('✅');
-        } else {
-            replyAndDelete(message, `Your message does not contain a valid domain or contains multiple domains. Please only send one domain.`);
-            return;
         }
+        message.react('✅');
+        return;
     }
+    replyAndDelete(message, `Your message does not contain a valid domain or contains multiple domains. Please only send one domain.`);
+    return;
 }
 
 async function replyAndDelete(message: Message, content: string) {
@@ -66,12 +61,10 @@ export function resolve(domains: string[]) {
     return new Promise<string[]>((resolve, reject) => {
         const resolved: string[] = [];
         domains.forEach(domain => {
-            dns.resolve(domain, (err, addresses) => {
-                if (err) reject(err);
-                else {
-                    resolved.push(...addresses);
-                }
-            })
+            Deno.resolveDns(domain, "A").then(res => {
+                resolved.push(res[ 0 ]);
+                if (resolved.length === domains.length) resolve(resolved);
+            }).catch(err => reject(err));
         })
         resolve(resolved);
     })
@@ -102,7 +95,7 @@ export function sendVoice(oldState: VoiceState, newState: VoiceState) {
 }
 
 function sendVoiceMessage(embed: EmbedBuilder, newState: VoiceState) {
-    newState.guild.channels.fetch(config.voice_log_channel).then(channel => (channel as TextChannel).send({ embeds: [embed] }))
+    newState.guild.channels.fetch(Deno.env.get("VOICE_LOG_CHANNEL")!).then(channel => (channel as TextChannel).send({ embeds: [ embed ] }))
 }
 
 function generateVoiceEmbed(word: string, negative: boolean, newState: VoiceState, oldState: VoiceState) {
@@ -118,10 +111,10 @@ function generateVoiceEmbed(word: string, negative: boolean, newState: VoiceStat
 
 export function defaultEmbed(user: User) {
     return new EmbedBuilder()
-        .setTitle(((!user.bot) ? "User" : "Bot"))
+        .setTitle((user.bot ? "Bot" : "User"))
         .setAuthor({ name: user.tag, iconURL: user.displayAvatarURL(), url: user.displayAvatarURL() })
         .addFields([
-            { name: ((!user.bot) ? "User" : "Bot") + " Creation Time", value: user.createdAt.toISOString(), inline: true },
+            { name: `${user.bot ? "Bot" : "User"} Creation Time`, value: user.createdAt.toISOString(), inline: true },
             { name: "ID", value: user.id, inline: true }
         ])
         .setTimestamp(new Date())
