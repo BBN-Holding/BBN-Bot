@@ -6,7 +6,7 @@ await load({
 });
 
 export const mongoClient = new MongoClient();
-
+console.log(Deno.env.get("DB_URL"))
 await mongoClient.connect(Deno.env.get("DB_URL")!);
 
 const db = mongoClient.database("one_bbn");
