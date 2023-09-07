@@ -139,7 +139,7 @@ export async function handleInteraction(interaction: Interaction) {
                         value: `> ${await getServerURLs(interaction.user.id)}`,
                     }, {
                         name: `Last Login:`,
-                        value: `\`\`\`${JSON.stringify(login[ 0 ])}\`\`\``,
+                        value: `\`\`\`${JSON.stringify(login[ 0 ] ?? "none")}\`\`\``,
                     });
                     embed.setFooter({
                         text: login[ 1 ] ?? "No Login" as string,
@@ -153,7 +153,7 @@ export async function handleInteraction(interaction: Interaction) {
                     ch.permissionOverwrites.create(interaction.user.id, {
                         "ViewChannel": true
                     });
-                }, 1000);
+                }, 5000);
 
                 const btnrow = new ActionRowBuilder<ButtonBuilder>().addComponents([
                     new ButtonBuilder()
@@ -161,12 +161,12 @@ export async function handleInteraction(interaction: Interaction) {
                         .setStyle(ButtonStyle.Danger)
                         .setLabel(`Close Ticket`),
                 ]);
-                ch.send({
+                await ch.send({
                     content: `${interaction.member} || <@&1120392307087261787>`,
                     embeds: [ embed ],
                     components: [ btnrow ],
                 });
-                interaction.reply({
+                await interaction.reply({
                     content: `> Successfully created your ticket here: ${ch}`,
                     ephemeral: true,
                 });
