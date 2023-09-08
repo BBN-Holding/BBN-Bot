@@ -124,9 +124,9 @@ export async function lastLogin(discordid: string) {
     if (!userevent) return null;
     const location = await fetch(`https://ipinfo.io/${userevent.ip}/json`).then(res => res.json());
     return [ {
-        platform: userevent.source.platform ?? "Not found",
-        platformVersion: userevent.source.platformVersion ?? "Not found",
-        legacyUserAgent: userevent.source.legacyUserAgent ?? "Not found",
+        platform: userevent.source?.platform ?? "Not found",
+        platformVersion: userevent.source?.platformVersion ?? "Not found",
+        legacyUserAgent: userevent.source?.legacyUserAgent ?? "Not found",
     }, (location.country ? String.fromCodePoint(...(location.country as string).toUpperCase().split('').map(char => 127397 + char.charCodeAt(0))) : "") + " " + location.city + " (" + location.timezone + ")", location.timezone ];
 }
 
