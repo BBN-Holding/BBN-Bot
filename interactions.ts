@@ -107,6 +107,7 @@ export async function handleInteraction(interaction: Interaction) {
     }
 
     if (interaction.isModalSubmit()) {
+        try {
         const ticket_user_reason = interaction.fields.getTextInputValue("ticket_reason");
         const dbuser = await finduser(interaction.user.id);
         const ticketname = `ticket-${interaction.user.id}`;
@@ -171,6 +172,9 @@ export async function handleInteraction(interaction: Interaction) {
                     ephemeral: true,
                 });
             });
+        } catch (e) {
+            console.error(e);
+        }
     }
 
     if (!interaction.isChatInputCommand()) return
