@@ -1,4 +1,4 @@
-import { Client, TextChannel, GuildBan, GuildMember, PartialGuildMember, User, Message, VoiceState, EmbedBuilder } from 'npm:discord.js'
+import { Client, TextChannel, GuildBan, GuildMember, PartialGuildMember, User, Message, VoiceState, EmbedBuilder, GuildTextBasedChannel } from 'npm:discord.js'
 
 export function sendBanMessage(ban: GuildBan, banned: boolean) {
     ban.client.channels.fetch(Deno.env.get("LOG_CHANNEL")!).then(channel => {
@@ -11,7 +11,8 @@ export function sendBanMessage(ban: GuildBan, banned: boolean) {
 export function sendLeaveMessage(member: PartialGuildMember | GuildMember) {
     const embed = defaultEmbed(member.user);
     embed.setTitle(`${embed.data.title} left`)
-    member.guild.channels.fetch(Deno.env.get("LOG_CHANNEL")!).then(channel => (channel as TextChannel).send({ embeds: [ embed ] }))
+    member.guild.channels.fetch(Deno.env.get("LOG_CHANNEL")!).then(channel => (channel as TextChannel).send({ embeds: [ embed ] }));
+    member.guild.channels.fetch().then(channels => channels.filter(channel => channel?.isTextBased() && channel.name === "ticket-"+member.user.id).forEach(channel => (channel as GuildTextBasedChannel).send({ embeds: [ embed ] })));
 }
 export function sendPrivateMessage(message: Message, client: Client) {
     if (message.channel.isDMBased()) {
