@@ -115,6 +115,7 @@ export async function lastLogin(discordid: string) {
     const user = await finduser(discordid);
     if (!user) return null;
     const userevent = await db.collection("user-events").findOne({
+        type: "auth",
         userId: user
     }, {
         sort: {
@@ -124,10 +125,10 @@ export async function lastLogin(discordid: string) {
     if (!userevent) return null;
     const location = await fetch(`https://ipinfo.io/${userevent.ip}/json`).then(res => res.json());
     return [ {
-        platform: userevent.source?.platform ?? "Not found",
-        platformVersion: userevent.source?.platformVersion ?? "Not found",
-        legacyUserAgent: userevent.source?.legacyUserAgent ?? "Not found",
-    }, (location.country ? String.fromCodePoint(...(location.country as string).toUpperCase().split('').map(char => 127397 + char.charCodeAt(0))) : "") + " " + location.city + " (" + location.timezone + ")", location.timezone ];
+        platform: userevent.source.platform,
+        platformVersion: userevent.source.platformVersion,
+        legacyUserAgent: userevent.source.legacyUserAgent,
+    }, `${location.country ? String.fromCodePoint(...(location.country as string).toUpperCase().split('').map(char => 127397 + char.charCodeAt(0))) : ""} ${location.city} (${location.timezone})`, location.timezone ];
 }
 
 export async function saveTranscript(transcript: any) {
@@ -165,16 +166,16 @@ export async function removeBoosterRewards(discordid: string) {
 }
 
 export async function addPartner(member: ObjectId, cpu: number, memory: number, disk: number, slots: number, invite: string) {
-    db.collection("@bbn/bot/partners").insertOne({
+    await db.collection("@bbn/bot/partners").insertOne({
         owner: member,
-        cpu: cpu,
-        memory: memory,
-        disk: disk,
-        slots: slots,
-        invite: invite,
+        cpu,
+        memory,
+        disk,
+        slots,
+        invite,
         lastinvite: Date.now()
     });
-    db.collection("@bbn/hosting/access").updateOne({
+    await db.collection("@bbn/hosting/access").updateOne({
         owner: member
     }, {
         $inc: {
