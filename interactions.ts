@@ -1,5 +1,6 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChannelType, EmbedBuilder, GuildMember, GuildMemberRoleManager, Interaction, Message, ModalBuilder, PermissionsBitField, TextChannel, TextInputBuilder, TextInputStyle, UserSelectMenuBuilder, VoiceChannel } from "npm:discord.js"
 import { saveTranscript, finduser, lastLogin, getServerURLs, getLastDaily, addCoins, setLastDaily, getCoins, removeCoins, addPartner, removePartner, getPartners, getMemberFromBBNId } from "./db.ts";
+import { delay } from "https://deno.land/std@0.202.0/async/delay.ts";
 
 export async function handleInteraction(interaction: Interaction) {
 
@@ -36,10 +37,6 @@ export async function handleInteraction(interaction: Interaction) {
                     content: `> We're closing your ticket. Please be patient. Ticket closed by ${interaction.user.tag}`,
                 });
 
-                if (![ "401817301919465482", "261083609148948488" ].includes(interaction.user.id)) {
-                    channel.setParent("1124263122895646802", { lockPermissions: true, reason: `Ticket closed by ${interaction.user.tag}` })
-                    break;
-                }
                 // get all messages from channel
                 const messages: Message[] = [];
 
@@ -108,70 +105,69 @@ export async function handleInteraction(interaction: Interaction) {
 
     if (interaction.isModalSubmit()) {
         try {
-        const ticket_user_reason = interaction.fields.getTextInputValue("ticket_reason");
-        const dbuser = await finduser(interaction.user.id);
-        const ticketname = `ticket-${interaction.user.id}`;
-        await interaction.guild!.channels
-            .create({
-                name: ticketname,
-                type: ChannelType.GuildText,
-                topic: `ticket of ${interaction.user.tag}`,
-                parent: "1081347349462405221",
+            const ticket_user_reason = interaction.fields.getTextInputValue("ticket_reason");
+            const dbuser = await finduser(interaction.user.id);
+            const ticketname = `ticket-${interaction.user.id}`;
+            await interaction.guild!.channels
+                .create({
+                    name: ticketname,
+                    type: ChannelType.GuildText,
+                    topic: `ticket of ${interaction.user.tag}`,
+                    parent: "1081347349462405221",
 
-            })
-            .then(async (ch: TextChannel) => {
-                const fields = [
-                    {
-                        name: `Reason:`,
-                        value: `> ${ticket_user_reason}`,
+                })
+                .then(async (ch: TextChannel) => {
+                    const fields = [
+                        {
+                            name: `Reason:`,
+                            value: `> ${ticket_user_reason}`,
+                        }
+                    ];
+                    const embed = new EmbedBuilder()
+                        .setColor("#5539cc")
+                        .setTitle(`Ticket of ${interaction.user.username}`)
+                        .addFields(fields);
+                    if (dbuser) {
+                        const login = await lastLogin(interaction.user.id) || [];
+                        embed.addFields({
+                            name: `User ID:`,
+                            value: `> ${dbuser.toHexString()}`,
+                        }, {
+                            name: `Server URLs:`,
+                            value: `> ${await getServerURLs(interaction.user.id)}`,
+                        }, {
+                            name: `Last Login:`,
+                            value: `\`\`\`${JSON.stringify(login[ 0 ] ?? "none")}\`\`\``,
+                        });
+                        embed.setFooter({
+                            text: login[ 1 ] ?? "No Login" as string,
+                            iconURL: interaction.user.displayAvatarURL(),
+                        })
+                        embed.setTimestamp(new Date(new Date().toLocaleString('en-US', { timeZone: login[ 2 ] ?? "UTC" })))
                     }
-                ];
-                const embed = new EmbedBuilder()
-                    .setColor("#5539cc")
-                    .setTitle(`Ticket of ${interaction.user.username}`)
-                    .addFields(fields);
-                if (dbuser) {
-                    const login = await lastLogin(interaction.user.id) || [];
-                    embed.addFields({
-                        name: `User ID:`,
-                        value: `> ${dbuser.toHexString()}`,
-                    }, {
-                        name: `Server URLs:`,
-                        value: `> ${await getServerURLs(interaction.user.id)}`,
-                    }, {
-                        name: `Last Login:`,
-                        value: `\`\`\`${JSON.stringify(login[ 0 ] ?? "none")}\`\`\``,
-                    });
-                    embed.setFooter({
-                        text: login[ 1 ] ?? "No Login" as string,
-                        iconURL: interaction.user.displayAvatarURL(),
-                    })
-                    embed.setTimestamp(new Date(new Date().toLocaleString('en-US', { timeZone: login[ 2 ] ?? "UTC" })))
-                }
 
 
-                setTimeout(() => {
+                    await delay(5000)
                     ch.permissionOverwrites.create(interaction.user.id, {
                         "ViewChannel": true
                     });
-                }, 5000);
 
-                const btnrow = new ActionRowBuilder<ButtonBuilder>().addComponents([
-                    new ButtonBuilder()
-                        .setCustomId(`close_ticket`)
-                        .setStyle(ButtonStyle.Danger)
-                        .setLabel(`Close Ticket`),
-                ]);
-                await ch.send({
-                    content: `${interaction.member} || <@&1120392307087261787>`,
-                    embeds: [ embed ],
-                    components: [ btnrow ],
+                    const btnrow = new ActionRowBuilder<ButtonBuilder>().addComponents([
+                        new ButtonBuilder()
+                            .setCustomId(`close_ticket`)
+                            .setStyle(ButtonStyle.Danger)
+                            .setLabel(`Close Ticket`),
+                    ]);
+                    await ch.send({
+                        content: `${interaction.member} || <@&1120392307087261787>`,
+                        embeds: [ embed ],
+                        components: [ btnrow ],
+                    });
+                    await interaction.reply({
+                        content: `> Successfully created your ticket here: ${ch}`,
+                        ephemeral: true,
+                    });
                 });
-                await interaction.reply({
-                    content: `> Successfully created your ticket here: ${ch}`,
-                    ephemeral: true,
-                });
-            });
         } catch (e) {
             console.error(e);
         }
@@ -278,7 +274,7 @@ export async function handleInteraction(interaction: Interaction) {
 
             // Give the user their daily reward
             const reward = 10 + (Math.floor(Math.random() * 10));
-            const res = (await addCoins(interaction.user.id, reward));
+            const res = await addCoins(interaction.user.id, reward);
             if (res === null) {
                 interaction.reply("We couldn't find your account. Please [log in via Discord here](<https://bbn.one/api/@bbn/auth/redirect/discord?goal=/hosting>)");
                 return;
