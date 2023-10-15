@@ -108,66 +108,73 @@ export async function handleInteraction(interaction: Interaction) {
             const ticket_user_reason = interaction.fields.getTextInputValue("ticket_reason");
             const dbuser = await finduser(interaction.user.id);
             const ticketname = `ticket-${interaction.user.id}`;
-            await interaction.guild!.channels
-                .create({
-                    name: ticketname,
-                    type: ChannelType.GuildText,
-                    topic: `ticket of ${interaction.user.tag}`,
-                    parent: "1081347349462405221",
-
-                })
-                .then(async (ch: TextChannel) => {
-                    const fields = [
-                        {
-                            name: `Reason:`,
-                            value: `> ${ticket_user_reason}`,
-                        }
-                    ];
-                    const embed = new EmbedBuilder()
-                        .setColor("#5539cc")
-                        .setTitle(`Ticket of ${interaction.user.username}`)
-                        .addFields(fields);
-                    if (dbuser) {
-                        const login = await lastLogin(interaction.user.id) || [];
-                        embed.addFields({
-                            name: `User ID:`,
-                            value: `> ${dbuser.toHexString()}`,
-                        }, {
-                            name: `Server URLs:`,
-                            value: `> ${await getServerURLs(interaction.user.id)}`,
-                        }, {
-                            name: `Last Login:`,
-                            value: `\`\`\`${JSON.stringify(login[ 0 ] ?? "none")}\`\`\``,
-                        });
-                        embed.setFooter({
-                            text: login[ 1 ] ?? "No Login" as string,
-                            iconURL: interaction.user.displayAvatarURL(),
-                        })
-                        embed.setTimestamp(new Date(new Date().toLocaleString('en-US', { timeZone: login[ 2 ] ?? "UTC" })))
-                    }
-
-
-                    await delay(5000)
-                    ch.permissionOverwrites.create(interaction.user.id, {
-                        "ViewChannel": true
-                    });
-
-                    const btnrow = new ActionRowBuilder<ButtonBuilder>().addComponents([
-                        new ButtonBuilder()
-                            .setCustomId(`close_ticket`)
-                            .setStyle(ButtonStyle.Danger)
-                            .setLabel(`Close Ticket`),
-                    ]);
-                    await ch.send({
-                        content: `${interaction.member} || <@&1120392307087261787>`,
-                        embeds: [ embed ],
-                        components: [ btnrow ],
-                    });
-                    await interaction.reply({
-                        content: `> Successfully created your ticket here: ${ch}`,
-                        ephemeral: true,
-                    });
+            const possibleChannel = interaction.guild?.channels.cache.find(ch => ch.name === ticketname);
+            if (possibleChannel) {
+                interaction.reply({
+                    content: `> You already have a ticket here: ${possibleChannel}`,
+                    ephemeral: true,
                 });
+                return;
+            }
+            const ch = await interaction.guild!.channels.create({
+                name: ticketname,
+                type: ChannelType.GuildText,
+                topic: `ticket of ${interaction.user.tag}`,
+                parent: "1081347349462405221",
+            });
+            
+            const fields = [
+                {
+                    name: `Reason:`,
+                    value: `> ${ticket_user_reason}`,
+                }
+            ];
+            const embed = new EmbedBuilder()
+                .setColor("#5539cc")
+                .setTitle(`Ticket of ${interaction.user.username}`)
+                .addFields(fields);
+            if (dbuser) {
+                const login = await lastLogin(interaction.user.id) || [];
+                embed.addFields({
+                    name: `User ID:`,
+                    value: `> ${dbuser.toHexString()}`,
+                }, {
+                    name: `Server URLs:`,
+                    value: `> ${await getServerURLs(interaction.user.id)}`,
+                }, {
+                    name: `Last Login:`,
+                    value: `\`\`\`${JSON.stringify(login[ 0 ] ?? "none")}\`\`\``,
+                });
+                embed.setFooter({
+                    text: login[ 1 ] ?? "No Login" as string,
+                    iconURL: interaction.user.displayAvatarURL(),
+                })
+                embed.setTimestamp(new Date(new Date().toLocaleString('en-US', { timeZone: login[ 2 ] ?? "UTC" })))
+            }
+
+
+            setTimeout(() => {
+                ch.permissionOverwrites.create(interaction.user.id, {
+                    "ViewChannel": true
+                });
+            }, 5000);
+
+            const btnrow = new ActionRowBuilder<ButtonBuilder>().addComponents([
+                new ButtonBuilder()
+                    .setCustomId(`close_ticket`)
+                    .setStyle(ButtonStyle.Danger)
+                    .setLabel(`Close Ticket`),
+            ]);
+            await ch.send({
+                content: `${interaction.member} || <@&1120392307087261787>`,
+                embeds: [ embed ],
+                components: [ btnrow ],
+            });
+            await interaction.reply({
+                content: `> Successfully created your ticket here: ${ch}`,
+                ephemeral: true,
+            });
+            
         } catch (e) {
             console.error(e);
         }
