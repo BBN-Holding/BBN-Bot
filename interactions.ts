@@ -122,7 +122,7 @@ export async function handleInteraction(interaction: Interaction) {
                 topic: `ticket of ${interaction.user.tag}`,
                 parent: "1081347349462405221",
             });
-            
+
             const fields = [
                 {
                     name: `Reason:`,
@@ -174,7 +174,7 @@ export async function handleInteraction(interaction: Interaction) {
                 content: `> Successfully created your ticket here: ${ch}`,
                 ephemeral: true,
             });
-            
+
         } catch (e) {
             console.error(e);
         }
@@ -392,7 +392,7 @@ export async function handleInteraction(interaction: Interaction) {
         }
         let out = "Owner - CPU, RAM, Storage, Slots, Invitecode, last invite, uses\n";
         const partners = await getPartners();
-        out += (await Promise.all(partners.map(async (partner: any) => `<@${(await interaction.guild?.members.fetch(await getMemberFromBBNId(partner.owner)))?.user.id}> (${partner.owner}) - ${partner.cpu}, ${partner.memory}, ${partner.disk}, ${partner.slots}, ${partner.invite}, <t:${Math.round(partner.lastinvite / 1000)}:R>, ${(await interaction.guild?.invites.fetch(partner.invite))?.uses}`))).join("\n");
+        out += (await Promise.all(partners.map(async (partner: any) => `<@${(await interaction.guild?.members.fetch(await getMemberFromBBNId(partner.owner))) ? (await interaction.guild?.members.fetch(await getMemberFromBBNId(partner.owner)))!.user.id : "USER QUIT"}> (${partner.owner}) - ${partner.cpu}, ${partner.memory}, ${partner.disk}, ${partner.slots}, ${partner.invite}, <t:${Math.round(partner.lastinvite / 1000)}:R>, ${(await interaction.guild?.invites.fetch(partner.invite))?.uses}`))).join("\n");
         interaction.reply(out);
     }
 }
