@@ -1,4 +1,4 @@
-import { load } from "https://deno.land/std@0.201.0/dotenv/mod.ts";
+import { load } from "https://deno.land/std@0.204.0/dotenv/mod.ts";
 import { MongoClient, ObjectId } from "https://deno.land/x/mongo@v0.32.0/mod.ts";
 
 await load({
@@ -11,11 +11,11 @@ await mongoClient.connect(Deno.env.get("DB_URL")!);
 
 const db = mongoClient.database("one_bbn");
 
-export async function finduser(discordid: string) {
+export async function findUser(discordId: string) {
     const user = await db.collection("users").findOne({
         authentication: {
             $elemMatch: {
-                id: discordid,
+                id: discordId,
                 type: "oauth",
                 provider: "discord"
             }
@@ -27,8 +27,8 @@ export async function finduser(discordid: string) {
     return user._id;
 }
 
-export async function getCoins(discordid: string) {
-    const user = await finduser(discordid);
+export async function getCoins(discordId: string) {
+    const user = await findUser(discordId);
     if (!user) return null;
     const access = await db.collection("@bbn/hosting/access").findOne({
         owner: user
@@ -37,9 +37,9 @@ export async function getCoins(discordid: string) {
     return access.coins;
 }
 
-export async function setCoins(discordid: string, coins: number) {
+export async function setCoins(discordId: string, coins: number) {
     // check if user exists
-    const user = await finduser(discordid);
+    const user = await findUser(discordId);
     if (!user) return null;
     // update user
     return await db.collection("@bbn/hosting/access").updateOne({
@@ -51,9 +51,9 @@ export async function setCoins(discordid: string, coins: number) {
     });
 }
 
-export async function addCoins(discordid: string, coins: number) {
+export async function addCoins(discordId: string, coins: number) {
     // check if user exists
-    const user = await finduser(discordid);
+    const user = await findUser(discordId);
     if (!user) return null;
     // update user
     return await db.collection("@bbn/hosting/access").updateOne({
@@ -65,9 +65,9 @@ export async function addCoins(discordid: string, coins: number) {
     });
 }
 
-export async function removeCoins(discordid: string, coins: number) {
+export async function removeCoins(discordId: string, coins: number) {
     // check if user exists
-    const user = await finduser(discordid);
+    const user = await findUser(discordId);
     if (!user) return null;
     // update user
     return await db.collection("@bbn/hosting/access").updateOne({
@@ -79,9 +79,9 @@ export async function removeCoins(discordid: string, coins: number) {
     });
 }
 
-export async function getLastDaily(discordid: string) {
+export async function getLastDaily(discordId: string) {
     // check if user exists
-    const user = await finduser(discordid);
+    const user = await findUser(discordId);
     if (!user) return null;
     const access = await db.collection("@bbn/hosting/access").findOne({
         owner: user
@@ -90,8 +90,8 @@ export async function getLastDaily(discordid: string) {
     return access.lastDaily;
 }
 
-export async function setLastDaily(discordid: string, lastDaily: number) {
-    const user = await finduser(discordid);
+export async function setLastDaily(discordId: string, lastDaily: number) {
+    const user = await findUser(discordId);
     if (!user) return null;
     return await db.collection("@bbn/hosting/access").updateOne({
         owner: user
@@ -102,8 +102,8 @@ export async function setLastDaily(discordid: string, lastDaily: number) {
     });
 }
 
-export async function getServerURLs(discordid: string) {
-    const user = await finduser(discordid);
+export async function getServerURLs(discordId: string) {
+    const user = await findUser(discordId);
     if (!user) return null;
     const servers = await db.collection("@bbn/hosting/servers").find({
         user: user
@@ -111,8 +111,8 @@ export async function getServerURLs(discordid: string) {
     return servers.map(server => `https://panel.bbn.one/server/${server.identifier}`).join("\n");
 }
 
-export async function lastLogin(discordid: string) {
-    const user = await finduser(discordid);
+export async function lastLogin(discordId: string) {
+    const user = await findUser(discordId);
     if (!user) return null;
     const userevent = await db.collection("user-events").findOne({
         type: "auth",
@@ -128,41 +128,11 @@ export async function lastLogin(discordid: string) {
         platform: userevent.source.platform,
         platformVersion: userevent.source.platformVersion,
         legacyUserAgent: userevent.source.legacyUserAgent,
-    }, `${location.country ? String.fromCodePoint(...(location.country as string).toUpperCase().split('').map(char => 127397 + char.charCodeAt(0))) : ""} ${location.city} (${location.timezone})`, location.timezone ];
+    }, location.bogon ? undefined : `${String.fromCodePoint(...(location.country as string).toUpperCase().split('').map(char => 127397 + char.charCodeAt(0)))} ${location.city} (${location.timezone})`, location.timezone ];
 }
 
 export async function saveTranscript(transcript: any) {
     await db.collection("@bbn/bot/transcripts").insertOne(transcript);
-}
-
-export async function addBoosterRewards(discordid: string) {
-    const user = await finduser(discordid);
-    if (!user) return null;
-    return await db.collection("@bbn/hosting/access").updateOne({
-        owner: user
-    }, {
-        $inc: {
-            "limits.memory": 1500,
-            "limits.disk": 2000,
-            "limits.cpu": 100,
-            "limits.slots": 1
-        }
-    });
-}
-
-export async function removeBoosterRewards(discordid: string) {
-    const user = await finduser(discordid);
-    if (!user) return null;
-    return await db.collection("@bbn/hosting/access").updateOne({
-        owner: user
-    }, {
-        $inc: {
-            "limits.memory": -1500,
-            "limits.disk": -2000,
-            "limits.cpu": -100,
-            "limits.slots": -1
-        }
-    });
 }
 
 export async function addPartner(member: ObjectId, cpu: number, memory: number, disk: number, slots: number, invite: string) {

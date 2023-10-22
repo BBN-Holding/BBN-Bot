@@ -1,8 +1,8 @@
-import { ActivityType, CategoryChannel, Client, Message, MessageType, REST, Routes } from 'npm:discord.js'
+import { ActivityType, CategoryChannel, Client, REST, Routes, TextChannel } from 'npm:discord.js'
 import { handleShowcaseMessage, sendBanMessage, sendLeaveMessage, sendPrivateMessage, sendVoice } from './helper.ts';
 import { handleInteraction } from "./interactions.ts";
 import { PartnerManager } from './partner.ts';
-import { addBoosterRewards, finduser, removeBoosterRewards } from "./db.ts";
+import { findUser } from "./db.ts";
 
 const client = new Client({ intents: 3276799 });
 
@@ -147,17 +147,10 @@ client.on("ready", () => {
 
 const partnerManager = new PartnerManager(client);
 
-client.on('inviteCreate', async () => {
-    await partnerManager.cacheInvites();
-});
+client.on('inviteCreate', async () => await partnerManager.cacheInvites());
+client.on('inviteDelete', async () => await partnerManager.cacheInvites());
 
-client.on('inviteDelete', async () => {
-    await partnerManager.cacheInvites();
-});
-
-client.on('guildMemberAdd', async (member) => {
-    await partnerManager.onMember(member, 'join');
-});
+client.on('guildMemberAdd', async (member) => await partnerManager.onMember(member, 'join'));
 
 client.on('guildBanAdd', (ban) => sendBanMessage(ban, true))
 client.on('guildBanRemove', (ban) => sendBanMessage(ban, false))
@@ -169,70 +162,32 @@ client.on('messageCreate', (message) => handleShowcaseMessage(message));
 client.on('voiceStateUpdate', sendVoice);
 
 client.on('interactionCreate', (interaction) => handleInteraction(interaction));
-client.on('messageCreate', async (message) => {
-    if (message.type === MessageType.GuildBoost && message.channelId === Deno.env.get("LOG_CHANNEL")! && message.guild) {
-        const dbuser = await finduser(message.author.id);
+
+client.on('guildMemberUpdate', async (oldMember, newMember) => {
+    if (oldMember.premiumSince !== newMember.premiumSince && newMember.premiumSince) {
+        const dbuser = await findUser(newMember.id);
         if (dbuser) {
-            await addBoosterRewards(message.author.id);
-            await message.channel.send(`Added booster rewards for https://discord.com/channels/${message.guildId}/${message.channelId}/${message.id}`);
+            (await newMember.guild.channels.fetch(Deno.env.get("GENERAL_CHANNEL")!) as TextChannel).send(`<@${newMember.id}> will now get a 10x /daily reward for the duration of their boost!`);
         } else {
-            if (message.guild.channels.cache.find((channel) => channel.name === `link-${message.author.id}`)) {
-                await message.channel.send(`https://discord.com/channels/${message.guildId}/${message.channelId}/${message.id} already has a link channel`);
+            if (newMember.guild.channels.cache.find((channel) => channel.name === `link-${newMember.id}`))
                 return;
-            }
-            const channel = await message.guild.channels.create({
-                name: `link-${message.author.id}`,
-                parent: await message.guild.channels.fetch(Deno.env.get("LINK_CATEGORY")!) as CategoryChannel,
+
+            const channel = await newMember.guild.channels.create({
+                name: `link-${newMember.id}`,
+                parent: await newMember.guild.channels.fetch(Deno.env.get("LINK_CATEGORY")!) as CategoryChannel,
                 permissionOverwrites: [
                     {
-                        id: message.author.id,
+                        id: newMember.id,
                         allow: [ 'ViewChannel' ]
                     }
                 ]
             });
-            await channel?.send({ content: `<@${message.author.id}> Looks like you just boosted the server! Unfortunately, you are not linked to your BBN account yet. Please send your Email address to this channel to link your account. Our Team will respond as soon as possible.`, allowedMentions: { users: [ message.author.id ] } });
-            await message.channel.send(`https://discord.com/channels/${message.guildId}/${message.channelId}/${message.id} created channel https://discord.com/channels/${message.guildId}/${channel?.id} to link`);
+            await channel.send({ content: `<@${newMember.id}> Looks like you just boosted the server! Unfortunately, you are not linked to your BBN account yet. Please send your Email address to this channel to link your account. Our Team will respond as soon as possible.`, allowedMentions: { users: [ newMember.id ] } });
         }
     }
 })
 
-async function checkBoosts() {
-    console.log('Checking boosts');
-    const guild = await client.guilds.fetch(Deno.env.get("GUILD_ID")!);
-    const log_channel = await guild.channels.fetch(Deno.env.get("LOG_CHANNEL")!);
-    if (!log_channel?.isTextBased()) return;
-    // Get all messages in the last 32 days
-    const messages: Message[] = [];
-    let scan = true;
-    let last_id = await log_channel.messages.fetch({ limit: 1 }).then((msgs) => msgs.first()!.id);
-    while (scan) {
-        const msgs = await log_channel.messages.fetch({ limit: 100, before: last_id });
-        last_id = msgs.last()!.id;
-        if (msgs.size === 0 || msgs.last()!.createdAt.getTime() < Date.now() - 33 * 24 * 60 * 60 * 1000) {
-            scan = false;
-        } else {
-            msgs.forEach((msg: Message) => {
-                if (msg.type === MessageType.GuildBoost && msg.createdAt.getTime() < Date.now() - 30 * 24 * 60 * 60 * 1000) {
-                    messages.push(msg);
-                }
-            })
-        }
-    }
-    messages.forEach(async (msg) => {
-        const user = await finduser(msg.author.id);
-        if (user) {
-            await removeBoosterRewards(msg.author.id);
-            await msg.channel.send(`Removed booster rewards for https://discord.com/channels/${guild.id}/${msg.channelId}/${msg.id}`);
-        } else {
-            await msg.channel.send({ content: 'User not found, <@757969277063266407> please check this user https://discord.com/channels/${guild.id}/${msg.channelId}/${msg.id}', allowedMentions: { roles: [ '757969277063266407' ] } });
-        }
-    });
-}
-
-setInterval(checkBoosts, 24 * 60 * 60 * 1000);
-
 client.login(Deno.env.get("TOKEN")!).then(() => {
     console.log('Logged in');
-    checkBoosts();
     partnerManager.cacheInvites();
 });

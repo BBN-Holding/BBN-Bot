@@ -1,9 +1,7 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChannelType, EmbedBuilder, GuildMember, GuildMemberRoleManager, Interaction, Message, ModalBuilder, PermissionsBitField, TextChannel, TextInputBuilder, TextInputStyle, UserSelectMenuBuilder, VoiceChannel } from "npm:discord.js"
-import { saveTranscript, finduser, lastLogin, getServerURLs, getLastDaily, addCoins, setLastDaily, getCoins, removeCoins, addPartner, removePartner, getPartners, getMemberFromBBNId } from "./db.ts";
-import { delay } from "https://deno.land/std@0.202.0/async/delay.ts";
+import { saveTranscript, findUser, lastLogin, getServerURLs, getLastDaily, addCoins, setLastDaily, getCoins, removeCoins, addPartner, removePartner, getPartners, getMemberFromBBNId } from "./db.ts";
 
 export async function handleInteraction(interaction: Interaction) {
-
     if (interaction.isButton()) {
         switch (interaction.customId) {
             case "lock": {
@@ -37,33 +35,33 @@ export async function handleInteraction(interaction: Interaction) {
                     content: `> We're closing your ticket. Please be patient. Ticket closed by ${interaction.user.tag}`,
                 });
 
-                // get all messages from channel
                 const messages: Message[] = [];
 
-                // Create message pointer
                 let message = await channel.messages
                     .fetch({ limit: 1 })
-                    .then((messagePage: any) => (messagePage.size === 1 ? messagePage.at(0) : null));
+                    .then(messagePage => (messagePage.size === 1 ? messagePage.at(0) : null));
 
                 while (message) {
                     await channel.messages
                         .fetch({ limit: 100, before: message.id })
-                        .then((messagePage: any) => {
-                            messagePage.forEach((msg: any) => messages.push(msg));
-                            // Update our message pointer to be the last message on the page of messages
+                        .then(messagePage => {
+                            messagePage.forEach(msg => messages.push(msg));
                             message = 0 < messagePage.size ? messagePage.at(messagePage.size - 1) : null;
                         });
                 }
                 let member;
                 try {
                     member = await interaction.guild?.members.fetch(channel.name.split("-")[ 1 ]);
+                    // deno-lint-ignore no-empty
                 } catch (_) { }
+                // deno-lint-ignore no-explicit-any
                 const transcript: any = {
                     messages: [],
                     closed: `Ticket closed by ${interaction.user.tag}`,
                     with: `${member ? member.user.tag : "Unknown User"} (${channel.name.split("-")[ 1 ]})`
                 };
                 for (const message of messages.values()) {
+                    // deno-lint-ignore no-explicit-any
                     const obj: any = {
                         author: message.author.tag,
                         authorid: message.author.id,
@@ -72,7 +70,7 @@ export async function handleInteraction(interaction: Interaction) {
                         avatar: message.author.displayAvatarURL(),
                     };
                     if (message.attachments.size > 0) {
-                        obj.attachments = message.attachments.map((a: any) => a.url);
+                        obj.attachments = message.attachments.map(a => a.url);
                     }
                     if (message.embeds.length > 0) {
                         obj.embed = message.embeds[ 0 ].toJSON();
@@ -106,7 +104,7 @@ export async function handleInteraction(interaction: Interaction) {
     if (interaction.isModalSubmit()) {
         try {
             const ticket_user_reason = interaction.fields.getTextInputValue("ticket_reason");
-            const dbuser = await finduser(interaction.user.id);
+            const dbuser = await findUser(interaction.user.id);
             const ticketname = `ticket-${interaction.user.id}`;
             const possibleChannel = interaction.guild?.channels.cache.find(ch => ch.name === ticketname);
             if (possibleChannel) {
@@ -146,12 +144,11 @@ export async function handleInteraction(interaction: Interaction) {
                     value: `\`\`\`${JSON.stringify(login[ 0 ] ?? "none")}\`\`\``,
                 });
                 embed.setFooter({
-                    text: login[ 1 ] ?? "No Login" as string,
+                    text: login[ 1 ] ?? "No Login",
                     iconURL: interaction.user.displayAvatarURL(),
                 })
                 embed.setTimestamp(new Date(new Date().toLocaleString('en-US', { timeZone: login[ 2 ] ?? "UTC" })))
             }
-
 
             setTimeout(() => {
                 ch.permissionOverwrites.create(interaction.user.id, {
@@ -176,6 +173,10 @@ export async function handleInteraction(interaction: Interaction) {
             });
 
         } catch (e) {
+            await interaction.reply({
+                content: `> Error while creating your ticket. Please try again later.`,
+                ephemeral: true,
+            });
             console.error(e);
         }
     }
@@ -225,7 +226,6 @@ export async function handleInteraction(interaction: Interaction) {
                 .setCustomId("create_ticket")
                 .setStyle(ButtonStyle.Success)
                 .setLabel("Create Ticket")
-
         ]);
         await ticketChannel.send({
             embeds: [ embed ],
@@ -268,19 +268,17 @@ export async function handleInteraction(interaction: Interaction) {
     }
 
     if (interaction.commandName == "daily") {
-        // Check if the user has already claimed their daily reward
         getLastDaily(interaction.user.id).then(async result => {
             if (result !== null) {
-                // Calculate the time difference in hours
                 const timeDiff = (Date.now() - result) / 3600000;
                 if (timeDiff < 24) {
-                    // Calculate the number of hours
                     return interaction.reply(`You have already claimed your daily reward. Please wait ${Math.ceil(24 - timeDiff)} hours before claiming again.`);
                 }
             }
 
-            // Give the user their daily reward
-            const reward = 10 + (Math.floor(Math.random() * 10));
+            let reward = 10 + (Math.floor(Math.random() * 10));
+            if ((await interaction.guild!.members.fetch(interaction.user.id)).premiumSince)
+                reward *= 10;
             const res = await addCoins(interaction.user.id, reward);
             if (res === null) {
                 interaction.reply("We couldn't find your account. Please [log in via Discord here](<https://bbn.one/api/@bbn/auth/redirect/discord?goal=/hosting>)");
@@ -292,7 +290,6 @@ export async function handleInteraction(interaction: Interaction) {
     }
 
     if (interaction.commandName == "balance") {
-        // Retrieve the user's balance from the database
         const possiblemember = interaction.options.getMentionable("user", false);
         let { id } = interaction.user;
         if (possiblemember) {
@@ -300,8 +297,7 @@ export async function handleInteraction(interaction: Interaction) {
                 interaction.reply("You do not have permission to view other users' balances.");
                 return;
             }
-            const member = possiblemember as GuildMember;
-            id = member.id;
+            id = (possiblemember as GuildMember).id;
         }
         await getCoins(id).then(result => {
             if (result === null) {
@@ -349,7 +345,7 @@ export async function handleInteraction(interaction: Interaction) {
         }
 
         const member = interaction.options.getMentionable("user", true) as GuildMember;
-        const dbmember = await finduser(member.id);
+        const dbmember = await findUser(member.id);
         if (!dbmember) {
             interaction.reply("We couldn't find an bbn account in our database");
             return;
@@ -371,13 +367,14 @@ export async function handleInteraction(interaction: Interaction) {
         addPartner(dbmember, cpu, ram, storage, slots, invite.code);
         interaction.reply(`Added ${member.user.username} as a partner.\n\nFollowing resources got added: \nCPU: ${cpu} \nMemory: ${ram} \nStorage: ${storage} \nSlots: ${slots} \nInvite code: https://discord.gg/${invite.code}`);
     }
+
     if (interaction.commandName == "removepartner") {
         if (!interaction.memberPermissions?.has(PermissionsBitField.Flags.Administrator)) {
             interaction.reply("You do not have permission to remove partners.");
             return;
         }
         const member = interaction.options.getMentionable("user", true) as GuildMember;
-        const dbmember = await finduser(member.id);
+        const dbmember = await findUser(member.id);
         if (!dbmember) {
             interaction.reply("We couldn't find an bbn account in our database");
             return;
@@ -385,6 +382,7 @@ export async function handleInteraction(interaction: Interaction) {
         removePartner(dbmember);
         interaction.reply(`Removed ${member.user.username} as a partner.`);
     }
+
     if (interaction.commandName == "partners") {
         if (!interaction.memberPermissions?.has(PermissionsBitField.Flags.Administrator)) {
             interaction.reply("You do not have permission to list partners.");
@@ -392,8 +390,16 @@ export async function handleInteraction(interaction: Interaction) {
         }
         let out = "Owner - CPU, RAM, Storage, Slots, Invitecode, last invite, uses\n";
         const partners = await getPartners();
-        out += (await Promise.all(partners.map(async (partner: any) => `<@${(await interaction.guild?.members.fetch(await getMemberFromBBNId(partner.owner))) ? (await interaction.guild?.members.fetch(await getMemberFromBBNId(partner.owner)))!.user.id : "USER QUIT"}> (${partner.owner}) - ${partner.cpu}, ${partner.memory}, ${partner.disk}, ${partner.slots}, ${partner.invite}, <t:${Math.round(partner.lastinvite / 1000)}:R>, ${(await interaction.guild?.invites.fetch(partner.invite))?.uses}`))).join("\n");
-        interaction.reply(out);
+
+        await interaction.deferReply();
+
+        out += (await Promise.all(partners.map(async partner =>
+            `<@${await getMemberFromBBNId(partner.owner)}> \`${partner.owner}\` - \`${partner.cpu}\` \`${partner.memory}\` \`${partner.disk}\` \`${partner.slots}\` \`${partner.invite}\` <t:${Math.round(partner.lastinvite / 1000)}:R> \`${(await interaction.guild?.invites.fetch(partner.invite)!).uses}\``))).join("\n");
+
+        const embed = new EmbedBuilder()
+            .setTitle(`Partners`)
+            .setDescription(out)
+        interaction.editReply({ embeds: [ embed ] });
     }
 }
 
