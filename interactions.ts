@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChannelType, EmbedBuilder, GuildMember, GuildMemberRoleManager, Interaction, Message, ModalBuilder, PermissionsBitField, TextChannel, TextInputBuilder, TextInputStyle, UserSelectMenuBuilder, VoiceChannel } from "npm:discord.js"
+import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChannelType, EmbedBuilder, GuildMember, GuildMemberRoleManager, GuildTextBasedChannel, Interaction, Message, ModalBuilder, PermissionsBitField, TextBasedChannel, TextChannel, TextInputBuilder, TextInputStyle, UserSelectMenuBuilder, VoiceChannel } from "npm:discord.js"
 import { saveTranscript, findUser, lastLogin, getServerURLs, getLastDaily, addCoins, setLastDaily, getCoins, removeCoins, addPartner, removePartner, getPartners, getMemberFromBBNId } from "./db.ts";
 
 export async function handleInteraction(interaction: Interaction) {
@@ -106,9 +106,12 @@ export async function handleInteraction(interaction: Interaction) {
             const ticket_user_reason = interaction.fields.getTextInputValue("ticket_reason");
             const dbuser = await findUser(interaction.user.id);
             const ticketname = `ticket-${interaction.user.id}`;
-            const possibleChannel = interaction.guild?.channels.cache.find(ch => ch.name === ticketname);
+            const possibleChannel = interaction.guild?.channels.cache.find(ch => ch.name === ticketname) as TextChannel;
             if (possibleChannel) {
-                interaction.reply({
+                await possibleChannel.permissionOverwrites.create(interaction.user.id, {
+                    "ViewChannel": true
+                });
+                await interaction.reply({
                     content: `> You already have a ticket here: ${possibleChannel}`,
                     ephemeral: true,
                 });
