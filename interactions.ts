@@ -106,23 +106,6 @@ export async function handleInteraction(interaction: Interaction) {
             const ticket_user_reason = interaction.fields.getTextInputValue("ticket_reason");
             const dbuser = await findUser(interaction.user.id);
             const ticketname = `ticket-${interaction.user.id}`;
-            const possibleChannel = interaction.guild?.channels.cache.find(ch => ch.name === ticketname) as TextChannel;
-            if (possibleChannel) {
-                await possibleChannel.permissionOverwrites.create(interaction.user.id, {
-                    "ViewChannel": true
-                });
-                await interaction.reply({
-                    content: `> You already have a ticket here: ${possibleChannel}`,
-                    ephemeral: true,
-                });
-                return;
-            }
-            const ch = await interaction.guild!.channels.create({
-                name: ticketname,
-                type: ChannelType.GuildText,
-                topic: `ticket of ${interaction.user.tag}`,
-                parent: "1081347349462405221",
-            });
 
             const fields = [
                 {
@@ -152,6 +135,34 @@ export async function handleInteraction(interaction: Interaction) {
                 })
                 embed.setTimestamp(new Date(new Date().toLocaleString('en-US', { timeZone: login[ 2 ] ?? "UTC" })))
             }
+            const btnrow = new ActionRowBuilder<ButtonBuilder>().addComponents([
+                new ButtonBuilder()
+                    .setCustomId(`close_ticket`)
+                    .setStyle(ButtonStyle.Danger)
+                    .setLabel(`Close Ticket`),
+            ]);
+            const possibleChannel = interaction.guild?.channels.cache.find(ch => ch.name === ticketname) as TextChannel;
+            if (possibleChannel) {
+                await possibleChannel.permissionOverwrites.create(interaction.user.id, {
+                    "ViewChannel": true
+                });
+                await possibleChannel.send({
+                    content: `${interaction.member} || <@&1120392307087261787>`,
+                    embeds: [ embed ],
+                    components: [ btnrow ],
+                });
+                await interaction.reply({
+                    content: `> You already have a ticket here: ${possibleChannel}`,
+                    ephemeral: true,
+                });
+                return;
+            }
+            const ch = await interaction.guild!.channels.create({
+                name: ticketname,
+                type: ChannelType.GuildText,
+                topic: `ticket of ${interaction.user.tag}`,
+                parent: "1081347349462405221",
+            });
 
             setTimeout(() => {
                 ch.permissionOverwrites.create(interaction.user.id, {
@@ -159,12 +170,6 @@ export async function handleInteraction(interaction: Interaction) {
                 });
             }, 5000);
 
-            const btnrow = new ActionRowBuilder<ButtonBuilder>().addComponents([
-                new ButtonBuilder()
-                    .setCustomId(`close_ticket`)
-                    .setStyle(ButtonStyle.Danger)
-                    .setLabel(`Close Ticket`),
-            ]);
             await ch.send({
                 content: `${interaction.member} || <@&1120392307087261787>`,
                 embeds: [ embed ],
