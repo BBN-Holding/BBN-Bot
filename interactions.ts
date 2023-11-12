@@ -285,7 +285,7 @@ export async function handleInteraction(interaction: Interaction) {
             }
 
             let reward = 10 + (Math.floor(Math.random() * 10));
-            if ((await interaction.guild!.members.fetch(interaction.user.id)).premiumSince)
+            if ((await interaction.guild!.members.fetch(interaction.user.id)).premiumSince || (await interaction.guild!.members.fetch(interaction.user.id)).roles.cache.has("1120392307087261787"))
                 reward *= 10;
             const res = await addCoins(interaction.user.id, reward);
             if (res === null) {
