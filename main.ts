@@ -134,6 +134,22 @@ client.on("ready", () => {
                         {
                             name: 'partners',
                             description: 'List all partners'
+                        },
+                        {
+                            name: "servers",
+                            description: "List all servers",
+                            options: [
+                                {
+                                    name: 'user',
+                                    description: 'The user to list servers from',
+                                    type: 9,
+                                    required: true,
+                                }
+                            ]
+                        },
+                        {
+                            name: "deescalate",
+                            description: "Deescalate a ticket to the previous support level",
                         }
                     ]
             });

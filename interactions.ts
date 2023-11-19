@@ -51,14 +51,14 @@ export async function handleInteraction(interaction: Interaction) {
                 }
                 let member;
                 try {
-                    member = await interaction.guild?.members.fetch(channel.name.split("-")[ 1 ]);
+                    member = await interaction.guild?.members.fetch(channel.name.split("-")[1]);
                     // deno-lint-ignore no-empty
                 } catch (_) { }
                 // deno-lint-ignore no-explicit-any
                 const transcript: any = {
                     messages: [],
                     closed: `Ticket closed by ${interaction.user.tag}`,
-                    with: `${member ? member.user.tag : "Unknown User"} (${channel.name.split("-")[ 1 ]})`
+                    with: `${member ? member.user.tag : "Unknown User"} (${channel.name.split("-")[1]})`
                 };
                 for (const message of messages.values()) {
                     // deno-lint-ignore no-explicit-any
@@ -73,7 +73,7 @@ export async function handleInteraction(interaction: Interaction) {
                         obj.attachments = message.attachments.map(a => a.url);
                     }
                     if (message.embeds.length > 0) {
-                        obj.embed = message.embeds[ 0 ].toJSON();
+                        obj.embed = message.embeds[0].toJSON();
                     }
                     transcript.messages.push(obj);
                 }
@@ -85,19 +85,19 @@ export async function handleInteraction(interaction: Interaction) {
     }
 
     if (interaction.isUserSelectMenu() && interaction.guild && interaction.customId === 'verify_modal') {
-        const member = interaction.guild.members.cache.get(interaction.values[ 0 ])
+        const member = interaction.guild.members.cache.get(interaction.values[0])
         const role = interaction.guild.roles.cache.get("757983851032215673")
 
         if (member && role) {
             if (member.roles.cache.has(role.id)) {
                 member.roles.remove(role, `Unverified by ${interaction.user.tag}`)
-                interaction.reply(`Successfully unverified <@${interaction.values[ 0 ]}>!`)
+                interaction.reply(`Successfully unverified <@${interaction.values[0]}>!`)
             } else {
                 member.roles.add(role, `Verified by ${interaction.user.tag}`)
-                interaction.reply(`Successfully verified <@${interaction.values[ 0 ]}>!`)
+                interaction.reply(`Successfully verified <@${interaction.values[0]}>!`)
             }
         } else {
-            interaction.reply(`An error occured while assigning the role to <@${interaction.values[ 0 ]}>`)
+            interaction.reply(`An error occured while assigning the role to <@${interaction.values[0]}>`)
         }
     }
 
@@ -127,13 +127,13 @@ export async function handleInteraction(interaction: Interaction) {
                     value: `> ${await getServerURLs(interaction.user.id)}`,
                 }, {
                     name: `Last Login:`,
-                    value: `\`\`\`${JSON.stringify(login[ 0 ] ?? "none")}\`\`\``,
+                    value: `\`\`\`${JSON.stringify(login[0] ?? "none")}\`\`\``,
                 });
                 embed.setFooter({
-                    text: login[ 1 ] ?? "No Login",
+                    text: login[1] ?? "No Login",
                     iconURL: interaction.user.displayAvatarURL(),
                 })
-                embed.setTimestamp(new Date(new Date().toLocaleString('en-US', { timeZone: login[ 2 ] ?? "UTC" })))
+                embed.setTimestamp(new Date(new Date().toLocaleString('en-US', { timeZone: login[2] ?? "UTC" })))
             }
             const btnrow = new ActionRowBuilder<ButtonBuilder>().addComponents([
                 new ButtonBuilder()
@@ -148,8 +148,8 @@ export async function handleInteraction(interaction: Interaction) {
                 });
                 await possibleChannel.send({
                     content: `${interaction.member} || <@&1120392307087261787>`,
-                    embeds: [ embed ],
-                    components: [ btnrow ],
+                    embeds: [embed],
+                    components: [btnrow],
                 });
                 await interaction.reply({
                     content: `> You already have a ticket here: ${possibleChannel}`,
@@ -172,8 +172,8 @@ export async function handleInteraction(interaction: Interaction) {
 
             await ch.send({
                 content: `${interaction.member} || <@&1120392307087261787>`,
-                embeds: [ embed ],
-                components: [ btnrow ],
+                embeds: [embed],
+                components: [btnrow],
             });
             await interaction.reply({
                 content: `> Successfully created your ticket here: ${ch}`,
@@ -236,8 +236,8 @@ export async function handleInteraction(interaction: Interaction) {
                 .setLabel("Create Ticket")
         ]);
         await ticketChannel.send({
-            embeds: [ embed ],
-            components: [ btnrow ],
+            embeds: [embed],
+            components: [btnrow],
         });
 
         interaction.reply({
@@ -246,7 +246,7 @@ export async function handleInteraction(interaction: Interaction) {
     }
 
     if (interaction.commandName === 'escalate') {
-        if (!(interaction.member?.roles as GuildMemberRoleManager).cache.has("1120392307087261787")) {
+        if (!Array.from((interaction.member?.roles as GuildMemberRoleManager).cache.keys()).some(role => supportRoles.includes(role))) {
             interaction.reply("You do not have permission to escalate this ticket.");
             return;
         }
@@ -261,8 +261,29 @@ export async function handleInteraction(interaction: Interaction) {
             reason: "Ticket escalated",
         });
         interaction.reply({
-            allowedMentions: { roles: [ '757969277063266407' ] },
+            allowedMentions: { roles: ['757969277063266407'] },
             content: "Ticket escalated. || <@&757969277063266407>"
+        });
+    }
+
+    if (interaction.commandName === 'deescalate') {
+        if (!Array.from((interaction.member?.roles as GuildMemberRoleManager).cache.keys()).some(role => supportRoles.includes(role))) {
+            interaction.reply("You do not have permission to deescalate this ticket.");
+            return;
+        }
+        // check if ticket channel
+        if (!(interaction.channel?.type === ChannelType.GuildText && interaction.channel?.parent?.id === "1120395441138315345")) {
+            interaction.reply("This command can only be used in a ticket channel.");
+            return;
+        }
+        // move to escalation category
+        interaction.channel?.setParent("1081347349462405221", {
+            lockPermissions: false,
+            reason: "Ticket deescalated",
+        });
+        interaction.reply({
+            allowedMentions: { roles: ['1120392307087261787'] },
+            content: "Ticket deescalated. || <@&1120392307087261787>"
         });
     }
 
@@ -272,7 +293,7 @@ export async function handleInteraction(interaction: Interaction) {
 
         const row_username = new ActionRowBuilder<UserSelectMenuBuilder>().addComponents(verify_modal)
 
-        await interaction.reply({ content: 'Which user do you want to verify?', components: [ row_username ], ephemeral: true })
+        await interaction.reply({ content: 'Which user do you want to verify?', components: [row_username], ephemeral: true })
     }
 
     if (interaction.commandName == "daily") {
@@ -407,9 +428,44 @@ export async function handleInteraction(interaction: Interaction) {
         const embed = new EmbedBuilder()
             .setTitle(`Partners`)
             .setDescription(out)
-        interaction.editReply({ embeds: [ embed ] });
+        interaction.editReply({ embeds: [embed] });
+    }
+
+    if (interaction.commandName == "servers") {
+        if (interaction.member) {
+            if (interaction.member.roles instanceof GuildMemberRoleManager) {
+                if (!Array.from(interaction.member.roles.cache.keys()).some(role => supportRoles.includes(role))) {
+                    interaction.reply("You do not have permission to list servers.");
+                    return;
+                }
+            } else {
+                if (!interaction.member.roles.some(role => supportRoles.includes(role))) {
+                    interaction.reply("You do not have permission to list servers.");
+                    return;
+                
+                }
+            }
+        }
+        const possiblemember = interaction.options.getMentionable("user", true);
+        if (!possiblemember) {
+            interaction.reply("Please mention a user.");
+            return;
+        }
+        const member = possiblemember as GuildMember;
+        const servers = await getServerURLs(member.id);
+        if (servers === null) {
+            interaction.reply("No account found for this user.");
+            return;
+        }
+        if (servers.length === 0) {
+            interaction.reply("This user has no servers.");
+            return;
+        }
+        interaction.reply(`Servers of ${member.user.username}:\n${servers}`);
     }
 }
+
+const supportRoles = ["757969277063266407", "815298088184446987", "1120392307087261787"] // Owner, Dev, Support
 
 function lockVoice(interaction: ButtonInteraction, lock: boolean) {
     const channel = (interaction.member as GuildMember).voice.channel as VoiceChannel
