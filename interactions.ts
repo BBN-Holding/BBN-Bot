@@ -461,7 +461,7 @@ export async function handleInteraction(interaction: Interaction) {
             interaction.reply("This user has no servers.");
             return;
         }
-        interaction.reply(`Servers of ${member.user.username}:\n${servers}`);
+        interaction.reply(`Servers of ${member.user.username}:\n${servers.map(server => `<${server}>`).join("\n")}`);
     }
 }
 
