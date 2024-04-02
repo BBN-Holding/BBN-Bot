@@ -301,7 +301,7 @@ export async function handleInteraction(interaction: Interaction) {
             if (result !== null) {
                 const timeDiff = (Date.now() - result) / 3600000;
                 if (timeDiff < 24) {
-                    return interaction.reply(`You have already claimed your daily reward. Please wait ${Math.ceil(24 - timeDiff)} hours before claiming again.`);
+                    return interaction.reply(`You have already claimed your daily reward. Please wait ${Math.ceil(24 - timeDiff)} hour(s) before claiming again.`);
                 }
             }
 
