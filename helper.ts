@@ -74,6 +74,9 @@ export function resolve(domains: string[]) {
 export function sendVoice(oldState: VoiceState, newState: VoiceState) {
     if (!oldState.channel && newState.channel) {
         sendVoiceMessage(generateVoiceEmbed('joined', false, newState, oldState), newState);
+        if (newState.channel.name === 'Talk 1') {
+            newState.guild.client.rest.put(`/channels/${newState.channelId}/voice-status`, { body: { status: "<:Shyguy:1223733571118960700> ❤" } })
+        }
     }
     if (oldState.channel && !newState.channel) {
         sendVoiceMessage(generateVoiceEmbed('left', true, newState, oldState), newState);
@@ -92,6 +95,9 @@ export function sendVoice(oldState: VoiceState, newState: VoiceState) {
     }
     if (oldState.channel && newState.channel && oldState.channelId !== newState.channelId) {
         sendVoiceMessage(generateVoiceEmbed('switched channel', true, newState, oldState).setColor('#FEE75C'), newState);
+        if (newState.channel.name === 'Talk 1') {
+            newState.guild.client.rest.put(`/channels/${newState.channelId}/voice-status`, { body: { status: "<:Shyguy:1223733571118960700> ❤" } })
+        }
     }
 }
 
